@@ -32,10 +32,14 @@ datatype Colors
   | yellow
   | grey
 
-datatype Inst = Print of string*Colors
+datatype Token = Print of string*Colors
+  | Keyword of string
+  | Symbols of string
+  | Identifier of string
+  | Numeric of string
+  | InvalidToken
 
 
-type Program = Inst list
 
 
 
@@ -55,8 +59,6 @@ the operations of the machine.
 
 *)
 
-type Stack   = int list
-exception StackUnderflow of Stack
 
 
 fun prnt_red x= print("\u001b[31;1m"^x)
@@ -67,14 +69,15 @@ fun prnt_grey x= print("\u001b[30;1m"^x)
 
 (* This function performs a single instruction of the stack machine *)
 
-fun  step (Print (x,c) )_              = (case c of
-                                            red => (prnt_red x; [])
-                                            | green => (prnt_green x; [])
-                                            | white => (prnt_white x; [])
-                                            | yellow => (prnt_yellow x; [])
-                                            | grey   => (prnt_grey x; [])
-                                        )
-
+fun  step (Print (x,c) )= (case c of
+                           red => (prnt_red x)
+                            | green => (prnt_green x)
+                            | white => (prnt_white x )
+                            | yellow => (prnt_yellow x )
+                            | grey   => (prnt_grey x )
+                            )
+    | step (Keyword x)  =( prnt_red x)
+    | step _            =( )
 
 (* And finally this runs a program. *)
 

@@ -31,7 +31,7 @@ on interactive sessions
 
 *)
 
-val interactive = RPLex.makeLexer (fn _ => TextIO.inputN (TextIO.stdIn,1))
+
 
 fun lexfile file = let val strm = TextIO.openIn file
 		   in RPLex.makeLexer (fn n => TextIO.inputN(strm,n))
@@ -47,10 +47,10 @@ when we want to pipe the output to rp.
 
 
 (* Running with a lexer *)
-fun runWithLexer lexer = let fun loop stack = case lexer () of
+fun runWithLexer lexer = let fun loop ()= case lexer () of
 						  NONE      => ()
-					       |  SOME inst => loop (Machine.step inst stack)
-			 in loop []
+					       |  SOME inst => loop (Machine.step inst)
+			 in loop ()
 			 end
 
 
@@ -62,9 +62,6 @@ val _ =  ( case CommandLine.arguments() of
 
 	    |  xs => (List.map (runWithLexer o lexfile) xs; ())
 	 )
-	 handle Machine.StackUnderflow s =>
-		( print "error: Stack underflow: " ;
-		  OS.Process.exit OS.Process.failure
-		)
+
 
 end

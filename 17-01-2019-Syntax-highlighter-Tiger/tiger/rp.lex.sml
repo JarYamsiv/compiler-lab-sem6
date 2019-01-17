@@ -2,7 +2,7 @@ structure RPLex=
    struct
     structure UserDeclarations =
       struct
-(*#line 1.1 "rp.lex"*)type lexresult             = Machine.Inst option
+(*#line 1.1 "rp.lex"*)type lexresult             = Machine.Token option
 fun eof ()                 = NONE
 
 
@@ -766,7 +766,7 @@ let fun continue() = lex() in
  end
 | 8 => let val yytext=yymktext() in (*#line 17.28 "rp.lex"*)SOME (Machine.Print (yytext,Machine.grey))       (*#line 767.1 "rp.lex.sml"*)
  end
-| 84 => let val yytext=yymktext() in (*#line 18.23 "rp.lex"*)SOME (Machine.Print (yytext,Machine.red))       (*#line 769.1 "rp.lex.sml"*)
+| 84 => let val yytext=yymktext() in (*#line 18.23 "rp.lex"*)SOME (Machine.Keyword (yytext))       (*#line 769.1 "rp.lex.sml"*)
  end
 | 87 => let val yytext=yymktext() in (*#line 19.30 "rp.lex"*)SOME (Machine.Print (yytext,Machine.white))       (*#line 771.1 "rp.lex.sml"*)
  end

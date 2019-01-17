@@ -1,4 +1,4 @@
-type lexresult             = Machine.Inst option
+type lexresult             = Machine.Token option
 fun eof ()                 = NONE
 
 
@@ -15,7 +15,7 @@ keywords="array" | "if" | "then" | "else" | "while" | "for" | "to" | "do" | "let
 
 {whitespace}+     				=> (SOME (Machine.Print (yytext,Machine.white))       );
 "/*".*"*/"          			=> (SOME (Machine.Print (yytext,Machine.grey))       );
-{keywords}			  			=> (SOME (Machine.Print (yytext,Machine.red))       );
+{keywords}			  			=> (SOME (Machine.Keyword (yytext))       );
 [a-zA-Z_][a-zA-Z0-9_]*			=> (SOME (Machine.Print (yytext,Machine.white))       );
 [-(){};+=<>"':/*\,]				=> (SOME (Machine.Print (yytext,Machine.green))       );
 [-+]?{d}([.]{d})?([eE][-+]?d)?	=> (SOME (Machine.Print (yytext,Machine.yellow))       );
