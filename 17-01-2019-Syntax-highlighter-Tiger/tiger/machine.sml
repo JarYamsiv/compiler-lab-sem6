@@ -30,6 +30,7 @@ datatype Colors
   | green
   | white
   | yellow
+  | grey
 
 datatype Inst
   = Exec of Ast.BinOp
@@ -71,10 +72,11 @@ fun printstack stack = let val conts = String.concatWith ", " (List.map Int.toSt
 fun printtop (x::xs) = print (Int.toString x ^ "\n")
   | printtop _       = raise StackUnderflow []
 
-fun prnt_red x= print("\u001b[31m"^x)
-fun prnt_green x= print("\u001b[32m"^x)
-fun prnt_white x= print("\u001b[37m"^x)
-fun prnt_yellow x= print("\u001b[33m"^x)
+fun prnt_red x= print("\u001b[31;1m"^x)
+fun prnt_green x= print("\u001b[32;1m"^x)
+fun prnt_white x= print("\u001b[37;1m"^x)
+fun prnt_yellow x= print("\u001b[33;1m"^x)
+fun prnt_grey x= print("\u001b[30;1m"^x)
 
 (* This function performs a single instruction of the stack machine *)
 
@@ -83,9 +85,10 @@ fun step (Push x)     stack           = x :: stack
   | step PrintTop     stack           = (printtop stack; stack)
   | step (Print (x,c) )_              = (case c of
                                             red => (prnt_red x; [])
-                                            | green => (prnt_red x; [])
-                                            | white => (prnt_red x; [])
-                                            | yellow => (prnt_red x; [])
+                                            | green => (prnt_green x; [])
+                                            | white => (prnt_white x; [])
+                                            | yellow => (prnt_yellow x; [])
+                                            | grey   => (prnt_grey x; [])
                                         )
   | step ClearStack   _               = []
   | step (Exec oper) (a :: b :: rest) = Ast.binOpDenote oper a b :: rest

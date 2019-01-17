@@ -18,7 +18,7 @@ COMMON=ast.sml machine.sml
 	mlyacc $<
 
 
-all: rp
+all: rp 
 
 PHONY: all clean test
 
