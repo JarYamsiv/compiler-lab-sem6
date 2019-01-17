@@ -17,11 +17,6 @@ digit=[0-9];
 %%
 {whitespace}+     => (lex()  (* White spaces are ignored *) );
 "#".*\n           => (lex()  (* A line comment *)           );
-"array"			  => (SOME (Machine.Print_red (yytext,Machine.red))       );
-[+-~]?{digit}+    => (SOME (Machine.Push (toInt yytext)));
-"+"               => (SOME (Machine.Exec Ast.Plus      ));
-"-"               => (SOME (Machine.Exec Ast.Minus     ));
-"*"               => (SOME (Machine.Exec Ast.Mul       ));
-"p"               => (SOME (Machine.PrintTop));
-"s"               => (SOME (Machine.PrintStack));
-"c"               => (SOME (Machine.ClearStack));
+"array"			  => (SOME (Machine.Print (yytext,Machine.red))       );
+"if"			  => (SOME (Machine.Print (yytext,Machine.red))       );
+

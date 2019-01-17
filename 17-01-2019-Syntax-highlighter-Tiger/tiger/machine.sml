@@ -37,7 +37,7 @@ datatype Inst
   | ClearStack
   | PrintTop
   | PrintStack
-  | Print_red of string*Colors
+  | Print of string*Colors
 
 
 type Program = Inst list
@@ -71,17 +71,22 @@ fun printstack stack = let val conts = String.concatWith ", " (List.map Int.toSt
 fun printtop (x::xs) = print (Int.toString x ^ "\n")
   | printtop _       = raise StackUnderflow []
 
-fun prnt_red x = let val c_red="\u001b[31m"
-                 in
-                  print(c_red^x)
-                end
+fun prnt_red x= print("\u001b[31m"^x)
+fun prnt_green x= print("\u001b[32m"^x)
+fun prnt_white x= print("\u001b[37m"^x)
+fun prnt_yellow x= print("\u001b[33m"^x)
 
 (* This function performs a single instruction of the stack machine *)
 
 fun step (Push x)     stack           = x :: stack
   | step PrintStack   stack           = (printstack stack; stack)
   | step PrintTop     stack           = (printtop stack; stack)
-  | step (Print_red (x,c))_           = (prnt_red x; [])
+  | step (Print (x,c) )_              = (case c of
+                                            red => (prnt_red x; [])
+                                            | green => (prnt_red x; [])
+                                            | white => (prnt_red x; [])
+                                            | yellow => (prnt_red x; [])
+                                        )
   | step ClearStack   _               = []
   | step (Exec oper) (a :: b :: rest) = Ast.binOpDenote oper a b :: rest
   | step _           stack            = raise StackUnderflow stack
@@ -100,7 +105,7 @@ fun instToString (Exec oper) = Ast.binOpToString oper
   | instToString ClearStack  = "c"
   | instToString PrintTop    = "p"
   | instToString PrintStack  = "s"
-  | instToString (Print_red  (x,color)) = "pr"
+  | instToString (Print  (x,color) ) = "pr"
 
 
 val programToString = String.concatWith " " o List.map instToString
