@@ -32,13 +32,7 @@ datatype Colors
   | yellow
   | grey
 
-datatype Inst
-  = Exec of Ast.BinOp
-  | Push of int
-  | ClearStack
-  | PrintTop
-  | PrintStack
-  | Print of string*Colors
+datatype Inst = Print of string*Colors
 
 
 type Program = Inst list
@@ -64,13 +58,6 @@ the operations of the machine.
 type Stack   = int list
 exception StackUnderflow of Stack
 
-(* Some helper functions for printing the stack *)
-
-fun printstack stack = let val conts = String.concatWith ", " (List.map Int.toString stack)
-		       in print ("[" ^ conts ^ "]\n")
-		       end
-fun printtop (x::xs) = print (Int.toString x ^ "\n")
-  | printtop _       = raise StackUnderflow []
 
 fun prnt_red x= print("\u001b[31;1m"^x)
 fun prnt_green x= print("\u001b[32;1m"^x)
@@ -80,37 +67,23 @@ fun prnt_grey x= print("\u001b[30;1m"^x)
 
 (* This function performs a single instruction of the stack machine *)
 
-fun step (Push x)     stack           = x :: stack
-  | step PrintStack   stack           = (printstack stack; stack)
-  | step PrintTop     stack           = (printtop stack; stack)
-  | step (Print (x,c) )_              = (case c of
+fun  step (Print (x,c) )_              = (case c of
                                             red => (prnt_red x; [])
                                             | green => (prnt_green x; [])
                                             | white => (prnt_white x; [])
                                             | yellow => (prnt_yellow x; [])
                                             | grey   => (prnt_grey x; [])
                                         )
-  | step ClearStack   _               = []
-  | step (Exec oper) (a :: b :: rest) = Ast.binOpDenote oper a b :: rest
-  | step _           stack            = raise StackUnderflow stack
+
 
 (* And finally this runs a program. *)
 
 
-val run = List.foldl (fn (inst,stack) => step inst stack) []
 
 
 (* Conversion of machine instructions to strings *)
 
 
-fun instToString (Exec oper) = Ast.binOpToString oper
-  | instToString (Push x   ) = Int.toString x
-  | instToString ClearStack  = "c"
-  | instToString PrintTop    = "p"
-  | instToString PrintStack  = "s"
-  | instToString (Print  (x,color) ) = "pr"
 
-
-val programToString = String.concatWith " " o List.map instToString
 
 end

@@ -13,10 +13,9 @@ keywords="array" | "if" | "then" | "else" | "while" | "for" | "to" | "do" | "let
 
 %%
 
-{whitespace}+     			=> (SOME (Machine.Print (yytext,Machine.white))       );
-"\/*".*"*\/"          		=> (SOME (Machine.Print (yytext,Machine.white))       );
-{keywords}			  		=> (SOME (Machine.Print (yytext,Machine.red))       );
-[a-zA-Z_][a-zA-Z0-9_]*		=> (SOME (Machine.Print (yytext,Machine.white))       );
-[-(){};+=<>"':/*]			=> (SOME (Machine.Print (yytext,Machine.green))       );
-{d}([.]{d})?							=> (SOME (Machine.Print (yytext,Machine.yellow))       );
-
+{whitespace}+     				=> (SOME (Machine.Print (yytext,Machine.white))       );
+"/*".*"*/"          			=> (SOME (Machine.Print (yytext,Machine.grey))       );
+{keywords}			  			=> (SOME (Machine.Print (yytext,Machine.red))       );
+[a-zA-Z_][a-zA-Z0-9_]*			=> (SOME (Machine.Print (yytext,Machine.white))       );
+[-(){};+=<>"':/*\,]				=> (SOME (Machine.Print (yytext,Machine.green))       );
+[-+]?{d}([.]{d})?([eE][-+]?d)?	=> (SOME (Machine.Print (yytext,Machine.yellow))       );

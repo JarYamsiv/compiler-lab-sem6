@@ -1,7 +1,11 @@
-array if(meow == eee)
+function main(var argc,var argv)
 {
 	/* this is a comment meow */
 	meow(eeem);
-	value a= 5 + 63.0 ;
+	var a= 5 + 63.0 ;
+	if(a == 68)
+	{
+		var b= -7;
+	}
 }
 
