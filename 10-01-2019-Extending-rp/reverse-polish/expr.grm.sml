@@ -33,7 +33,7 @@ val table=let val actionRows =
 \\026\000\004\000\010\000\005\000\009\000\000\000\
 \\027\000\004\000\010\000\005\000\009\000\000\000\
 \\028\000\005\000\009\000\000\000\
-\\029\000\002\000\012\000\003\000\011\000\004\000\010\000\005\000\009\000\000\000\
+\\029\000\000\000\
 \\030\000\000\000\
 \"
 val actionRowNumbers =
@@ -168,43 +168,43 @@ val actions =
 fn (i392,defaultPos,stack,
     (()):arg) =>
 case (i392,stack)
-of  ( 0, ( ( _, ( MlyValue.EXPS EXPS, EXPS1left, EXPS1right)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 43.29 "expr.grm"*) EXPS (*#line 171.1 "expr.grm.sml"*)
+of  ( 0, ( ( _, ( MlyValue.EXPS EXPS, EXPS1left, EXPS1right)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 44.29 "expr.grm"*) EXPS (*#line 171.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 2, ( result, EXPS1left, EXPS1right), rest671)
 end
-|  ( 1, ( ( _, ( _, _, NEWLINE1right)) :: ( _, ( MlyValue.EXPS EXPS, EXPS1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 44.28 "expr.grm"*) EXPS (*#line 175.1 "expr.grm.sml"*)
+|  ( 1, ( ( _, ( _, _, NEWLINE1right)) :: ( _, ( MlyValue.EXPS EXPS, EXPS1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 45.28 "expr.grm"*) EXPS (*#line 175.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 2, ( result, EXPS1left, NEWLINE1right), rest671)
 end
-|  ( 2, ( rest671)) => let val  result = MlyValue.EXPS ((*#line 46.29 "expr.grm"*) []                  (*#line 179.1 "expr.grm.sml"*)
+|  ( 2, ( rest671)) => let val  result = MlyValue.EXPS ((*#line 47.29 "expr.grm"*) []                  (*#line 179.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 1, ( result, defaultPos, defaultPos), rest671)
 end
-|  ( 3, ( ( _, ( MlyValue.EXPS EXPS, _, EXPS1right)) :: _ :: ( _, ( MlyValue.EXP EXP, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXPS ((*#line 47.28 "expr.grm"*) EXP :: EXPS         (*#line 183.1 "expr.grm.sml"*)
+|  ( 3, ( ( _, ( MlyValue.EXPS EXPS, _, EXPS1right)) :: _ :: ( _, ( MlyValue.EXP EXP, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXPS ((*#line 48.28 "expr.grm"*) EXP :: EXPS         (*#line 183.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 1, ( result, EXP1left, EXPS1right), rest671)
 end
-|  ( 4, ( ( _, ( MlyValue.CONST CONST, CONST1left, CONST1right)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 50.29 "expr.grm"*) Ast.Const CONST     (*#line 187.1 "expr.grm.sml"*)
+|  ( 4, ( ( _, ( MlyValue.CONST CONST, CONST1left, CONST1right)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 51.29 "expr.grm"*) Ast.Const CONST     (*#line 187.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, CONST1left, CONST1right), rest671)
 end
-|  ( 5, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 51.29 "expr.grm"*) Ast.plus  EXP1 EXP2 (*#line 191.1 "expr.grm.sml"*)
+|  ( 5, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 52.29 "expr.grm"*) Ast.plus  EXP1 EXP2 (*#line 191.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, EXP1left, EXP2right), rest671)
 end
-|  ( 6, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 52.28 "expr.grm"*) Ast.minus EXP1 EXP2 (*#line 195.1 "expr.grm.sml"*)
+|  ( 6, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 53.28 "expr.grm"*) Ast.minus EXP1 EXP2 (*#line 195.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, EXP1left, EXP2right), rest671)
 end
-|  ( 7, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 53.28 "expr.grm"*) Ast.mul   EXP1 EXP2 (*#line 199.1 "expr.grm.sml"*)
+|  ( 7, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 54.28 "expr.grm"*) Ast.mul   EXP1 EXP2 (*#line 199.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, EXP1left, EXP2right), rest671)
 end
-|  ( 8, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 54.29 "expr.grm"*) Ast.div   EXP1 EXP2 (*#line 203.1 "expr.grm.sml"*)
+|  ( 8, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 55.29 "expr.grm"*) Ast.div   EXP1 EXP2 (*#line 203.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, EXP1left, EXP2right), rest671)
 end
-|  ( 9, ( ( _, ( _, _, RPAREN1right)) :: ( _, ( MlyValue.EXP EXP, _, _)) :: ( _, ( _, LPAREN1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 55.29 "expr.grm"*) EXP (*#line 207.1 "expr.grm.sml"*)
+|  ( 9, ( ( _, ( _, _, RPAREN1right)) :: ( _, ( MlyValue.EXP EXP, _, _)) :: ( _, ( _, LPAREN1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 56.29 "expr.grm"*) EXP (*#line 207.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, LPAREN1left, RPAREN1right), rest671)
 end
