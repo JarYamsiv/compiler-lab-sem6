@@ -69,15 +69,17 @@ fun prnt_grey x= print("\u001b[30;1m"^x)
 
 (* This function performs a single instruction of the stack machine *)
 
-fun  step (Print (x,c) )= (case c of
+fun  read_token (Print (x,c) )= (case c of
                            red => (prnt_red x)
                             | green => (prnt_green x)
                             | white => (prnt_white x )
                             | yellow => (prnt_yellow x )
                             | grey   => (prnt_grey x )
                             )
-    | step (Keyword x)  =( prnt_red x)
-    | step _            =( )
+    | read_token (Keyword x)    =( prnt_red x)
+    | read_token (Numeric x)    =( prnt_green x)
+    | read_token (Identifier x) =( prnt_white x)
+    | read_token _              =( )
 
 (* And finally this runs a program. *)
 

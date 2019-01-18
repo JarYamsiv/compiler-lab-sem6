@@ -49,7 +49,7 @@ when we want to pipe the output to rp.
 (* Running with a lexer *)
 fun runWithLexer lexer = let fun loop ()= case lexer () of
 						  NONE      => ()
-					       |  SOME inst => loop (Machine.step inst)
+					       |  SOME tok => loop (Machine.read_token tok)
 			 in loop ()
 			 end
 

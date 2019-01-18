@@ -16,6 +16,6 @@ keywords="array" | "if" | "then" | "else" | "while" | "for" | "to" | "do" | "let
 {whitespace}+     				=> (SOME (Machine.Print (yytext,Machine.white))       );
 "/*".*"*/"          			=> (SOME (Machine.Print (yytext,Machine.grey))       );
 {keywords}			  			=> (SOME (Machine.Keyword (yytext))       );
-[a-zA-Z_][a-zA-Z0-9_]*			=> (SOME (Machine.Print (yytext,Machine.white))       );
+[a-zA-Z_][a-zA-Z0-9_]*			=> (SOME (Machine.Identifier yytext)       );
 [-(){};+=<>"':/*\,]				=> (SOME (Machine.Print (yytext,Machine.green))       );
-[-+]?{d}([.]{d})?([eE][-+]?d)?	=> (SOME (Machine.Print (yytext,Machine.yellow))       );
+[-+]?{d}([.]{d})?([eE][-+]?d)?	=> (SOME (Machine.Numeric yytext)       );

@@ -768,11 +768,11 @@ let fun continue() = lex() in
  end
 | 84 => let val yytext=yymktext() in (*#line 18.23 "rp.lex"*)SOME (Machine.Keyword (yytext))       (*#line 769.1 "rp.lex.sml"*)
  end
-| 87 => let val yytext=yymktext() in (*#line 19.30 "rp.lex"*)SOME (Machine.Print (yytext,Machine.white))       (*#line 771.1 "rp.lex.sml"*)
+| 87 => let val yytext=yymktext() in (*#line 19.30 "rp.lex"*)SOME (Machine.Identifier yytext)       (*#line 771.1 "rp.lex.sml"*)
  end
 | 89 => let val yytext=yymktext() in (*#line 20.28 "rp.lex"*)SOME (Machine.Print (yytext,Machine.green))       (*#line 773.1 "rp.lex.sml"*)
  end
-| 99 => let val yytext=yymktext() in (*#line 21.36 "rp.lex"*)SOME (Machine.Print (yytext,Machine.yellow))       (*#line 775.1 "rp.lex.sml"*)
+| 99 => let val yytext=yymktext() in (*#line 21.36 "rp.lex"*)SOME (Machine.Numeric yytext)       (*#line 775.1 "rp.lex.sml"*)
  end
 | _ => raise Internal.LexerError
 
