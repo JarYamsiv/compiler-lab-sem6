@@ -549,21 +549,21 @@ val s = [
 "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\059\000\059\000\000\
+\\058\058\058\058\058\058\058\058\058\058\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\\000\000\000\000\058\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000"
 ),
- (59, 
+ (58, 
 "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\058\058\058\058\058\058\058\058\058\058\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\\000\000\000\000\058\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000"
 ),
@@ -655,70 +655,70 @@ in Vector.fromList(map g
 [{fin = [], trans = 0},
 {fin = [], trans = 1},
 {fin = [], trans = 1},
-{fin = [(N 89)], trans = 0},
-{fin = [(N 87)], trans = 4},
-{fin = [(N 87)], trans = 5},
-{fin = [(N 87)], trans = 6},
-{fin = [(N 87)], trans = 7},
-{fin = [(N 87)], trans = 8},
-{fin = [(N 84),(N 87)], trans = 4},
-{fin = [(N 87)], trans = 10},
-{fin = [(N 87)], trans = 11},
-{fin = [(N 87)], trans = 12},
-{fin = [(N 87)], trans = 13},
-{fin = [(N 87)], trans = 8},
-{fin = [(N 87)], trans = 15},
-{fin = [(N 87)], trans = 16},
-{fin = [(N 87)], trans = 17},
-{fin = [(N 87)], trans = 18},
-{fin = [(N 87)], trans = 19},
-{fin = [(N 87)], trans = 20},
-{fin = [(N 87)], trans = 21},
-{fin = [(N 87)], trans = 22},
-{fin = [(N 87)], trans = 23},
-{fin = [(N 87)], trans = 8},
-{fin = [(N 87)], trans = 25},
-{fin = [(N 87)], trans = 26},
-{fin = [(N 87)], trans = 27},
-{fin = [(N 87)], trans = 28},
-{fin = [(N 87)], trans = 29},
-{fin = [(N 87)], trans = 30},
-{fin = [(N 87)], trans = 31},
-{fin = [(N 87)], trans = 32},
-{fin = [(N 87)], trans = 33},
-{fin = [(N 87)], trans = 29},
-{fin = [(N 87)], trans = 35},
-{fin = [(N 87)], trans = 36},
-{fin = [(N 87)], trans = 37},
-{fin = [(N 87)], trans = 38},
-{fin = [(N 87)], trans = 39},
-{fin = [(N 87)], trans = 40},
-{fin = [(N 87)], trans = 16},
-{fin = [(N 87)], trans = 11},
-{fin = [(N 87)], trans = 43},
-{fin = [(N 87)], trans = 44},
-{fin = [(N 87)], trans = 45},
-{fin = [(N 87)], trans = 8},
-{fin = [(N 87)], trans = 47},
-{fin = [(N 87)], trans = 48},
-{fin = [(N 87)], trans = 49},
-{fin = [(N 87)], trans = 50},
-{fin = [(N 87)], trans = 51},
-{fin = [(N 87)], trans = 52},
-{fin = [(N 87)], trans = 53},
-{fin = [(N 87)], trans = 54},
-{fin = [(N 87)], trans = 55},
-{fin = [(N 99)], trans = 56},
+{fin = [(N 100)], trans = 0},
+{fin = [(N 98)], trans = 4},
+{fin = [(N 98)], trans = 5},
+{fin = [(N 98)], trans = 6},
+{fin = [(N 98)], trans = 7},
+{fin = [(N 98)], trans = 8},
+{fin = [(N 84),(N 98)], trans = 4},
+{fin = [(N 98)], trans = 10},
+{fin = [(N 98)], trans = 11},
+{fin = [(N 98)], trans = 12},
+{fin = [(N 98)], trans = 13},
+{fin = [(N 98)], trans = 8},
+{fin = [(N 98)], trans = 15},
+{fin = [(N 98)], trans = 16},
+{fin = [(N 98)], trans = 17},
+{fin = [(N 98)], trans = 18},
+{fin = [(N 98)], trans = 19},
+{fin = [(N 98)], trans = 20},
+{fin = [(N 98)], trans = 21},
+{fin = [(N 98)], trans = 22},
+{fin = [(N 98)], trans = 23},
+{fin = [(N 98)], trans = 8},
+{fin = [(N 98)], trans = 25},
+{fin = [(N 98)], trans = 26},
+{fin = [(N 98)], trans = 27},
+{fin = [(N 98)], trans = 28},
+{fin = [(N 98)], trans = 29},
+{fin = [(N 98)], trans = 30},
+{fin = [(N 98)], trans = 31},
+{fin = [(N 98)], trans = 32},
+{fin = [(N 98)], trans = 33},
+{fin = [(N 98)], trans = 29},
+{fin = [(N 98)], trans = 35},
+{fin = [(N 98)], trans = 36},
+{fin = [(N 98)], trans = 37},
+{fin = [(N 98)], trans = 38},
+{fin = [(N 98)], trans = 39},
+{fin = [(N 98)], trans = 40},
+{fin = [(N 98)], trans = 16},
+{fin = [(N 98)], trans = 11},
+{fin = [(N 98)], trans = 43},
+{fin = [(N 98)], trans = 44},
+{fin = [(N 98)], trans = 45},
+{fin = [(N 98)], trans = 8},
+{fin = [(N 98)], trans = 47},
+{fin = [(N 98)], trans = 48},
+{fin = [(N 98)], trans = 49},
+{fin = [(N 98)], trans = 50},
+{fin = [(N 98)], trans = 51},
+{fin = [(N 98)], trans = 52},
+{fin = [(N 98)], trans = 53},
+{fin = [(N 98)], trans = 54},
+{fin = [(N 98)], trans = 55},
+{fin = [(N 95)], trans = 56},
 {fin = [], trans = 57},
-{fin = [(N 99)], trans = 0},
-{fin = [], trans = 59},
+{fin = [(N 95)], trans = 58},
+{fin = [], trans = 58},
 {fin = [], trans = 60},
-{fin = [(N 99)], trans = 61},
-{fin = [(N 89)], trans = 62},
+{fin = [(N 95)], trans = 61},
+{fin = [(N 100)], trans = 62},
 {fin = [], trans = 63},
 {fin = [], trans = 64},
 {fin = [(N 8)], trans = 63},
-{fin = [(N 89)], trans = 66},
+{fin = [(N 100)], trans = 66},
 {fin = [(N 2)], trans = 67}])
 end
 structure StartStates =
@@ -762,17 +762,17 @@ let fun continue() = lex() in
 
 			(* Application actions *)
 
-  2 => let val yytext=yymktext() in (*#line 16.27 "rp.lex"*)SOME (Machine.Print (yytext,Machine.white))       (*#line 765.1 "rp.lex.sml"*)
+  100 => let val yytext=yymktext() in (*#line 21.28 "rp.lex"*)SOME (Machine.Symbols yytext)       (*#line 765.1 "rp.lex.sml"*)
  end
-| 8 => let val yytext=yymktext() in (*#line 17.28 "rp.lex"*)SOME (Machine.Print (yytext,Machine.grey))       (*#line 767.1 "rp.lex.sml"*)
+| 2 => let val yytext=yymktext() in (*#line 16.27 "rp.lex"*)SOME (Machine.Print (yytext,Machine.white))       (*#line 767.1 "rp.lex.sml"*)
  end
-| 84 => let val yytext=yymktext() in (*#line 18.23 "rp.lex"*)SOME (Machine.Keyword (yytext))       (*#line 769.1 "rp.lex.sml"*)
+| 8 => let val yytext=yymktext() in (*#line 17.28 "rp.lex"*)SOME (Machine.Print (yytext,Machine.grey))       (*#line 769.1 "rp.lex.sml"*)
  end
-| 87 => let val yytext=yymktext() in (*#line 19.30 "rp.lex"*)SOME (Machine.Identifier yytext)       (*#line 771.1 "rp.lex.sml"*)
+| 84 => let val yytext=yymktext() in (*#line 18.23 "rp.lex"*)SOME (Machine.Keyword (yytext))       (*#line 771.1 "rp.lex.sml"*)
  end
-| 89 => let val yytext=yymktext() in (*#line 20.28 "rp.lex"*)SOME (Machine.Print (yytext,Machine.green))       (*#line 773.1 "rp.lex.sml"*)
+| 95 => let val yytext=yymktext() in (*#line 19.38 "rp.lex"*)SOME (Machine.Numeric yytext)       (*#line 773.1 "rp.lex.sml"*)
  end
-| 99 => let val yytext=yymktext() in (*#line 21.36 "rp.lex"*)SOME (Machine.Numeric yytext)       (*#line 775.1 "rp.lex.sml"*)
+| 98 => let val yytext=yymktext() in (*#line 20.30 "rp.lex"*)SOME (Machine.Identifier yytext)       (*#line 775.1 "rp.lex.sml"*)
  end
 | _ => raise Internal.LexerError
 

@@ -5,7 +5,7 @@ function main(var argc,var argv)
 	var a= 5 + 63.0 ;
 	if(a == 68)
 	{
-		var b= -7;
+		var b= -7e-6;
 	}
 }
 
