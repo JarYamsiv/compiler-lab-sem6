@@ -42,20 +42,16 @@ left associative and the precedence increase as you go down this list.
 
 %%
 
-PROGRAM :  EXPS                 ( EXPS )
-        | STATEMENTS            ( STATEMENTS )
+PROGRAM :   STATEMENTS            ( STATEMENTS )
 
-STATEMENTS:STATEMENT            ([])
-          |STATEMENT NEWLINE    ([])
-          |STATEMENT NEWLINE STATEMENTS ([])
-          |EXP NEWLINE          ([EXP])
+STATEMENTS:STATEMENT            ([STATEMENT])
+          |STATEMENT NEWLINE    ([STATEMENT])
+          |STATEMENT NEWLINE STATEMENTS (STATEMENT::STATEMENTS)
+          
 
 STATEMENT:IDENTIFIER            (Ast.Id IDENTIFIER)
-
-EXPS    : EXP NEWLINE         ( [EXP]                  )
-	| EXP NEWLINE EXPS     ( EXP :: EXPS         )
-  | EXP                  (  [EXP] )
-
+          |EXP                  (EXP)
+          |IDENTIFIER EQUALSIGN EXP(Ast.As (IDENTIFIER,EXP))
 
 
 EXP     : CONST                ( Ast.Const CONST     )
