@@ -75,7 +75,6 @@ fun step (Push x)     stack           = x :: stack
 (* And finally this runs a program. *)
 
 
-val run = List.foldl (fn (inst,stack) => step inst stack) []
 
 
 (* Conversion of machine instructions to strings *)

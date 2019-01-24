@@ -47,8 +47,10 @@ languages. Here is the one for our rather humble expression language.
 
 *)
 
+
 datatype Expr  = Const of int
 	       | Op    of Expr * BinOp * Expr
+         | Id    of string
 
      and BinOp = Plus
 	       | Minus
@@ -86,7 +88,8 @@ fun binOpDenote Plus  x y = x + y
   | binOpDenote Mul   x y = x * y;
 
 fun exprDenote (Const x)       = x
-  | exprDenote (Op (x,oper,y)) = binOpDenote oper (exprDenote x) (exprDenote y);
+  | exprDenote (Op (x,oper,y)) = binOpDenote oper (exprDenote x) (exprDenote y)
+  | exprDenote (Id x)          = 0
 
 (* Conversion to strings *)
 

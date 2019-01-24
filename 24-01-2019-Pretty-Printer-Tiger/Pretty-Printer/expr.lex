@@ -65,3 +65,5 @@ digit = [0-9]+;
 "+"           => ( Tokens.PLUS  (!lineRef,!lineRef) );
 "-"           => ( Tokens.MINUS  (!lineRef,!lineRef) );
 "*"           => ( Tokens.MUL (!lineRef,!lineRef) );
+"="           => ( Tokens.EQUALSIGN (!lineRef,!lineRef) );
+[a-zA-Z_][a-zA-Z0-9_] => (Tokens.IDENTIFIER(yytext ,!lineRef, !lineRef));

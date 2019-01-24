@@ -22,6 +22,9 @@ it is empty *)
 %nonterm EXP     of Ast.Expr
        | EXPS    of Ast.Expr list
        | PROGRAM of Ast.Expr list
+       | ASSIGNMENT of Ast.Expr
+       | STATEMENTS of Ast.Expr list
+       | STATEMENT of Ast.Expr
 
 %noshift EOF
 (*
@@ -39,12 +42,21 @@ left associative and the precedence increase as you go down this list.
 
 %%
 
-PROGRAM : EXPS                 ( EXPS )
-	| EXPS NEWLINE         ( EXPS )
+PROGRAM :  EXPS                 ( EXPS )
+        | STATEMENTS            ( STATEMENTS )
 
-EXPS    : (* empty *)          ( []                  )
+STATEMENTS:STATEMENT            ([])
+          |STATEMENT NEWLINE    ([])
+          |STATEMENT NEWLINE STATEMENTS ([])
+          |EXP NEWLINE          ([EXP])
+
+STATEMENT:IDENTIFIER            (Ast.Id IDENTIFIER)
+
+EXPS    : EXP NEWLINE         ( [EXP]                  )
 	| EXP NEWLINE EXPS     ( EXP :: EXPS         )
-  | EXP                   ([EXP] )
+  | EXP                  (  [EXP] )
+
+
 
 EXP     : CONST                ( Ast.Const CONST     )
         | EXP PLUS EXP         ( Ast.plus  EXP1 EXP2 )

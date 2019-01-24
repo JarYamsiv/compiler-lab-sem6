@@ -15,6 +15,7 @@ keywords="array" | "if" | "then" | "else" | "while" | "for" | "to" | "do" | "let
 
 {whitespace}+     				=> (SOME (Machine.Print (yytext,Machine.white))       );
 "/*".*"*/"          			=> (SOME (Machine.Print (yytext,Machine.grey))       );
+["].*["]						=> (SOME (Machine.Print (yytext,Machine.yellow))       );
 {keywords}			  			=> (SOME (Machine.Keyword (yytext))       );
 [-+]?{d}([.]{d})?([eE][-+]?{d})?	=> (SOME (Machine.Numeric yytext)       );
 [a-zA-Z_][a-zA-Z0-9_]*			=> (SOME (Machine.Identifier yytext)       );

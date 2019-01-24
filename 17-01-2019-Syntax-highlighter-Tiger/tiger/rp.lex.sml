@@ -29,9 +29,9 @@ val s = [
 \\000"
 ),
  (1, 
-"\000\000\000\000\000\000\000\000\000\067\067\000\000\067\000\000\
+"\000\000\000\000\000\000\000\000\000\070\070\000\000\070\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\\067\000\003\000\000\000\000\003\003\003\003\066\003\066\000\062\
+\\070\000\067\000\000\000\000\003\003\003\003\066\003\066\000\062\
 \\056\056\056\056\056\056\056\056\056\056\003\003\003\003\003\000\
 \\000\004\004\004\004\004\004\004\004\004\004\004\004\004\004\004\
 \\004\004\004\004\004\004\004\004\004\004\004\000\000\000\000\004\
@@ -634,9 +634,20 @@ val s = [
 \\000"
 ),
  (67, 
-"\000\000\000\000\000\000\000\000\000\067\067\000\000\067\000\000\
+"\068\068\068\068\068\068\068\068\068\068\000\068\068\068\068\068\
+\\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\
+\\068\068\069\068\068\068\068\068\068\068\068\068\068\068\068\068\
+\\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\
+\\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\
+\\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\
+\\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\
+\\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\068\
+\\068"
+),
+ (70, 
+"\000\000\000\000\000\000\000\000\000\070\070\000\000\070\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\\067\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\070\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
@@ -655,71 +666,74 @@ in Vector.fromList(map g
 [{fin = [], trans = 0},
 {fin = [], trans = 1},
 {fin = [], trans = 1},
-{fin = [(N 100)], trans = 0},
-{fin = [(N 98)], trans = 4},
-{fin = [(N 98)], trans = 5},
-{fin = [(N 98)], trans = 6},
-{fin = [(N 98)], trans = 7},
-{fin = [(N 98)], trans = 8},
-{fin = [(N 84),(N 98)], trans = 4},
-{fin = [(N 98)], trans = 10},
-{fin = [(N 98)], trans = 11},
-{fin = [(N 98)], trans = 12},
-{fin = [(N 98)], trans = 13},
-{fin = [(N 98)], trans = 8},
-{fin = [(N 98)], trans = 15},
-{fin = [(N 98)], trans = 16},
-{fin = [(N 98)], trans = 17},
-{fin = [(N 98)], trans = 18},
-{fin = [(N 98)], trans = 19},
-{fin = [(N 98)], trans = 20},
-{fin = [(N 98)], trans = 21},
-{fin = [(N 98)], trans = 22},
-{fin = [(N 98)], trans = 23},
-{fin = [(N 98)], trans = 8},
-{fin = [(N 98)], trans = 25},
-{fin = [(N 98)], trans = 26},
-{fin = [(N 98)], trans = 27},
-{fin = [(N 98)], trans = 28},
-{fin = [(N 98)], trans = 29},
-{fin = [(N 98)], trans = 30},
-{fin = [(N 98)], trans = 31},
-{fin = [(N 98)], trans = 32},
-{fin = [(N 98)], trans = 33},
-{fin = [(N 98)], trans = 29},
-{fin = [(N 98)], trans = 35},
-{fin = [(N 98)], trans = 36},
-{fin = [(N 98)], trans = 37},
-{fin = [(N 98)], trans = 38},
-{fin = [(N 98)], trans = 39},
-{fin = [(N 98)], trans = 40},
-{fin = [(N 98)], trans = 16},
-{fin = [(N 98)], trans = 11},
-{fin = [(N 98)], trans = 43},
-{fin = [(N 98)], trans = 44},
-{fin = [(N 98)], trans = 45},
-{fin = [(N 98)], trans = 8},
-{fin = [(N 98)], trans = 47},
-{fin = [(N 98)], trans = 48},
-{fin = [(N 98)], trans = 49},
-{fin = [(N 98)], trans = 50},
-{fin = [(N 98)], trans = 51},
-{fin = [(N 98)], trans = 52},
-{fin = [(N 98)], trans = 53},
-{fin = [(N 98)], trans = 54},
-{fin = [(N 98)], trans = 55},
-{fin = [(N 95)], trans = 56},
+{fin = [(N 104)], trans = 0},
+{fin = [(N 102)], trans = 4},
+{fin = [(N 102)], trans = 5},
+{fin = [(N 102)], trans = 6},
+{fin = [(N 102)], trans = 7},
+{fin = [(N 102)], trans = 8},
+{fin = [(N 88),(N 102)], trans = 4},
+{fin = [(N 102)], trans = 10},
+{fin = [(N 102)], trans = 11},
+{fin = [(N 102)], trans = 12},
+{fin = [(N 102)], trans = 13},
+{fin = [(N 102)], trans = 8},
+{fin = [(N 102)], trans = 15},
+{fin = [(N 102)], trans = 16},
+{fin = [(N 102)], trans = 17},
+{fin = [(N 102)], trans = 18},
+{fin = [(N 102)], trans = 19},
+{fin = [(N 102)], trans = 20},
+{fin = [(N 102)], trans = 21},
+{fin = [(N 102)], trans = 22},
+{fin = [(N 102)], trans = 23},
+{fin = [(N 102)], trans = 8},
+{fin = [(N 102)], trans = 25},
+{fin = [(N 102)], trans = 26},
+{fin = [(N 102)], trans = 27},
+{fin = [(N 102)], trans = 28},
+{fin = [(N 102)], trans = 29},
+{fin = [(N 102)], trans = 30},
+{fin = [(N 102)], trans = 31},
+{fin = [(N 102)], trans = 32},
+{fin = [(N 102)], trans = 33},
+{fin = [(N 102)], trans = 29},
+{fin = [(N 102)], trans = 35},
+{fin = [(N 102)], trans = 36},
+{fin = [(N 102)], trans = 37},
+{fin = [(N 102)], trans = 38},
+{fin = [(N 102)], trans = 39},
+{fin = [(N 102)], trans = 40},
+{fin = [(N 102)], trans = 16},
+{fin = [(N 102)], trans = 11},
+{fin = [(N 102)], trans = 43},
+{fin = [(N 102)], trans = 44},
+{fin = [(N 102)], trans = 45},
+{fin = [(N 102)], trans = 8},
+{fin = [(N 102)], trans = 47},
+{fin = [(N 102)], trans = 48},
+{fin = [(N 102)], trans = 49},
+{fin = [(N 102)], trans = 50},
+{fin = [(N 102)], trans = 51},
+{fin = [(N 102)], trans = 52},
+{fin = [(N 102)], trans = 53},
+{fin = [(N 102)], trans = 54},
+{fin = [(N 102)], trans = 55},
+{fin = [(N 99)], trans = 56},
 {fin = [], trans = 57},
-{fin = [(N 95)], trans = 58},
+{fin = [(N 99)], trans = 58},
 {fin = [], trans = 58},
 {fin = [], trans = 60},
-{fin = [(N 95)], trans = 61},
-{fin = [(N 100)], trans = 62},
+{fin = [(N 99)], trans = 61},
+{fin = [(N 104)], trans = 62},
 {fin = [], trans = 63},
 {fin = [], trans = 64},
 {fin = [(N 8)], trans = 63},
-{fin = [(N 100)], trans = 66},
-{fin = [(N 2)], trans = 67}])
+{fin = [(N 104)], trans = 66},
+{fin = [(N 104)], trans = 67},
+{fin = [], trans = 67},
+{fin = [(N 12)], trans = 67},
+{fin = [(N 2)], trans = 70}])
 end
 structure StartStates =
 	struct
@@ -762,17 +776,19 @@ let fun continue() = lex() in
 
 			(* Application actions *)
 
-  100 => let val yytext=yymktext() in (*#line 21.28 "rp.lex"*)SOME (Machine.Symbols yytext)       (*#line 765.1 "rp.lex.sml"*)
+  102 => let val yytext=yymktext() in (*#line 21.30 "rp.lex"*)SOME (Machine.Identifier yytext)       (*#line 779.1 "rp.lex.sml"*)
  end
-| 2 => let val yytext=yymktext() in (*#line 16.27 "rp.lex"*)SOME (Machine.Print (yytext,Machine.white))       (*#line 767.1 "rp.lex.sml"*)
+| 104 => let val yytext=yymktext() in (*#line 22.28 "rp.lex"*)SOME (Machine.Symbols yytext)       (*#line 781.1 "rp.lex.sml"*)
  end
-| 8 => let val yytext=yymktext() in (*#line 17.28 "rp.lex"*)SOME (Machine.Print (yytext,Machine.grey))       (*#line 769.1 "rp.lex.sml"*)
+| 12 => let val yytext=yymktext() in (*#line 18.19 "rp.lex"*)SOME (Machine.Print (yytext,Machine.yellow))       (*#line 783.1 "rp.lex.sml"*)
  end
-| 84 => let val yytext=yymktext() in (*#line 18.23 "rp.lex"*)SOME (Machine.Keyword (yytext))       (*#line 771.1 "rp.lex.sml"*)
+| 2 => let val yytext=yymktext() in (*#line 16.27 "rp.lex"*)SOME (Machine.Print (yytext,Machine.white))       (*#line 785.1 "rp.lex.sml"*)
  end
-| 95 => let val yytext=yymktext() in (*#line 19.38 "rp.lex"*)SOME (Machine.Numeric yytext)       (*#line 773.1 "rp.lex.sml"*)
+| 8 => let val yytext=yymktext() in (*#line 17.28 "rp.lex"*)SOME (Machine.Print (yytext,Machine.grey))       (*#line 787.1 "rp.lex.sml"*)
  end
-| 98 => let val yytext=yymktext() in (*#line 20.30 "rp.lex"*)SOME (Machine.Identifier yytext)       (*#line 775.1 "rp.lex.sml"*)
+| 88 => let val yytext=yymktext() in (*#line 19.23 "rp.lex"*)SOME (Machine.Keyword (yytext))       (*#line 789.1 "rp.lex.sml"*)
+ end
+| 99 => let val yytext=yymktext() in (*#line 20.38 "rp.lex"*)SOME (Machine.Numeric yytext)       (*#line 791.1 "rp.lex.sml"*)
  end
 | _ => raise Internal.LexerError
 

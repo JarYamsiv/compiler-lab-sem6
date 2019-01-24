@@ -6,6 +6,7 @@ function main(var argc,var argv)
 	if(a == 68)
 	{
 		var b= -7e-6;
+		var a = "\n";
 	}
 }
 
