@@ -2,6 +2,17 @@ signature Expr_TOKENS =
 sig
 type ('a,'b) token
 type svalue
+val FUN:  'a * 'a -> (svalue,'a) token
+val ELSE:  'a * 'a -> (svalue,'a) token
+val IF:  'a * 'a -> (svalue,'a) token
+val RSQUARE:  'a * 'a -> (svalue,'a) token
+val LSQUARE:  'a * 'a -> (svalue,'a) token
+val RPAREN:  'a * 'a -> (svalue,'a) token
+val LPAREN:  'a * 'a -> (svalue,'a) token
+val RCURL:  'a * 'a -> (svalue,'a) token
+val LCURL:  'a * 'a -> (svalue,'a) token
+val COLON:  'a * 'a -> (svalue,'a) token
+val SEMICOLON:  'a * 'a -> (svalue,'a) token
 val EQUALSIGN:  'a * 'a -> (svalue,'a) token
 val IDENTIFIER: (string) *  'a * 'a -> (svalue,'a) token
 val NEWLINE:  'a * 'a -> (svalue,'a) token

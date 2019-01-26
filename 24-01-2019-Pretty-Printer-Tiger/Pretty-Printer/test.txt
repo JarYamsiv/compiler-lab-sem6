@@ -1,3 +1,8 @@
-aa
-ss
-meow = 6 + 5
+aa;
+ss;
+meow = 6 + 5;
+dd;
+fun ee(){
+	aa;
+	ee = 3;
+}

@@ -17,14 +17,21 @@ it is empty *)
     | NEWLINE
     | IDENTIFIER of string
     | EQUALSIGN
+    | SEMICOLON
+    | COLON
+    | LCURL   | RCURL
+    | LPAREN  | RPAREN
+    | LSQUARE | RSQUARE
+    | IF      | ELSE
+    | FUN
 
 (* The nonterminals of the language *)
 %nonterm EXP     of Ast.Expr
-       | EXPS    of Ast.Expr list
-       | PROGRAM of Ast.Expr list
-       | ASSIGNMENT of Ast.Expr
-       | STATEMENTS of Ast.Expr list
-       | STATEMENT of Ast.Expr
+       | PROGRAM of Ast.ProgramElement list
+       | PROGRAMELEM of Ast.ProgramElement
+       | STATEMENT of Ast.Statement
+       | STATEMENTS of Ast.Statement list
+       | CODEBLOCK of Ast.CodeBlock
 
 %noshift EOF
 (*
@@ -42,16 +49,20 @@ left associative and the precedence increase as you go down this list.
 
 %%
 
-PROGRAM :   STATEMENTS            ( STATEMENTS )
+PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
+        |   PROGRAMELEM           ([PROGRAMELEM])
 
-STATEMENTS:STATEMENT            ([STATEMENT])
-          |STATEMENT NEWLINE    ([STATEMENT])
-          |STATEMENT NEWLINE STATEMENTS (STATEMENT::STATEMENTS)
+STATEMENTS: STATEMENT SEMICOLON STATEMENTS  (STATEMENT::STATEMENTS)
+          |                       ([])
+
+PROGRAMELEM : STATEMENT SEMICOLON  (Ast.St STATEMENT)
+            | FUN IDENTIFIER LPAREN RPAREN LCURL STATEMENTS RCURL(Ast.Fn (Ast.Fun (IDENTIFIER,[])))
+
+
           
 
-STATEMENT:IDENTIFIER            (Ast.Id IDENTIFIER)
-          |EXP                  (EXP)
-          |IDENTIFIER EQUALSIGN EXP(Ast.As (IDENTIFIER,EXP))
+STATEMENT:IDENTIFIER                  (Ast.Id IDENTIFIER)
+          |IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
 
 
 EXP     : CONST                ( Ast.Const CONST     )

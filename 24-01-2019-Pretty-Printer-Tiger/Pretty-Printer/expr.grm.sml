@@ -19,49 +19,68 @@ structure Token = Token
 local open LrTable in 
 val table=let val actionRows =
 "\
-\\001\000\001\000\007\000\000\000\
-\\001\000\001\000\007\000\007\000\006\000\000\000\
+\\001\000\001\000\013\000\000\000\
 \\001\000\005\000\000\000\000\000\
-\\019\000\000\000\
-\\020\000\006\000\008\000\000\000\
-\\021\000\001\000\007\000\007\000\006\000\000\000\
-\\022\000\000\000\
-\\023\000\008\000\012\000\000\000\
-\\024\000\002\000\011\000\003\000\010\000\004\000\009\000\000\000\
-\\025\000\002\000\011\000\003\000\010\000\004\000\009\000\000\000\
-\\026\000\000\000\
-\\027\000\004\000\009\000\000\000\
-\\028\000\004\000\009\000\000\000\
-\\029\000\000\000\
+\\001\000\007\000\006\000\019\000\005\000\000\000\
+\\001\000\007\000\009\000\000\000\
+\\001\000\009\000\007\000\000\000\
+\\001\000\009\000\025\000\000\000\
+\\001\000\011\000\018\000\000\000\
+\\001\000\012\000\024\000\000\000\
+\\001\000\013\000\011\000\000\000\
+\\001\000\014\000\014\000\000\000\
+\\028\000\000\000\
+\\029\000\007\000\006\000\019\000\005\000\000\000\
+\\030\000\000\000\
+\\031\000\007\000\006\000\000\000\
+\\032\000\000\000\
+\\033\000\000\000\
+\\034\000\008\000\010\000\000\000\
+\\035\000\002\000\017\000\003\000\016\000\004\000\015\000\000\000\
+\\036\000\000\000\
+\\037\000\004\000\015\000\000\000\
+\\038\000\004\000\015\000\000\000\
+\\039\000\000\000\
 \"
 val actionRowNumbers =
-"\001\000\004\000\003\000\008\000\
-\\007\000\010\000\005\000\000\000\
-\\000\000\000\000\000\000\006\000\
-\\013\000\012\000\011\000\009\000\
-\\002\000"
+"\002\000\004\000\011\000\003\000\
+\\016\000\014\000\010\000\008\000\
+\\000\000\009\000\017\000\018\000\
+\\006\000\000\000\000\000\000\000\
+\\013\000\021\000\020\000\019\000\
+\\007\000\005\000\015\000\013\000\
+\\012\000\001\000"
 val gotoT =
 "\
-\\001\000\003\000\003\000\016\000\005\000\002\000\006\000\001\000\000\000\
+\\002\000\025\000\003\000\002\000\004\000\001\000\000\000\
+\\000\000\
+\\002\000\006\000\003\000\002\000\004\000\001\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
-\\001\000\003\000\005\000\011\000\006\000\001\000\000\000\
-\\001\000\012\000\000\000\
-\\001\000\013\000\000\000\
-\\001\000\014\000\000\000\
-\\001\000\015\000\000\000\
+\\001\000\010\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
+\\001\000\017\000\000\000\
+\\001\000\018\000\000\000\
+\\001\000\019\000\000\000\
+\\004\000\021\000\005\000\020\000\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\004\000\021\000\005\000\024\000\000\000\
 \\000\000\
 \\000\000\
 \"
-val numstates = 17
-val numrules = 11
+val numstates = 26
+val numrules = 12
 val s = ref "" and index = ref 0
 val string_to_int = fn () => 
 let val i = !index
@@ -123,10 +142,10 @@ type pos = int
 type arg = unit
 structure MlyValue = 
 struct
-datatype svalue = VOID | ntVOID of unit | IDENTIFIER of  (string) | CONST of  (int) | STATEMENT of  (Ast.Expr) | STATEMENTS of  (Ast.Expr list) | ASSIGNMENT of  (Ast.Expr) | PROGRAM of  (Ast.Expr list) | EXPS of  (Ast.Expr list) | EXP of  (Ast.Expr)
+datatype svalue = VOID | ntVOID of unit | IDENTIFIER of  (string) | CONST of  (int) | CODEBLOCK of  (Ast.CodeBlock) | STATEMENTS of  (Ast.Statement list) | STATEMENT of  (Ast.Statement) | PROGRAMELEM of  (Ast.ProgramElement) | PROGRAM of  (Ast.ProgramElement list) | EXP of  (Ast.Expr)
 end
 type svalue = MlyValue.svalue
-type result = Ast.Expr list
+type result = Ast.ProgramElement list
 end
 structure EC=
 struct
@@ -148,13 +167,24 @@ fn (T 0) => "CONST"
   | (T 5) => "NEWLINE"
   | (T 6) => "IDENTIFIER"
   | (T 7) => "EQUALSIGN"
+  | (T 8) => "SEMICOLON"
+  | (T 9) => "COLON"
+  | (T 10) => "LCURL"
+  | (T 11) => "RCURL"
+  | (T 12) => "LPAREN"
+  | (T 13) => "RPAREN"
+  | (T 14) => "LSQUARE"
+  | (T 15) => "RSQUARE"
+  | (T 16) => "IF"
+  | (T 17) => "ELSE"
+  | (T 18) => "FUN"
   | _ => "bogus-term"
 local open Header in
 val errtermvalue=
 fn _ => MlyValue.VOID
 end
 val terms : term list = nil
- $$ (T 7) $$ (T 5) $$ (T 4) $$ (T 3) $$ (T 2) $$ (T 1)end
+ $$ (T 18) $$ (T 17) $$ (T 16) $$ (T 15) $$ (T 14) $$ (T 13) $$ (T 12) $$ (T 11) $$ (T 10) $$ (T 9) $$ (T 8) $$ (T 7) $$ (T 5) $$ (T 4) $$ (T 3) $$ (T 2) $$ (T 1)end
 structure Actions =
 struct 
 exception mlyAction of int
@@ -163,47 +193,51 @@ val actions =
 fn (i392,defaultPos,stack,
     (()):arg) =>
 case (i392,stack)
-of  ( 0, ( ( _, ( MlyValue.STATEMENTS STATEMENTS, STATEMENTS1left, STATEMENTS1right)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 45.36 "expr.grm"*) STATEMENTS (*#line 166.1 "expr.grm.sml"*)
+of  ( 0, ( ( _, ( MlyValue.PROGRAM PROGRAM, _, PROGRAM1right)) :: ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 52.35 "expr.grm"*)PROGRAMELEM::PROGRAM(*#line 196.1 "expr.grm.sml"*)
 )
- in ( LrTable.NT 2, ( result, STATEMENTS1left, STATEMENTS1right), rest671)
+ in ( LrTable.NT 1, ( result, PROGRAMELEM1left, PROGRAM1right), rest671)
 end
-|  ( 1, ( ( _, ( MlyValue.STATEMENT STATEMENT, STATEMENT1left, STATEMENT1right)) :: rest671)) => let val  result = MlyValue.STATEMENTS ((*#line 47.34 "expr.grm"*)[STATEMENT](*#line 170.1 "expr.grm.sml"*)
+|  ( 1, ( ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, PROGRAMELEM1right)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 53.36 "expr.grm"*)[PROGRAMELEM](*#line 200.1 "expr.grm.sml"*)
 )
- in ( LrTable.NT 4, ( result, STATEMENT1left, STATEMENT1right), rest671)
+ in ( LrTable.NT 1, ( result, PROGRAMELEM1left, PROGRAMELEM1right), rest671)
 end
-|  ( 2, ( ( _, ( _, _, NEWLINE1right)) :: ( _, ( MlyValue.STATEMENT STATEMENT, STATEMENT1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENTS ((*#line 48.34 "expr.grm"*)[STATEMENT](*#line 174.1 "expr.grm.sml"*)
-)
- in ( LrTable.NT 4, ( result, STATEMENT1left, NEWLINE1right), rest671)
-end
-|  ( 3, ( ( _, ( MlyValue.STATEMENTS STATEMENTS, _, STATEMENTS1right)) :: _ :: ( _, ( MlyValue.STATEMENT STATEMENT, STATEMENT1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENTS ((*#line 49.42 "expr.grm"*)STATEMENT::STATEMENTS(*#line 178.1 "expr.grm.sml"*)
+|  ( 2, ( ( _, ( MlyValue.STATEMENTS STATEMENTS, _, STATEMENTS1right)) :: _ :: ( _, ( MlyValue.STATEMENT STATEMENT, STATEMENT1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENTS ((*#line 55.46 "expr.grm"*)STATEMENT::STATEMENTS(*#line 204.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 4, ( result, STATEMENT1left, STATEMENTS1right), rest671)
 end
-|  ( 4, ( ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, IDENTIFIER1right)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 52.34 "expr.grm"*)Ast.Id IDENTIFIER(*#line 182.1 "expr.grm.sml"*)
+|  ( 3, ( rest671)) => let val  result = MlyValue.STATEMENTS ((*#line 56.36 "expr.grm"*)[](*#line 208.1 "expr.grm.sml"*)
 )
- in ( LrTable.NT 5, ( result, IDENTIFIER1left, IDENTIFIER1right), rest671)
+ in ( LrTable.NT 4, ( result, defaultPos, defaultPos), rest671)
 end
-|  ( 5, ( ( _, ( MlyValue.EXP EXP, EXP1left, EXP1right)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 53.34 "expr.grm"*)EXP(*#line 186.1 "expr.grm.sml"*)
+|  ( 4, ( ( _, ( _, _, SEMICOLON1right)) :: ( _, ( MlyValue.STATEMENT STATEMENT, STATEMENT1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 58.37 "expr.grm"*)Ast.St STATEMENT(*#line 212.1 "expr.grm.sml"*)
 )
- in ( LrTable.NT 5, ( result, EXP1left, EXP1right), rest671)
+ in ( LrTable.NT 2, ( result, STATEMENT1left, SEMICOLON1right), rest671)
 end
-|  ( 6, ( ( _, ( MlyValue.EXP EXP, _, EXP1right)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 54.37 "expr.grm"*)Ast.As (IDENTIFIER,EXP)(*#line 190.1 "expr.grm.sml"*)
+|  ( 5, ( ( _, ( _, _, RCURL1right)) :: _ :: _ :: _ :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, _, _)) :: ( _, ( _, FUN1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 59.67 "expr.grm"*)Ast.Fn (Ast.Fun (IDENTIFIER,[]))(*#line 216.1 "expr.grm.sml"*)
 )
- in ( LrTable.NT 5, ( result, IDENTIFIER1left, EXP1right), rest671)
+ in ( LrTable.NT 2, ( result, FUN1left, RCURL1right), rest671)
 end
-|  ( 7, ( ( _, ( MlyValue.CONST CONST, CONST1left, CONST1right)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 57.33 "expr.grm"*) Ast.Const CONST     (*#line 194.1 "expr.grm.sml"*)
+|  ( 6, ( ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, IDENTIFIER1right)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 64.40 "expr.grm"*)Ast.Id IDENTIFIER(*#line 220.1 "expr.grm.sml"*)
+)
+ in ( LrTable.NT 3, ( result, IDENTIFIER1left, IDENTIFIER1right), rest671)
+end
+|  ( 7, ( ( _, ( MlyValue.EXP EXP, _, EXP1right)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 65.39 "expr.grm"*)Ast.As (IDENTIFIER,EXP)(*#line 224.1 "expr.grm.sml"*)
+)
+ in ( LrTable.NT 3, ( result, IDENTIFIER1left, EXP1right), rest671)
+end
+|  ( 8, ( ( _, ( MlyValue.CONST CONST, CONST1left, CONST1right)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 68.33 "expr.grm"*) Ast.Const CONST     (*#line 228.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, CONST1left, CONST1right), rest671)
 end
-|  ( 8, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 58.33 "expr.grm"*) Ast.plus  EXP1 EXP2 (*#line 198.1 "expr.grm.sml"*)
+|  ( 9, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 69.33 "expr.grm"*) Ast.plus  EXP1 EXP2 (*#line 232.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, EXP1left, EXP2right), rest671)
 end
-|  ( 9, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 59.26 "expr.grm"*) Ast.minus EXP1 EXP2 (*#line 202.1 "expr.grm.sml"*)
+|  ( 10, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 70.26 "expr.grm"*) Ast.minus EXP1 EXP2 (*#line 236.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, EXP1left, EXP2right), rest671)
 end
-|  ( 10, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 60.26 "expr.grm"*) Ast.mul   EXP1 EXP2 (*#line 206.1 "expr.grm.sml"*)
+|  ( 11, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 71.26 "expr.grm"*) Ast.mul   EXP1 EXP2 (*#line 240.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, EXP1left, EXP2right), rest671)
 end
@@ -227,5 +261,16 @@ fun EOF (p1,p2) = Token.TOKEN (ParserData.LrTable.T 4,(ParserData.MlyValue.VOID,
 fun NEWLINE (p1,p2) = Token.TOKEN (ParserData.LrTable.T 5,(ParserData.MlyValue.VOID,p1,p2))
 fun IDENTIFIER (i,p1,p2) = Token.TOKEN (ParserData.LrTable.T 6,(ParserData.MlyValue.IDENTIFIER i,p1,p2))
 fun EQUALSIGN (p1,p2) = Token.TOKEN (ParserData.LrTable.T 7,(ParserData.MlyValue.VOID,p1,p2))
+fun SEMICOLON (p1,p2) = Token.TOKEN (ParserData.LrTable.T 8,(ParserData.MlyValue.VOID,p1,p2))
+fun COLON (p1,p2) = Token.TOKEN (ParserData.LrTable.T 9,(ParserData.MlyValue.VOID,p1,p2))
+fun LCURL (p1,p2) = Token.TOKEN (ParserData.LrTable.T 10,(ParserData.MlyValue.VOID,p1,p2))
+fun RCURL (p1,p2) = Token.TOKEN (ParserData.LrTable.T 11,(ParserData.MlyValue.VOID,p1,p2))
+fun LPAREN (p1,p2) = Token.TOKEN (ParserData.LrTable.T 12,(ParserData.MlyValue.VOID,p1,p2))
+fun RPAREN (p1,p2) = Token.TOKEN (ParserData.LrTable.T 13,(ParserData.MlyValue.VOID,p1,p2))
+fun LSQUARE (p1,p2) = Token.TOKEN (ParserData.LrTable.T 14,(ParserData.MlyValue.VOID,p1,p2))
+fun RSQUARE (p1,p2) = Token.TOKEN (ParserData.LrTable.T 15,(ParserData.MlyValue.VOID,p1,p2))
+fun IF (p1,p2) = Token.TOKEN (ParserData.LrTable.T 16,(ParserData.MlyValue.VOID,p1,p2))
+fun ELSE (p1,p2) = Token.TOKEN (ParserData.LrTable.T 17,(ParserData.MlyValue.VOID,p1,p2))
+fun FUN (p1,p2) = Token.TOKEN (ParserData.LrTable.T 18,(ParserData.MlyValue.VOID,p1,p2))
 end
 end

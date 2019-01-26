@@ -1,13 +1,23 @@
 structure Translate =
 struct
 
+
 fun compileExpr (Ast.Const x)         = print (" "^(Int.toString x)^" ")
   | compileExpr (Ast.Op (x, oper, y)) = (compileExpr x ; print (Ast.binOpToString oper); compileExpr y )
-  | compileExpr (Ast.Id x)			  = print (x^"\n")
-  | compileExpr (Ast.As (id,x))		  = (print (id^"=");compileExpr x)
+
+fun   compileStatement (Ast.Id x)			  =    print (x^"\n")
+	| compileStatement (Ast.As (x,exp))	  	  =  ( print (x^" = ");compileExpr exp;print "\n")
+
+fun   compileElem (Ast.St state)	  	  = compileStatement(state)	
+	| compileElem _  					  = () 
+
+
+
+
+
 
 
 fun compile []        = ()
-  | compile (x :: xs) = (compileExpr x; compile xs)
+  | compile (x :: xs) = (compileElem x; compile xs)
 
 end

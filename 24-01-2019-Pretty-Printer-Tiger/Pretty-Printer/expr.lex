@@ -58,12 +58,22 @@ digit = [0-9]+;
 "#".*\n       => ( updateLine 1; lex ());
 {ws}+         => ( lex() );
 \n({ws}*\n)*  => ( let val old = !lineRef
-		   in updateLine (newlineCount yytext); Tokens.NEWLINE (old, !lineRef)
+		   in updateLine (newlineCount yytext); lex()
 		   end
 		 );
-{digit}+      => ( Tokens.CONST (toInt yytext, !lineRef, !lineRef) );
-"+"           => ( Tokens.PLUS  (!lineRef,!lineRef) );
-"-"           => ( Tokens.MINUS  (!lineRef,!lineRef) );
-"*"           => ( Tokens.MUL (!lineRef,!lineRef) );
-"="           => ( Tokens.EQUALSIGN (!lineRef,!lineRef) );
-[a-zA-Z_][a-zA-Z0-9_]* => (Tokens.IDENTIFIER(yytext ,!lineRef, !lineRef));
+{digit}+                => ( Tokens.CONST (toInt yytext, !lineRef, !lineRef) );
+"+"                     => ( Tokens.PLUS  (!lineRef,!lineRef) );
+"-"                     => ( Tokens.MINUS  (!lineRef,!lineRef) );
+"*"                     => ( Tokens.MUL (!lineRef,!lineRef) );
+"="                     => ( Tokens.EQUALSIGN (!lineRef,!lineRef) );
+"("                     => ( Tokens.LPAREN (!lineRef,!lineRef) );
+")"                     => ( Tokens.RPAREN (!lineRef,!lineRef) );
+"{"                     => ( Tokens.LCURL (!lineRef,!lineRef) );
+"}"                     => ( Tokens.RCURL (!lineRef,!lineRef) );
+"["                     => ( Tokens.LSQUARE (!lineRef,!lineRef) );
+"]"                     => ( Tokens.RSQUARE (!lineRef,!lineRef) );
+";"                     => ( Tokens.SEMICOLON (!lineRef,!lineRef) );
+":"                     => ( Tokens.COLON (!lineRef,!lineRef) );
+"fun"                   => ( Tokens.FUN (!lineRef,!lineRef));
+[a-zA-Z_][a-zA-Z0-9_]*  => ( Tokens.IDENTIFIER(yytext ,!lineRef, !lineRef));
+
