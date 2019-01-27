@@ -2,6 +2,9 @@ aawfasf;
 ss;
 meow = 6 + 5;dd;
 fun ee(){
-	aa;
-	ee = 3;
+aa;ee = 3;
+if(2==2){aa;if(3==3){meow=6;gg;}}
 }
+
+fun main(){
+start;meow;}

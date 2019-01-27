@@ -1,8 +1,9 @@
-1 shift/reduce conflict
+2 shift/reduce conflicts
 start symbol used on the rhs of 1 rule
 
 warning: start symbol appears on the rhs of <PROGRAM : PROGRAMELEM PROGRAM >
-error:  state 29: shift/reduce conflict (shift IDENTIFIER, reduce by rule 4)
+error:  state 30: shift/reduce conflict (shift IDENTIFIER, reduce by rule 4)
+error:  state 37: shift/reduce conflict (shift EQ, reduce by rule 13)
 
 state 0:
 
@@ -12,7 +13,7 @@ state 0:
 	IDENTIFIER	shift 4
 	FUN	shift 3
 
-	PROGRAM	goto 31
+	PROGRAM	goto 41
 	PROGRAMELEM	goto 2
 	STATEMENT	goto 1
 
@@ -67,11 +68,11 @@ state 4:
 
 state 5:
 
-	PROGRAMELEM : STATEMENT SEMICOLON .  (reduce by rule 9)
+	PROGRAMELEM : STATEMENT SEMICOLON .  (reduce by rule 10)
 
 
 
-	.	reduce by rule 9
+	.	reduce by rule 10
 
 
 state 6:
@@ -144,11 +145,11 @@ state 11:
 
 state 12:
 
-	EXP : CONST .  (reduce by rule 11)
+	EXP : CONST .  (reduce by rule 14)
 
 
 
-	.	reduce by rule 11
+	.	reduce by rule 14
 
 
 state 13:
@@ -218,6 +219,7 @@ state 18:
 	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN LCURL . CODEBLOCKS RCURL 
 
 	IDENTIFIER	shift 4
+	IF	shift 27
 
 	STATEMENT	goto 26
 	STATEMENTS	goto 25
@@ -232,53 +234,53 @@ state 19:
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
 	EXP : EXP . MUL EXP 
-	EXP : EXP MUL EXP .  (reduce by rule 15)
+	EXP : EXP MUL EXP .  (reduce by rule 18)
 
 
 
-	.	reduce by rule 15
+	.	reduce by rule 18
 
 
 state 20:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
-	EXP : EXP MINUS EXP .  (reduce by rule 14)
+	EXP : EXP MINUS EXP .  (reduce by rule 17)
 	EXP : EXP . MUL EXP 
 
 	MUL	shift 14
 
 
-	.	reduce by rule 14
+	.	reduce by rule 17
 
 
 state 21:
 
 	EXP : EXP . PLUS EXP 
-	EXP : EXP PLUS EXP .  (reduce by rule 12)
+	EXP : EXP PLUS EXP .  (reduce by rule 15)
 	EXP : EXP . MINUS EXP 
 	EXP : EXP . MUL EXP 
 
 	MUL	shift 14
 
 
-	.	reduce by rule 12
+	.	reduce by rule 15
 
 
 state 22:
 
-	EXP : LPAREN EXP RPAREN .  (reduce by rule 13)
+	EXP : LPAREN EXP RPAREN .  (reduce by rule 16)
 
 
 
-	.	reduce by rule 13
+	.	reduce by rule 16
 
 
 state 23:
 
 	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN LCURL CODEBLOCKS . RCURL 
 
-	RCURL	shift 27
+	RCURL	shift 28
 
 
 	.	error
@@ -287,16 +289,17 @@ state 23:
 state 24:
 
 	CODEBLOCKS : CODEBLOCK . CODEBLOCKS 
-	CODEBLOCKS : CODEBLOCK .  (reduce by rule 8)
+	CODEBLOCKS : CODEBLOCK .  (reduce by rule 9)
 
 	IDENTIFIER	shift 4
+	IF	shift 27
 
 	STATEMENT	goto 26
 	STATEMENTS	goto 25
 	CODEBLOCK	goto 24
-	CODEBLOCKS	goto 28
+	CODEBLOCKS	goto 29
 
-	.	reduce by rule 8
+	.	reduce by rule 9
 
 
 state 25:
@@ -313,7 +316,7 @@ state 26:
 	STATEMENTS : STATEMENT . SEMICOLON 
 	STATEMENTS : STATEMENT . SEMICOLON STATEMENTS 
 
-	SEMICOLON	shift 29
+	SEMICOLON	shift 30
 
 
 	.	error
@@ -321,24 +324,34 @@ state 26:
 
 state 27:
 
-	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN LCURL CODEBLOCKS RCURL .  (reduce by rule 10)
+	CODEBLOCK : IF . LPAREN CONDITION RPAREN LCURL CODEBLOCKS RCURL 
+
+	LPAREN	shift 31
 
 
-
-	.	reduce by rule 10
+	.	error
 
 
 state 28:
 
-	CODEBLOCKS : CODEBLOCK CODEBLOCKS .  (reduce by rule 7)
+	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN LCURL CODEBLOCKS RCURL .  (reduce by rule 11)
 
 
 
-	.	reduce by rule 7
+	.	reduce by rule 11
 
-error:  state 29: shift/reduce conflict (shift IDENTIFIER, reduce by rule 4)
 
 state 29:
+
+	CODEBLOCKS : CODEBLOCK CODEBLOCKS .  (reduce by rule 8)
+
+
+
+	.	reduce by rule 8
+
+error:  state 30: shift/reduce conflict (shift IDENTIFIER, reduce by rule 4)
+
+state 30:
 
 	STATEMENTS : STATEMENT SEMICOLON .  (reduce by rule 4)
 	STATEMENTS : STATEMENT SEMICOLON . STATEMENTS 
@@ -346,12 +359,23 @@ state 29:
 	IDENTIFIER	shift 4
 
 	STATEMENT	goto 26
-	STATEMENTS	goto 30
+	STATEMENTS	goto 32
 
 	.	reduce by rule 4
 
 
-state 30:
+state 31:
+
+	CODEBLOCK : IF LPAREN . CONDITION RPAREN LCURL CODEBLOCKS RCURL 
+
+	CONST	shift 34
+
+	CONDITION	goto 33
+
+	.	error
+
+
+state 32:
 
 	STATEMENTS : STATEMENT SEMICOLON STATEMENTS .  (reduce by rule 5)
 
@@ -360,7 +384,95 @@ state 30:
 	.	reduce by rule 5
 
 
-state 31:
+state 33:
+
+	CODEBLOCK : IF LPAREN CONDITION . RPAREN LCURL CODEBLOCKS RCURL 
+	CONDITION : CONDITION . EQ CONDITION 
+
+	RPAREN	shift 36
+	EQ	shift 35
+
+
+	.	error
+
+
+state 34:
+
+	CONDITION : CONST .  (reduce by rule 12)
+
+
+
+	.	reduce by rule 12
+
+
+state 35:
+
+	CONDITION : CONDITION EQ . CONDITION 
+
+	CONST	shift 34
+
+	CONDITION	goto 37
+
+	.	error
+
+
+state 36:
+
+	CODEBLOCK : IF LPAREN CONDITION RPAREN . LCURL CODEBLOCKS RCURL 
+
+	LCURL	shift 38
+
+
+	.	error
+
+error:  state 37: shift/reduce conflict (shift EQ, reduce by rule 13)
+
+state 37:
+
+	CONDITION : CONDITION . EQ CONDITION 
+	CONDITION : CONDITION EQ CONDITION .  (reduce by rule 13)
+
+	EQ	shift 35
+
+
+	.	reduce by rule 13
+
+
+state 38:
+
+	CODEBLOCK : IF LPAREN CONDITION RPAREN LCURL . CODEBLOCKS RCURL 
+
+	IDENTIFIER	shift 4
+	IF	shift 27
+
+	STATEMENT	goto 26
+	STATEMENTS	goto 25
+	CODEBLOCK	goto 24
+	CODEBLOCKS	goto 39
+
+	.	error
+
+
+state 39:
+
+	CODEBLOCK : IF LPAREN CONDITION RPAREN LCURL CODEBLOCKS . RCURL 
+
+	RCURL	shift 40
+
+
+	.	error
+
+
+state 40:
+
+	CODEBLOCK : IF LPAREN CONDITION RPAREN LCURL CODEBLOCKS RCURL .  (reduce by rule 7)
+
+
+
+	.	reduce by rule 7
+
+
+state 41:
 
 
 	EOF	accept
@@ -368,5 +480,5 @@ state 31:
 
 	.	error
 
-27 of 67 action table entries left after compaction
-21 goto table entries
+36 of 89 action table entries left after compaction
+27 goto table entries
