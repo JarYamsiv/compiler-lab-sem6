@@ -32,6 +32,7 @@ it is empty *)
        | STATEMENT of Ast.Statement
        | STATEMENTS of Ast.Statement list
        | CODEBLOCK of Ast.CodeBlock
+       | CODEBLOCKS of Ast.CodeBlock list
 
 %noshift EOF
 (*
@@ -40,7 +41,7 @@ Operator precedence and associativity. The %left says the operator is
 left associative and the precedence increase as you go down this list.
 
 *)
-
+%left SEMICOLON
 %left PLUS MINUS  (* + and - are of same precedence *)
 %left MUL         (* higher than + and -            *)
 
@@ -52,20 +53,29 @@ left associative and the precedence increase as you go down this list.
 PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
         |   PROGRAMELEM           ([PROGRAMELEM])
 
-STATEMENTS: STATEMENT SEMICOLON STATEMENTS  (STATEMENT::STATEMENTS)
-          |                       ([])
+STATEMENT:IDENTIFIER                  (Ast.Id IDENTIFIER)
+          |IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
+
+STATEMENTS:STATEMENT SEMICOLON             ([STATEMENT]) 
+          |STATEMENT SEMICOLON STATEMENTS  (STATEMENT::STATEMENTS)
+
+CODEBLOCK:STATEMENTS                (Ast.Stlist STATEMENTS)
+
+CODEBLOCKS:CODEBLOCK CODEBLOCKS    (CODEBLOCK::CODEBLOCKS)
+          |CODEBLOCK                ([CODEBLOCK])
+
+
 
 PROGRAMELEM : STATEMENT SEMICOLON  (Ast.St STATEMENT)
-            | FUN IDENTIFIER LPAREN RPAREN LCURL STATEMENTS RCURL(Ast.Fn (Ast.Fun (IDENTIFIER,[])))
+            | FUN IDENTIFIER LPAREN RPAREN LCURL 
+            CODEBLOCKS 
+            RCURL(Ast.Fn (Ast.Fun (IDENTIFIER,CODEBLOCKS)))
 
 
           
 
-STATEMENT:IDENTIFIER                  (Ast.Id IDENTIFIER)
-          |IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
-
-
 EXP     : CONST                ( Ast.Const CONST     )
         | EXP PLUS EXP         ( Ast.plus  EXP1 EXP2 )
+        | LPAREN EXP RPAREN    ( EXP )
 	| EXP MINUS EXP        ( Ast.minus EXP1 EXP2 )
 	| EXP MUL   EXP        ( Ast.mul   EXP1 EXP2 )

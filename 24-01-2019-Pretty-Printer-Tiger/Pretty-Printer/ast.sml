@@ -26,13 +26,13 @@ datatype Statement = Id of string
           | As    of string * Expr
 
 datatype CodeBlock = Stlist of Statement list
-			| CondBlock of Condition*CodeBlock*CodeBlock
 
 datatype Function = Fun of string* CodeBlock list
 
 
 datatype ProgramElement = St of Statement
 						| Fn of Function 
+						| Cd of CodeBlock
 
 
 

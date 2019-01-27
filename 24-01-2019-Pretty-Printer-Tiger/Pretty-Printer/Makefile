@@ -19,7 +19,7 @@ COMMON=ast.sml
 
 
 all:  ec
-	./ec test.txt
+
 
 PHONY: all clean test
 
@@ -35,7 +35,7 @@ ec: ec.sml ec.mlb expr.grm.sml expr.lex.sml ${COMMON} translate.sml
 
 
 test: all
-	${CURDIR}/rp test.inp
-	${CURDIR}/ec test.expr | ${CURDIR}/rp
+	${CURDIR}/ec test.txt
+
 
 
