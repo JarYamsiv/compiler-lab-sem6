@@ -4,6 +4,7 @@ meow = 6 + 5;dd;
 fun ee(){
 aa;ee = 3;
 if(2==2){aa;if(3==3){meow=6;gg;}}
+if(3==4){bb;}else{hh;}
 }
 
 fun main(){

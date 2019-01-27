@@ -28,7 +28,7 @@ datatype Statement = Id of string
           | As    of string * Expr
 
 datatype CodeBlock =  Stlist of Statement list
-					| Cblock of string*CodeBlock list
+					| Cblock of Condition*CodeBlock list
 
 datatype Function = Fun of string* CodeBlock list
 

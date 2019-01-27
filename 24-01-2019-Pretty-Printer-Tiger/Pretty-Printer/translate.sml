@@ -22,7 +22,11 @@ and  compileStatements  (t,((x:Ast.Statement) :: (xs:Ast.Statement list)))	  = (
 	|compileStatements  (t,[])	   											  = ()
 
 fun  compileBlock (Ast.Stlist slist)		t  = (compileStatements (t,slist) )	
-	|compileBlock (Ast.Cblock (x,clist))    t  = (addtabs t;print ("if("^x^"){\n") ;compileBlocks (t+1,clist);addtabs t;print"}\n")
+	|compileBlock (Ast.Cblock (x,clist))    t  = (
+													addtabs t; print ("if("); compileCondition x; print ("){\n") ;
+													compileBlocks (t+1,clist);
+													addtabs t;print"}\n"
+													)
 
 and  compileBlocks  (t,((x:Ast.CodeBlock) :: (xs:Ast.CodeBlock list)))				  = (compileBlock x t;compileBlocks (t,xs)) 
 	|compileBlocks  (t,[])				         									  = ()
