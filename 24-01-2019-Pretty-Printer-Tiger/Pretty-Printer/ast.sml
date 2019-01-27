@@ -26,9 +26,11 @@ datatype Condition = CConst of int
 
 datatype Statement = Id of string
           | As    of string * Expr
+          | FnCl  of string
 
 datatype CodeBlock =  Stlist of Statement list
 					| Cblock of Condition*CodeBlock list
+					| CEblock of Condition*CodeBlock list*CodeBlock list
 
 datatype Function = Fun of string* CodeBlock list
 
@@ -57,6 +59,10 @@ fun minus a b = Op (a, Minus, b)
 fun mul   a b = Op (a, Mul, b)
 
 fun eq    a b = CondOp(a,EQ,b)
+fun lt    a b = CondOp(a,LT,b)
+fun gt    a b = CondOp(a,GT,b)
+fun nd    a b = CondOp(a,AND,b)
+fun or    a b = CondOp(a,OR,b)
 
 
 end

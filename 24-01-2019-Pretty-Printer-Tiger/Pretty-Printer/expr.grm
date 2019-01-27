@@ -43,6 +43,9 @@ Operator precedence and associativity. The %left says the operator is
 left associative and the precedence increase as you go down this list.
 
 *)
+%left EQ LT GT
+%left OR
+%left AND
 %left SEMICOLON
 %left PLUS MINUS  (* + and - are of same precedence *)
 %left MUL         (* higher than + and -            *)
@@ -57,13 +60,14 @@ PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
 
 STATEMENT:IDENTIFIER                  (Ast.Id IDENTIFIER)
           |IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
+          |IDENTIFIER LPAREN RPAREN  (Ast.FnCl IDENTIFIER)
 
 STATEMENTS:STATEMENT SEMICOLON             ([STATEMENT]) 
           |STATEMENT SEMICOLON STATEMENTS  (STATEMENT::STATEMENTS)
 
 CODEBLOCK: STATEMENTS                (Ast.Stlist STATEMENTS)
           |IF LPAREN CONDITION RPAREN LCURL CODEBLOCKS RCURL (Ast.Cblock (CONDITION,CODEBLOCKS))
-          |IF LPAREN CONDITION RPAREN LCURL CODEBLOCKS RCURL ELSE LCURL CODEBLOCKS RCURL (Ast.Cblock (CONDITION,CODEBLOCKS1))
+          |IF LPAREN CONDITION RPAREN LCURL CODEBLOCKS RCURL ELSE LCURL CODEBLOCKS RCURL (Ast.CEblock (CONDITION,CODEBLOCKS1,CODEBLOCKS2))
 
 CODEBLOCKS:CODEBLOCK CODEBLOCKS    (CODEBLOCK::CODEBLOCKS)
           |CODEBLOCK                ([CODEBLOCK])
@@ -76,7 +80,13 @@ PROGRAMELEM : STATEMENT SEMICOLON  (Ast.St STATEMENT)
             RCURL(Ast.Fn (Ast.Fun (IDENTIFIER,CODEBLOCKS)))
 
 CONDITION : CONST                       ( Ast.CConst CONST)
+          | IDENTIFIER                  ( Ast.CVar IDENTIFIER)
           | CONDITION EQ CONDITION      ( Ast.eq CONDITION1 CONDITION2)
+          | CONDITION LT CONDITION      ( Ast.lt CONDITION1 CONDITION2)
+          | CONDITION GT CONDITION      ( Ast.gt CONDITION1 CONDITION2)
+          | CONDITION AND CONDITION     ( Ast.nd CONDITION1 CONDITION2)
+          | CONDITION OR CONDITION      ( Ast.or CONDITION1 CONDITION2)
+          | LPAREN CONDITION RPAREN     ( CONDITION )
           
 
 EXP     : CONST                ( Ast.Const CONST     )
