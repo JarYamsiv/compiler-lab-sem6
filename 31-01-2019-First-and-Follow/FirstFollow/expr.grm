@@ -1,0 +1,58 @@
+(* This is the preamble where you can have arbitrary sml code. For us
+it is empty *)
+
+%%
+
+%eop EOF
+%verbose
+%pure
+%name Expr
+
+(* The terminals or tokens of the language *)
+%term EOF
+    | IDENTIFIER of string
+    | COLON
+    | BAR
+    | EPS
+    | SEMICOLON
+
+
+(* The nonterminals of the language *)
+%nonterm PROGRAM of Ast.Rule list
+       | PROGRAMELEM of Ast.Rule
+       | LHS of Ast.Lhs
+       | IDARR of Ast.Id list
+
+
+
+
+%noshift EOF
+(*
+
+Operator precedence and associativity. The %left says the operator is
+left associative and the precedence increase as you go down this list.
+
+*)
+
+
+(* The type that captures position in the input *)
+%pos int
+
+%%
+
+PROGRAM :   PROGRAMELEM PROGRAM     (PROGRAMELEM::PROGRAM)
+        |   PROGRAMELEM             ([PROGRAMELEM])
+
+PROGRAMELEM: IDENTIFIER COLON LHS SEMICOLON(Ast.Rul (IDENTIFIER,LHS))
+
+LHS : IDARR                         (Ast.Lh IDARR)
+    | EPS                           (Ast.Lh [(Ast.EPSILON)])
+
+IDARR: IDENTIFIER                     ([Ast.St IDENTIFIER])
+      | IDENTIFIER IDARR              ((Ast.St IDENTIFIER)::IDARR)
+
+
+
+
+
+

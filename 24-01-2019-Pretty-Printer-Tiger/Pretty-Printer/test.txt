@@ -9,3 +9,5 @@ if(n==4&&m==5){bb();}else{hh;}
 
 fun main()
 {start();meow();}
+
+fun eeef(){if(a==b){ooo();a=6;}}

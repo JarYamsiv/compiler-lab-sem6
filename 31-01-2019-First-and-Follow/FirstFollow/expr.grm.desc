@@ -1,0 +1,130 @@
+start symbol used on the rhs of 1 rule
+
+warning: start symbol appears on the rhs of <PROGRAM : PROGRAMELEM PROGRAM >
+
+state 0:
+
+	PROGRAM : . PROGRAMELEM PROGRAM 
+	PROGRAM : . PROGRAMELEM 
+
+	IDENTIFIER	shift 2
+
+	PROGRAM	goto 11
+	PROGRAMELEM	goto 1
+
+	.	error
+
+
+state 1:
+
+	PROGRAM : PROGRAMELEM . PROGRAM 
+	PROGRAM : PROGRAMELEM .  (reduce by rule 1)
+
+	IDENTIFIER	shift 2
+
+	PROGRAM	goto 3
+	PROGRAMELEM	goto 1
+
+	.	reduce by rule 1
+
+
+state 2:
+
+	PROGRAMELEM : IDENTIFIER . COLON LHS SEMICOLON 
+
+	COLON	shift 4
+
+
+	.	error
+
+
+state 3:
+
+	PROGRAM : PROGRAMELEM PROGRAM .  (reduce by rule 0)
+
+
+
+	.	reduce by rule 0
+
+
+state 4:
+
+	PROGRAMELEM : IDENTIFIER COLON . LHS SEMICOLON 
+
+	IDENTIFIER	shift 8
+	EPS	shift 7
+
+	LHS	goto 6
+	IDARR	goto 5
+
+	.	error
+
+
+state 5:
+
+	LHS : IDARR .  (reduce by rule 3)
+
+
+
+	.	reduce by rule 3
+
+
+state 6:
+
+	PROGRAMELEM : IDENTIFIER COLON LHS . SEMICOLON 
+
+	SEMICOLON	shift 9
+
+
+	.	error
+
+
+state 7:
+
+	LHS : EPS .  (reduce by rule 4)
+
+
+
+	.	reduce by rule 4
+
+
+state 8:
+
+	IDARR : IDENTIFIER .  (reduce by rule 5)
+	IDARR : IDENTIFIER . IDARR 
+
+	IDENTIFIER	shift 8
+
+	IDARR	goto 10
+
+	.	reduce by rule 5
+
+
+state 9:
+
+	PROGRAMELEM : IDENTIFIER COLON LHS SEMICOLON .  (reduce by rule 2)
+
+
+
+	.	reduce by rule 2
+
+
+state 10:
+
+	IDARR : IDENTIFIER IDARR .  (reduce by rule 6)
+
+
+
+	.	reduce by rule 6
+
+
+state 11:
+
+
+	EOF	accept
+
+
+	.	error
+
+8 of 20 action table entries left after compaction
+7 goto table entries
