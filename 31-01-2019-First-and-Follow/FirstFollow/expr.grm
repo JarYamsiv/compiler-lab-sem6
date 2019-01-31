@@ -21,7 +21,7 @@ it is empty *)
 %nonterm PROGRAM of Ast.Rule list
        | PROGRAMELEM of Ast.Rule
        | LHS of Ast.Lhs
-       | IDARR of string list
+       | IDARR of Ast.Id list
 
 
 
@@ -46,9 +46,10 @@ PROGRAM :   PROGRAMELEM PROGRAM     (PROGRAMELEM::PROGRAM)
 PROGRAMELEM: IDENTIFIER COLON LHS SEMICOLON(Ast.Rul (IDENTIFIER,LHS))
 
 LHS : IDARR                         (Ast.Lh IDARR)
+    | EPS                           (Ast.Lh [(Ast.EPSILON)])
 
-IDARR: IDENTIFIER                     ([IDENTIFIER])
-      | IDENTIFIER IDARR              (IDENTIFIER::IDARR)
+IDARR: IDENTIFIER                     ([Ast.St IDENTIFIER])
+      | IDENTIFIER IDARR              ((Ast.St IDENTIFIER)::IDARR)
 
 
 

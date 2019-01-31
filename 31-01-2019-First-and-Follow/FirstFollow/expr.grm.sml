@@ -21,36 +21,38 @@ val table=let val actionRows =
 "\
 \\001\000\001\000\000\000\000\000\
 \\001\000\002\000\004\000\000\000\
-\\001\000\002\000\009\000\000\000\
+\\001\000\002\000\010\000\005\000\009\000\000\000\
 \\001\000\003\000\006\000\000\000\
-\\001\000\006\000\010\000\000\000\
-\\013\000\000\000\
-\\014\000\002\000\004\000\000\000\
-\\015\000\000\000\
+\\001\000\006\000\011\000\000\000\
+\\014\000\000\000\
+\\015\000\002\000\004\000\000\000\
 \\016\000\000\000\
-\\017\000\002\000\009\000\000\000\
+\\017\000\000\000\
 \\018\000\000\000\
+\\019\000\002\000\010\000\000\000\
+\\020\000\000\000\
 \"
 val actionRowNumbers =
 "\001\000\006\000\003\000\005\000\
 \\002\000\008\000\004\000\009\000\
-\\007\000\010\000\000\000"
+\\010\000\007\000\011\000\000\000"
 val gotoT =
 "\
-\\001\000\010\000\002\000\001\000\000\000\
+\\001\000\011\000\002\000\001\000\000\000\
 \\001\000\003\000\002\000\001\000\000\000\
 \\000\000\
 \\000\000\
 \\003\000\006\000\004\000\005\000\000\000\
 \\000\000\
 \\000\000\
-\\004\000\009\000\000\000\
+\\000\000\
+\\004\000\010\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \"
-val numstates = 11
-val numrules = 6
+val numstates = 12
+val numrules = 7
 val s = ref "" and index = ref 0
 val string_to_int = fn () => 
 let val i = !index
@@ -112,7 +114,7 @@ type pos = int
 type arg = unit
 structure MlyValue = 
 struct
-datatype svalue = VOID | ntVOID of unit | IDENTIFIER of  (string) | IDARR of  (string list) | LHS of  (Ast.Lhs) | PROGRAMELEM of  (Ast.Rule) | PROGRAM of  (Ast.Rule list)
+datatype svalue = VOID | ntVOID of unit | IDENTIFIER of  (string) | IDARR of  (Ast.Id list) | LHS of  (Ast.Lhs) | PROGRAMELEM of  (Ast.Rule) | PROGRAM of  (Ast.Rule list)
 end
 type svalue = MlyValue.svalue
 type result = Ast.Rule list
@@ -150,27 +152,31 @@ val actions =
 fn (i392,defaultPos,stack,
     (()):arg) =>
 case (i392,stack)
-of  ( 0, ( ( _, ( MlyValue.PROGRAM PROGRAM, _, PROGRAM1right)) :: ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 43.38 "expr.grm"*)PROGRAMELEM::PROGRAM(*#line 153.1 "expr.grm.sml"*)
+of  ( 0, ( ( _, ( MlyValue.PROGRAM PROGRAM, _, PROGRAM1right)) :: ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 43.38 "expr.grm"*)PROGRAMELEM::PROGRAM(*#line 155.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, PROGRAMELEM1left, PROGRAM1right), rest671)
 end
-|  ( 1, ( ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, PROGRAMELEM1right)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 44.38 "expr.grm"*)[PROGRAMELEM](*#line 157.1 "expr.grm.sml"*)
+|  ( 1, ( ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, PROGRAMELEM1right)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 44.38 "expr.grm"*)[PROGRAMELEM](*#line 159.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, PROGRAMELEM1left, PROGRAMELEM1right), rest671)
 end
-|  ( 2, ( ( _, ( _, _, SEMICOLON1right)) :: ( _, ( MlyValue.LHS LHS, _, _)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 46.45 "expr.grm"*)Ast.Rul (IDENTIFIER,LHS)(*#line 161.1 "expr.grm.sml"*)
+|  ( 2, ( ( _, ( _, _, SEMICOLON1right)) :: ( _, ( MlyValue.LHS LHS, _, _)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 46.45 "expr.grm"*)Ast.Rul (IDENTIFIER,LHS)(*#line 163.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 1, ( result, IDENTIFIER1left, SEMICOLON1right), rest671)
 end
-|  ( 3, ( ( _, ( MlyValue.IDARR IDARR, IDARR1left, IDARR1right)) :: rest671)) => let val  result = MlyValue.LHS ((*#line 48.38 "expr.grm"*)Ast.Lh IDARR(*#line 165.1 "expr.grm.sml"*)
+|  ( 3, ( ( _, ( MlyValue.IDARR IDARR, IDARR1left, IDARR1right)) :: rest671)) => let val  result = MlyValue.LHS ((*#line 48.38 "expr.grm"*)Ast.Lh IDARR(*#line 167.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 2, ( result, IDARR1left, IDARR1right), rest671)
 end
-|  ( 4, ( ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, IDENTIFIER1right)) :: rest671)) => let val  result = MlyValue.IDARR ((*#line 50.40 "expr.grm"*)[IDENTIFIER](*#line 169.1 "expr.grm.sml"*)
+|  ( 4, ( ( _, ( _, EPS1left, EPS1right)) :: rest671)) => let val  result = MlyValue.LHS ((*#line 49.38 "expr.grm"*)Ast.Lh [(Ast.EPSILON)](*#line 171.1 "expr.grm.sml"*)
+)
+ in ( LrTable.NT 2, ( result, EPS1left, EPS1right), rest671)
+end
+|  ( 5, ( ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, IDENTIFIER1right)) :: rest671)) => let val  result = MlyValue.IDARR ((*#line 51.40 "expr.grm"*)[Ast.St IDENTIFIER](*#line 175.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 3, ( result, IDENTIFIER1left, IDENTIFIER1right), rest671)
 end
-|  ( 5, ( ( _, ( MlyValue.IDARR IDARR, _, IDARR1right)) :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.IDARR ((*#line 51.40 "expr.grm"*)IDENTIFIER::IDARR(*#line 173.1 "expr.grm.sml"*)
+|  ( 6, ( ( _, ( MlyValue.IDARR IDARR, _, IDARR1right)) :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.IDARR ((*#line 52.40 "expr.grm"*)(Ast.St IDENTIFIER)::IDARR(*#line 179.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 3, ( result, IDENTIFIER1left, IDARR1right), rest671)
 end
