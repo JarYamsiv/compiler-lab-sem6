@@ -62,29 +62,10 @@ digit = [0-9]+;
 		   end
 		 );
 "/*".*"*/"              => (lex());
-{digit}+                => ( Tokens.CONST (toInt yytext, !lineRef, !lineRef) );
-"+"                     => ( Tokens.PLUS  (!lineRef,!lineRef) );
-"-"                     => ( Tokens.MINUS  (!lineRef,!lineRef) );
-"*"                     => ( Tokens.MUL (!lineRef,!lineRef) );
-"="                     => ( Tokens.EQUALSIGN (!lineRef,!lineRef) );
-"("                     => ( Tokens.LPAREN (!lineRef,!lineRef) );
-")"                     => ( Tokens.RPAREN (!lineRef,!lineRef) );
-"{"                     => ( Tokens.LCURL (!lineRef,!lineRef) );
-"}"                     => ( Tokens.RCURL (!lineRef,!lineRef) );
-"["                     => ( Tokens.LSQUARE (!lineRef,!lineRef) );
-"]"                     => ( Tokens.RSQUARE (!lineRef,!lineRef) );
-";"                     => ( Tokens.SEMICOLON (!lineRef,!lineRef) );
-":"                     => ( Tokens.COLON (!lineRef,!lineRef) );
 
-"fun"                   => ( Tokens.FUN (!lineRef,!lineRef));
-
-"if"                    => ( Tokens.IF (!lineRef,!lineRef));
-"else"                  => ( Tokens.ELSE (!lineRef,!lineRef));
-"=="                    => ( Tokens.EQ (!lineRef,!lineRef) );
-">"                     => ( Tokens.GT (!lineRef,!lineRef) );
-"<"                     => ( Tokens.LT (!lineRef,!lineRef) );
-"&&"                    => ( Tokens.AND (!lineRef,!lineRef) );
-"||"                    => ( Tokens.OR (!lineRef,!lineRef) );
-
+"e"                     => ( Tokens.EPS(!lineRef, !lineRef));
 [a-zA-Z_][a-zA-Z0-9_]*  => ( Tokens.IDENTIFIER(yytext ,!lineRef, !lineRef));
+":"                     => ( Tokens.COLON(!lineRef, !lineRef));
+"|"                     => ( Tokens.BAR(!lineRef, !lineRef));
+";"                     => ( Tokens.SEMICOLON(!lineRef, !lineRef));
 

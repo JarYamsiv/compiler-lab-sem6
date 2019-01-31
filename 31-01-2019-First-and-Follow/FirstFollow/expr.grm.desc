@@ -1,0 +1,120 @@
+start symbol used on the rhs of 1 rule
+
+warning: start symbol appears on the rhs of <PROGRAM : PROGRAMELEM PROGRAM >
+
+state 0:
+
+	PROGRAM : . PROGRAMELEM PROGRAM 
+	PROGRAM : . PROGRAMELEM 
+
+	IDENTIFIER	shift 2
+
+	PROGRAM	goto 10
+	PROGRAMELEM	goto 1
+
+	.	error
+
+
+state 1:
+
+	PROGRAM : PROGRAMELEM . PROGRAM 
+	PROGRAM : PROGRAMELEM .  (reduce by rule 1)
+
+	IDENTIFIER	shift 2
+
+	PROGRAM	goto 3
+	PROGRAMELEM	goto 1
+
+	.	reduce by rule 1
+
+
+state 2:
+
+	PROGRAMELEM : IDENTIFIER . COLON LHS SEMICOLON 
+
+	COLON	shift 4
+
+
+	.	error
+
+
+state 3:
+
+	PROGRAM : PROGRAMELEM PROGRAM .  (reduce by rule 0)
+
+
+
+	.	reduce by rule 0
+
+
+state 4:
+
+	PROGRAMELEM : IDENTIFIER COLON . LHS SEMICOLON 
+
+	IDENTIFIER	shift 7
+
+	LHS	goto 6
+	IDARR	goto 5
+
+	.	error
+
+
+state 5:
+
+	LHS : IDARR .  (reduce by rule 3)
+
+
+
+	.	reduce by rule 3
+
+
+state 6:
+
+	PROGRAMELEM : IDENTIFIER COLON LHS . SEMICOLON 
+
+	SEMICOLON	shift 8
+
+
+	.	error
+
+
+state 7:
+
+	IDARR : IDENTIFIER .  (reduce by rule 4)
+	IDARR : IDENTIFIER . IDARR 
+
+	IDENTIFIER	shift 7
+
+	IDARR	goto 9
+
+	.	reduce by rule 4
+
+
+state 8:
+
+	PROGRAMELEM : IDENTIFIER COLON LHS SEMICOLON .  (reduce by rule 2)
+
+
+
+	.	reduce by rule 2
+
+
+state 9:
+
+	IDARR : IDENTIFIER IDARR .  (reduce by rule 5)
+
+
+
+	.	reduce by rule 5
+
+
+state 10:
+
+
+	EOF	accept
+
+
+	.	error
+
+7 of 18 action table entries left after compaction
+7 goto table entries
