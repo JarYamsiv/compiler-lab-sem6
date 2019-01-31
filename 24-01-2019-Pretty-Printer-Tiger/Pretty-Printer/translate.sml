@@ -17,7 +17,7 @@ fun addtabs n = if n <= 0 then
 fun compileExpr (Ast.Const x)         = print (" "^yellow^(Int.toString x)^reset^" ")
   | compileExpr (Ast.Op (x, oper, y)) = (compileExpr x ; print (Ast.binOpToString oper); compileExpr y )
 
- 
+
 
 fun compileCondition (Ast.CConst x)	  = print (" "^yellow^(Int.toString x)^reset^" ")
   | compileCondition (Ast.CVar  x)		  = print (" "^white^x^reset^" ")
@@ -27,8 +27,8 @@ fun   compileStatement (Ast.Id x)		t  =  (addtabs t; print (white^x^green^";\n"^
 	| compileStatement (Ast.As (x,exp))	t  =  (addtabs t; print (white^x^green^" = "^reset);compileExpr exp;print (green^";\n"^reset))
 	| compileStatement (Ast.FnCl x)		t  =  (addtabs t; print (white^x^green^"();\n"^reset))
 
-and  compileStatements  (t,((x:Ast.Statement) :: (xs:Ast.Statement list)))	  = (compileStatement x t;compileStatements (t,xs))
-	|compileStatements  (t,[])	   											  = ()
+and  compileStatements  (t,(x :: xs))	  = (compileStatement x t;compileStatements (t,xs))
+	|compileStatements  (t,[])	   		  = ()
 
 fun  compileBlock (Ast.Stlist slist)		t 		= (compileStatements (t,slist) )	
 	|compileBlock (Ast.Cblock (x,clist))    t 		= (
@@ -45,8 +45,8 @@ fun  compileBlock (Ast.Stlist slist)		t 		= (compileStatements (t,slist) )
 														addtabs t;print (green^"}\n"^reset)
 													  )
 
-and  compileBlocks  (t,((x:Ast.CodeBlock) :: (xs:Ast.CodeBlock list)))				  = (compileBlock x t;compileBlocks (t,xs)) 
-	|compileBlocks  (t,[])				         									  = ()
+and  compileBlocks  (t,(x :: xs))				  = (compileBlock x t;compileBlocks (t,xs)) 
+	|compileBlocks  (t,[])				          = ()
 
 fun compileFun(Ast.Fun (x,g))		t  =  (
 											print (red^"fun "^white^x^green^"(){\n"^reset);

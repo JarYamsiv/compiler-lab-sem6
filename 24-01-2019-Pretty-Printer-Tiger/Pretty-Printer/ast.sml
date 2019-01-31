@@ -45,7 +45,7 @@ fun binOpToString Plus  = "+"
   | binOpToString Minus = "-"
   | binOpToString Mul   = "*"
 
- fun  condOpToString EQ    = "=="
+fun   condOpToString EQ    = "=="
  	| condOpToString LT    = "<"
  	| condOpToString GT    = ">"
  	| condOpToString GTEQ  = ">="
