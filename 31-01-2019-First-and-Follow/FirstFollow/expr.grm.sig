@@ -2,6 +2,7 @@ signature Expr_TOKENS =
 sig
 type ('a,'b) token
 type svalue
+val EOP:  'a * 'a -> (svalue,'a) token
 val SEMICOLON:  'a * 'a -> (svalue,'a) token
 val EPS:  'a * 'a -> (svalue,'a) token
 val BAR:  'a * 'a -> (svalue,'a) token

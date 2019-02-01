@@ -1,11 +1,11 @@
 (* The abstract syntax tree for expression *)
 structure Ast = struct
 
-datatype Id = St of string | EPSILON
+datatype Id = St of Atom.atom | EPSILON | EOP
 
-datatype Lhs = Lh of Id list
+datatype Rhs = Rh of Id list
  
-datatype Rule = Rul of string*Lhs
+datatype Rule = Rul of string*Rhs
 
 
 end

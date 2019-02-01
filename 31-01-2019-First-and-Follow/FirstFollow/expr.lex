@@ -68,4 +68,5 @@ digit = [0-9]+;
 ":"                     => ( Tokens.COLON(!lineRef, !lineRef));
 "|"                     => ( Tokens.BAR(!lineRef, !lineRef));
 ";"                     => ( Tokens.SEMICOLON(!lineRef, !lineRef));
+"$"                     => ( Tokens.EOP(!lineRef, !lineRef));
 

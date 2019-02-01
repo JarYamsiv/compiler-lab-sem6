@@ -9,7 +9,7 @@ state 0:
 
 	IDENTIFIER	shift 2
 
-	PROGRAM	goto 11
+	PROGRAM	goto 12
 	PROGRAMELEM	goto 1
 
 	.	error
@@ -30,7 +30,7 @@ state 1:
 
 state 2:
 
-	PROGRAMELEM : IDENTIFIER . COLON LHS SEMICOLON 
+	PROGRAMELEM : IDENTIFIER . COLON RHS SEMICOLON 
 
 	COLON	shift 4
 
@@ -49,12 +49,12 @@ state 3:
 
 state 4:
 
-	PROGRAMELEM : IDENTIFIER COLON . LHS SEMICOLON 
+	PROGRAMELEM : IDENTIFIER COLON . RHS SEMICOLON 
 
 	IDENTIFIER	shift 8
 	EPS	shift 7
 
-	LHS	goto 6
+	RHS	goto 6
 	IDARR	goto 5
 
 	.	error
@@ -62,8 +62,10 @@ state 4:
 
 state 5:
 
-	LHS : IDARR .  (reduce by rule 3)
+	RHS : IDARR .  (reduce by rule 3)
+	RHS : IDARR . EOP 
 
+	EOP	shift 9
 
 
 	.	reduce by rule 3
@@ -71,9 +73,9 @@ state 5:
 
 state 6:
 
-	PROGRAMELEM : IDENTIFIER COLON LHS . SEMICOLON 
+	PROGRAMELEM : IDENTIFIER COLON RHS . SEMICOLON 
 
-	SEMICOLON	shift 9
+	SEMICOLON	shift 10
 
 
 	.	error
@@ -81,7 +83,7 @@ state 6:
 
 state 7:
 
-	LHS : EPS .  (reduce by rule 4)
+	RHS : EPS .  (reduce by rule 4)
 
 
 
@@ -90,35 +92,44 @@ state 7:
 
 state 8:
 
-	IDARR : IDENTIFIER .  (reduce by rule 5)
+	IDARR : IDENTIFIER .  (reduce by rule 6)
 	IDARR : IDENTIFIER . IDARR 
 
 	IDENTIFIER	shift 8
 
-	IDARR	goto 10
+	IDARR	goto 11
 
-	.	reduce by rule 5
+	.	reduce by rule 6
 
 
 state 9:
 
-	PROGRAMELEM : IDENTIFIER COLON LHS SEMICOLON .  (reduce by rule 2)
+	RHS : IDARR EOP .  (reduce by rule 5)
+
+
+
+	.	reduce by rule 5
+
+
+state 10:
+
+	PROGRAMELEM : IDENTIFIER COLON RHS SEMICOLON .  (reduce by rule 2)
 
 
 
 	.	reduce by rule 2
 
 
-state 10:
-
-	IDARR : IDENTIFIER IDARR .  (reduce by rule 6)
-
-
-
-	.	reduce by rule 6
-
-
 state 11:
+
+	IDARR : IDENTIFIER IDARR .  (reduce by rule 7)
+
+
+
+	.	reduce by rule 7
+
+
+state 12:
 
 
 	EOF	accept
@@ -126,5 +137,5 @@ state 11:
 
 	.	error
 
-8 of 20 action table entries left after compaction
+9 of 22 action table entries left after compaction
 7 goto table entries

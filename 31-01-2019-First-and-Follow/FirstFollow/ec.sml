@@ -32,7 +32,8 @@ fun print_error (s,i:int,_) = TextIO.output(TextIO.stdErr,
 (* The portion of the code that does the actual compiling *)
 
 val (program,_) = ExprParser.parse (0,thisLexer,print_error,())
-val executable  = Translate.compile program
-(*val _           = TextIO.output(TextIO.stdOut, Machine.programToString executable)*)
+val rule_map  = Translate.compile program AtomMap.empty
+val _ = Translate.printmap rule_map
+
 
 end

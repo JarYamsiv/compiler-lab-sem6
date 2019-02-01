@@ -1,29 +1,48 @@
 structure Translate =
 struct
 
-val symbol_set =ref AtomSet.empty
+structure Rule = struct
+	type lhs = Atom.atom
+	type rhs = Atom.atom list
+end
 
 
 
-fun prntLHS (Ast.St x)		   = (print (x^" "))
-	|prntLHS (Ast.EPSILON)     = (print ("_"))
 
-fun singleLHS  (x::xs)         = (prntLHS x;singleLHS xs)
-	| singleLHS [] 			   = ()
+fun prntRHS y = case y of
+				(Ast.St x) => (print((Atom.toString x)^" ");x)
+				|(Ast.EPSILON) => (print("_");Atom.atom "_")
+				|(Ast.EOP) => (print("$");Atom.atom "$") 
 
-fun compileLHS (Ast.Lh y)      = (singleLHS y)
 
-fun compileRule (Ast.Rul(x,y)) = let val atom_val_x = (Atom.atom x) in
+
+fun compileRHS (Ast.Rh y)      = (map prntRHS y)
+
+fun compileRule (Ast.Rul(x,y)) = let 
+									val atom_val_x = (Atom.atom x)
+									val ret_list = compileRHS y 
+								in
 								(	
-
-									print (x^"->"); symbol_set:= AtomSet.add( !symbol_set ,atom_val_x );
-									compileLHS y;
-									print ("\n")
+									print ("<-"^x);
+									print ("\n");
+									(atom_val_x,ret_list)
+									
 								 )end
 
 
+fun compile l map= case l of
+				(x::xs) =>	(case AtomMap.find(map, #1(compileRule x) ) of
+								   NONE =>       AtomMap.insert'( (compileRule x) , (compile xs map))
+								 | SOME value => AtomMap.insert'( (compileRule x) , (compile xs map)) 
+						    )
+				| []	=> AtomMap.empty
 
-fun compile []        = (AtomSet.app (print o Atom.toString) (!symbol_set)  )
-  | compile (x :: xs) = (compileRule x; compile xs)
+(*fun print_single_rhs l = map ( fn k=>(print ((Atom.toString k)^" ") )  ) l
+
+fun print_rhs set = AtomSet.app print_rhs set*)
+
+fun print_map_elem (key,a) = (print ((Atom.toString key)^"->");(map (fn k=>print (" "^(Atom.toString k)) ) a);(print "\n")  )
+
+fun printmap rulemap= (AtomMap.appi print_map_elem rulemap )
 
 end

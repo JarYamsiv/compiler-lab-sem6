@@ -15,12 +15,13 @@ it is empty *)
     | BAR
     | EPS
     | SEMICOLON
+    | EOP
 
 
 (* The nonterminals of the language *)
 %nonterm PROGRAM of Ast.Rule list
        | PROGRAMELEM of Ast.Rule
-       | LHS of Ast.Lhs
+       | RHS of Ast.Rhs
        | IDARR of Ast.Id list
 
 
@@ -43,13 +44,14 @@ left associative and the precedence increase as you go down this list.
 PROGRAM :   PROGRAMELEM PROGRAM     (PROGRAMELEM::PROGRAM)
         |   PROGRAMELEM             ([PROGRAMELEM])
 
-PROGRAMELEM: IDENTIFIER COLON LHS SEMICOLON(Ast.Rul (IDENTIFIER,LHS))
+PROGRAMELEM: IDENTIFIER COLON RHS SEMICOLON(Ast.Rul (IDENTIFIER,RHS))
 
-LHS : IDARR                         (Ast.Lh IDARR)
-    | EPS                           (Ast.Lh [(Ast.EPSILON)])
+RHS : IDARR                         (Ast.Rh IDARR)
+    | EPS                           (Ast.Rh [(Ast.EPSILON)])
+    | IDARR EOP 					(Ast.Rh  (IDARR @ [Ast.EOP])  )
 
-IDARR: IDENTIFIER                     ([Ast.St IDENTIFIER])
-      | IDENTIFIER IDARR              ((Ast.St IDENTIFIER)::IDARR)
+IDARR: IDENTIFIER                     ([Ast.St (Atom.atom IDENTIFIER)])
+      | IDENTIFIER IDARR              ((Ast.St (Atom.atom IDENTIFIER))::IDARR)
 
 
 
