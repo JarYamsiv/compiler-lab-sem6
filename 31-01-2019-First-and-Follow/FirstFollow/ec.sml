@@ -33,6 +33,7 @@ fun print_error (s,i:int,_) = TextIO.output(TextIO.stdErr,
 
 val (program,_) = ExprParser.parse (0,thisLexer,print_error,())
 val rule_map  = Translate.compile program AtomMap.empty
+val _ = print ("compiled productions : \n")
 val _ = Translate.printmap rule_map
 
 

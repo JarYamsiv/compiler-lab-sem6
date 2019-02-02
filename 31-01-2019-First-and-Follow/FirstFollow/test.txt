@@ -1,5 +1,14 @@
-PROGRAM: EXP  $;
-EXP: EXP PLUS EXP;
-EXP: EXP MINUS EXP;
-EXP: NUM;
-EXP: e ;
+P: E $;
+
+E : E A E;
+E : A;
+E : B;
+
+A : B C;
+A : A E;
+A : C C;
+
+B : E F;
+B : C C;
+
+C : _;
