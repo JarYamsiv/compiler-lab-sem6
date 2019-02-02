@@ -1,14 +1,14 @@
-P: E $;
+P: ES $;
 
-E : E A E;
-E : A;
-E : B;
+ES: E SEMI ES;
+ES: E SEMI;
+ES: _;
 
-A : B C;
-A : A E;
-A : C C;
+E: T PLUS E;
+E: T;
 
-B : E F;
-B : C C;
+T: F MUL T;
+T: F;
 
-C : _;
+F: LPAREN E RPAREN;
+F: NUM;
