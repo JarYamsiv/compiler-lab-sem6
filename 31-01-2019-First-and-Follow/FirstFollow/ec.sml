@@ -32,9 +32,12 @@ fun print_error (s,i:int,_) = TextIO.output(TextIO.stdErr,
 (* The portion of the code that does the actual compiling *)
 
 val (program,_) = ExprParser.parse (0,thisLexer,print_error,())
-val rule_map  = Translate.compile program AtomMap.empty
+val (rule_map,sym_table,tok_table)  = Translate.compile program AtomMap.empty AtomSet.empty AtomSet.empty
 val _ = print ("compiled productions : \n")
-val _ = Translate.printmap rule_map
+val _ = Translate.printmap (rule_map,sym_table,tok_table)
+
+(*val _ = AtomSet.app (fn k=> print (Translate.red^(Atom.toString k)^"\n"^Translate.reset) ) sym_table
+val _ = AtomSet.app (fn k=> print (Translate.yellow^(Atom.toString k)^"\n"^Translate.reset) ) tok_table*)
 
 
 end

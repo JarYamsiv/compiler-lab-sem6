@@ -3,6 +3,12 @@ struct
 
 type RHS = Atom.atom list
 
+val red = "\u001b[31;1m"
+val green = "\u001b[32;1m"
+val white = "\u001b[37;1m"
+val yellow = "\u001b[33;1m"
+val grey = "\u001b[30;1m"
+val reset = "\u001b[0m"
 
 
 structure StringKey =
@@ -36,26 +42,37 @@ fun compileRHS (Ast.Rh y)  :RHS    = (map compileProdElem y)
 fun compileRule (Ast.Rul(x,y)) = let 
 									val _ = print (x^"->")
 									val atom_val_x = (Atom.atom x)
-									val ret_list_set = ProductionSet.singleton(compileRHS y) 
+									val prod_list = compileRHS y
+									val tok_set = AtomSet.fromList(prod_list)
+									val ret_list_set = ProductionSet.singleton(prod_list)
+
 								in
 								(	
 									print ("\n");
-									(atom_val_x,ret_list_set)
+									(atom_val_x,ret_list_set,tok_set)
 									
 								 )end
 
 
-fun compile l rule_map= case l of
+fun compile l rule_map sym_set tok_set= case l of
 				(x::xs) =>	( let 
 									val a = compileRule x
 									val lhskey_compiled    = #1(a)
 									val prodnlist_compiled = #2(a)
+									val this_tok_table = #3(a)
 									val this_map = AtomMap.singleton(lhskey_compiled,prodnlist_compiled)
+									val this_sym_table = AtomSet.singleton(lhskey_compiled)									
+									val (new_map,new_sym_table,new_tok_table) = compile xs rule_map sym_set tok_set
+
+									val ret_sym_table = AtomSet.union(this_sym_table,new_sym_table)
+									val ret_tok_table = AtomSet.union(new_tok_table,this_tok_table)
+									val ret_tok_table = AtomSet.difference(ret_tok_table,new_sym_table)
+									
 
 								in 
-									AtomMap.unionWith (ProductionSet.union) (this_map,(compile xs rule_map))
+									  ( AtomMap.unionWith (ProductionSet.union) (this_map,new_map) , ret_sym_table ,ret_tok_table) 
 						    	end)
-				| []	=> AtomMap.empty
+				| []	=> (AtomMap.empty,AtomSet.empty,AtomSet.empty)
 
 
 
@@ -63,23 +80,33 @@ fun compile l rule_map= case l of
 
 (*fun print_map_elem (key,a) = (print ((Atom.toString key)^"->");(map (fn k=>print (" "^(Atom.toString k)) ) a);(print "\n")  )*)
 
-fun printProdnElem (x:RHS) = case x of
-						(y::ys) => (print ((Atom.toString y)^" "); printProdnElem ys )
-						| []	=> ()
 
-fun  prnt_rhs_list ([x:RHS])	=(printProdnElem x)
-	| prnt_rhs_list []    = ()
-	| prnt_rhs_list ((x:RHS)::(xs:RHS list)) = ( printProdnElem x;print " | ";prnt_rhs_list xs  )
+fun printmap (rulemap,sym_table,tok_table)= 
+	let
+		fun print_symtok y = case AtomSet.member(sym_table,y) of
+								true => (print (green^(Atom.toString y)^reset^" "))
+								|false => (print (white^(Atom.toString y)^reset^" "))
+		fun printProdn (x:RHS) = case x of
+									(y::ys) => (print_symtok y;printProdn ys)
+									| []	=>()
+
+		fun print_prodns productions = 
+			let
+						val prodns_list = map StringKey.convToRhs (ProductionSet.listItems productions)
+						fun   prnt_rhs_list ([x:RHS])	=(printProdn x)
+				 			 |prnt_rhs_list []    = ()
+				 			 |prnt_rhs_list ((x:RHS)::(xs:RHS list)) = ( printProdn x;print " | ";prnt_rhs_list xs  )
+			in
+				(prnt_rhs_list prodns_list)
+			end
+		fun print_map_elem (key,a) = (print (green^(Atom.toString key)^reset^" -> ");print_prodns a;(print "\n")  )
+
+
+	in
+		(AtomMap.appi print_map_elem rulemap )
+	end
 
 
 
-fun print_prodns productions = let
-								   val prodns_list = map StringKey.convToRhs (ProductionSet.listItems productions)
-								in
-									(prnt_rhs_list prodns_list)
-								end
-fun print_map_elem (key,a) = (print ((Atom.toString key)^"-> ");print_prodns a;(print "\n")  )
-
-fun printmap rulemap= (AtomMap.appi print_map_elem rulemap )
 
 end
