@@ -124,26 +124,35 @@ fun printmap (rulemap,sym_table,tok_table)=
 		map print_rule (AtomSet.listItems sym_table)
 	end
 
+fun ret_prod_list (rulemap,lhs):RHS list = map StringKey.convToRhs (ProductionSet.listItems (valOf  (AtomMap.find (rulemap,lhs))))
+
+fun filter f (x::xs) = (case (f x) of
+	SOME y=>[y]@(filter f xs)
+	|NONE =>(filter f xs)
+	)
+|filter f [] = []
+
 fun calc_nullable (rulemap,sym_table,tok_table) = let
 
-	fun singular_prodn lhs = 
+	fun base_nullable lhs = 
 		let
-			val (prodn_list:RHS list) = map StringKey.convToRhs (ProductionSet.listItems (valOf  (AtomMap.find (rulemap,lhs))))
-			fun singular [x:Atom.atom] = SOME x
-				|singular _	 = NONE
-			val singular_productions = map singular prodn_list
+			val (prodn_list:RHS list) = ret_prod_list (rulemap,lhs)
+
+			fun isEpsilon [x:Atom.atom] = if Atom.compare(x,Atom.atom "_") = EQUAL then SOME x else NONE
+				|isEpsilon _	 = NONE
+			val isEpsilon_productions = filter isEpsilon prodn_list
+
 			val _ = print ((Atom.toString lhs)^"->")
 		in
-			map (fn k=> 
-				case k of
-					SOME x=>print (Atom.toString x)
-					|NONE  =>()
-				) singular_productions;
-			print "\n"
+			case isEpsilon_productions of
+				[] => (print "no first epsilon\n";NONE)
+				|_ => (print "first epsilon\n";SOME lhs)
 		end
+		val base_nullable_set =AtomSet.fromList (filter base_nullable (AtomSet.listItems(sym_table)))
+
 
 in
-	map singular_prodn (AtomSet.listItems(sym_table))
+	map (fn k=> print(green^(Atom.toString k)^reset^"\n")) (AtomSet.listItems base_nullable_set)
 end
 
 
