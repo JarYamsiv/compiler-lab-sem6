@@ -76,16 +76,11 @@ fun compile l rule_map sym_set tok_set= case l of
 
 
 
-
-
-(*fun print_map_elem (key,a) = (print ((Atom.toString key)^"->");(map (fn k=>print (" "^(Atom.toString k)) ) a);(print "\n")  )*)
-
-
-fun printmap (rulemap,sym_table,tok_table)= 
+(*fun printmap (rulemap,sym_table,tok_table)= 
 	let
 		fun print_symtok y = case AtomSet.member(sym_table,y) of
 								true => (print (green^(Atom.toString y)^reset^" "))
-								|false => (print (white^(Atom.toString y)^reset^" "))
+								|false => (print (red^(Atom.toString y)^reset^" "))
 		fun printProdn (x:RHS) = case x of
 									(y::ys) => (print_symtok y;printProdn ys)
 									| []	=>()
@@ -104,9 +99,64 @@ fun printmap (rulemap,sym_table,tok_table)=
 
 	in
 		(AtomMap.appi print_map_elem rulemap )
+	end*)
+
+fun printmap (rulemap,sym_table,tok_table)=
+	let
+		val a =10
+		fun print_prodns rhs_from_map=
+					let
+						val rhs_from_map_e =valOf rhs_from_map
+						val prodn_list = map StringKey.convToRhs (ProductionSet.listItems rhs_from_map_e)
+
+						fun print_symtok x = case AtomSet.member(sym_table,x) of
+							true => (print (green^(Atom.toString x)^reset^" "))
+							|false => (print (red^(Atom.toString x)^reset^" "))
+
+						fun  prnt_rhs_list [x] = (map print_symtok x;())
+							|prnt_rhs_list []	=()
+							|prnt_rhs_list (x::xs)=(map print_symtok x;print " | ";prnt_rhs_list xs)
+					in
+						(prnt_rhs_list prodn_list)
+					end
+		fun print_rule symbol = (print (green^(Atom.toString symbol)^reset^"->");print_prodns (AtomMap.find(rulemap,symbol));print "\n")
+	in
+		map print_rule (AtomSet.listItems sym_table)
 	end
+
+fun calc_nullable (rulemap,sym_table,tok_table) = let
+
+	fun singular_prodn lhs = 
+		let
+			val (prodn_list:RHS list) = map StringKey.convToRhs (ProductionSet.listItems (valOf  (AtomMap.find (rulemap,lhs))))
+			fun singular [x:Atom.atom] = SOME x
+				|singular _	 = NONE
+			val singular_productions = map singular prodn_list
+			val _ = print ((Atom.toString lhs)^"->")
+		in
+			map (fn k=> 
+				case k of
+					SOME x=>print (Atom.toString x)
+					|NONE  =>()
+				) singular_productions;
+			print "\n"
+		end
+
+in
+	map singular_prodn (AtomSet.listItems(sym_table))
+end
 
 
 
 
 end
+
+(*
+	Type definitions:
+
+	Map : 
+		Key : Atom.atom
+		Element: ProductionSet.set
+
+
+*)

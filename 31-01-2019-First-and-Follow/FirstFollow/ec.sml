@@ -39,5 +39,7 @@ val _ = Translate.printmap (rule_map,sym_table,tok_table)
 (*val _ = AtomSet.app (fn k=> print (Translate.red^(Atom.toString k)^"\n"^Translate.reset) ) sym_table
 val _ = AtomSet.app (fn k=> print (Translate.yellow^(Atom.toString k)^"\n"^Translate.reset) ) tok_table*)
 
+val _ = Translate.calc_nullable(rule_map,sym_table,tok_table)
+
 
 end
