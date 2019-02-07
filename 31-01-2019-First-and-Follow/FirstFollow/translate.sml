@@ -229,26 +229,40 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 
 				val _ = print ("\n"^reset)
 			in
-				AtomMap.singleton(lhs,first_head_set)
+				AtomMap.unionWith (AtomSet.union) (AtomMap.singleton(lhs,first_head_set) , cur_map)
 			end
 
 		fun calc_next_map (x::xs) this_map = 
 			let
 				val x_updated_map = lhs_update x this_map
-				val new_map = calc_next_map xs this_map
+				val new_map = calc_next_map xs x_updated_map
 			in
 				AtomMap.unionWith (AtomSet.union) (new_map,x_updated_map)
 			end
-			|calc_next_map [] this_map= this_map
+			|calc_next_map [] this_map= (print "\n";this_map)
 
 		fun recursive_first base_map = 
 			let
 				val next_map = AtomMap.unionWith (AtomSet.union) (base_map,(calc_next_map (AtomSet.listItems sym_table) base_map))
+				fun map_equality map1 map2 (k::ks) = 
+					let
+					 	val m1_val = AtomMap.find(map1,k)
+					 	val m2_val = AtomMap.find(map2,k)
+					 in
+					 	case (m1_val,m2_val) of
+					 		(SOME v1,SOME v2) =>AtomSet.equal(v1,v2) andalso (map_equality map1 map2 ks)
+					 		|(NONE,NONE)		  =>true andalso (map_equality map1 map2 ks)
+					 		|_					  =>false
+					 end
+					 |map_equality map1 map2 [] = true
 			in
-				()
+				case map_equality base_map next_map (AtomSet.listItems sym_table) of
+					true   => next_map
+					|false => recursive_first next_map
 			end
 
 		val f_base_map = calc_next_map (AtomSet.listItems sym_table) base_map
+		val f_base_map = recursive_first base_map
 
 	in
 		(*AtomMap.appi (fn (key,first_set) => (print((Atom.toString key)^": ");printSet first_set  ; print "\n" )) base_map*)
