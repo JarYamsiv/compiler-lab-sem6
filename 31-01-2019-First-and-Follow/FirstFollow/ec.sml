@@ -36,10 +36,8 @@ val (rule_map,sym_table,tok_table)  = Translate.compile program AtomMap.empty At
 val _ = print ("compiled productions : \n")
 val _ = Translate.printmap (rule_map,sym_table,tok_table)
 
-(*val _ = AtomSet.app (fn k=> print (Translate.red^(Atom.toString k)^"\n"^Translate.reset) ) sym_table
-val _ = AtomSet.app (fn k=> print (Translate.yellow^(Atom.toString k)^"\n"^Translate.reset) ) tok_table*)
-
 val nullable_set = Translate.calc_nullable(rule_map,sym_table,tok_table)
+val first_table = Translate.calc_first(rule_map,sym_table,tok_table,nullable_set)
 
 
 end
