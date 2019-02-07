@@ -126,11 +126,13 @@ fun printmap (rulemap,sym_table,tok_table)=
 
 fun ret_prod_list (rulemap,lhs):RHS list = map StringKey.convToRhs (ProductionSet.listItems (valOf  (AtomMap.find (rulemap,lhs))))
 
+
 fun filter f (x::xs) = (case (f x) of
 	SOME y=>[y]@(filter f xs)
 	|NONE =>(filter f xs)
 	)
 |filter f [] = []
+
 
 fun calc_nullable (rulemap,sym_table,tok_table) = let
 
@@ -140,6 +142,7 @@ fun calc_nullable (rulemap,sym_table,tok_table) = let
 
 			fun isEpsilon [x:Atom.atom] = if Atom.compare(x,Atom.atom "_") = EQUAL then SOME x else NONE
 				|isEpsilon _	 = NONE
+				
 			val isEpsilon_productions = filter isEpsilon prodn_list
 
 			val _ = print ((Atom.toString lhs)^"->")
@@ -148,11 +151,43 @@ fun calc_nullable (rulemap,sym_table,tok_table) = let
 				[] => (print "no first epsilon\n";NONE)
 				|_ => (print "first epsilon\n";SOME lhs)
 		end
-		val base_nullable_set =AtomSet.fromList (filter base_nullable (AtomSet.listItems(sym_table)))
 
+	val base_nullable_set =AtomSet.fromList (filter base_nullable (AtomSet.listItems(sym_table)))
 
+	fun next_nullable_set cur_set =
+		let
+			fun singularProdn lhs = 
+				let
+					val prod_list = ret_prod_list (rulemap,lhs)
+					val sing_prodn = filter (fn k=>if length(k)>1 then NONE else
+						(case AtomSet.member(cur_set,(hd k)) of
+													true => SOME k
+													|false =>NONE)
+						)
+					prod_list
+				in
+					case sing_prodn of
+						[] =>(NONE)
+						|_ =>(SOME lhs)
+				end
+			val next_set = filter singularProdn (AtomSet.listItems sym_table)
+		in
+			AtomSet.fromList(next_set)
+		end
+
+	fun recursive_nullable base_set = 
+		let
+			val next_set = AtomSet.union(base_set,(next_nullable_set base_set))
+
+		in
+			case AtomSet.equal(next_set,base_set) of
+				 true  => next_set
+				|false => (recursive_nullable next_set)
+		end
+
+		val nullable_set = recursive_nullable base_nullable_set
 in
-	map (fn k=> print(green^(Atom.toString k)^reset^"\n")) (AtomSet.listItems base_nullable_set)
+	map (fn k=> print(green^(Atom.toString k)^reset^"\n")) (AtomSet.listItems (nullable_set));nullable_set
 end
 
 
