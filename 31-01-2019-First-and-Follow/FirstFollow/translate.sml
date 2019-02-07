@@ -2,7 +2,7 @@ structure Translate =
 struct
 
 type RHS = Atom.atom list
-val esc = Char.toString (Char.chr 27)
+
 val red = "\u001b[31;1m"
 val green = "\u001b[32;1m"
 val white = "\u001b[37;1m"
@@ -133,11 +133,13 @@ fun calc_nullable (rulemap,sym_table,tok_table) = let
 		let
 			fun singularProdn lhs = 
 				let
+					fun string_nullable (s::tring) = AtomSet.member(cur_set,s) andalso string_nullable tring
+						|string_nullable []		   = true
+
 					val prod_list = ret_prod_list (rulemap,lhs)
-					val sing_prodn = filter (fn k=>if length(k)>1 then NONE else
-						(case AtomSet.member(cur_set,(hd k)) of
-													true => SOME k
-													|false =>NONE)
+					val sing_prodn = filter (fn k=>case (string_nullable k) of
+													true =>SOME k
+													|false =>NONE
 						)
 					prod_list
 				in
@@ -185,9 +187,9 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 				val prod_list = ret_prod_list (rulemap,lhs)
 			in
 				AtomSet.fromList( filter (
-					fn k=>case AtomSet.member(tok_table,(hd k)) of
-						 true  => (case Atom.compare((hd k),Atom.atom "_") of EQUAL=> NONE |_ => SOME (hd k))
-						|false => NONE
+					fn k=>case AtomSet.member(sym_table,(hd k)) of
+						 false  => (case Atom.compare((hd k),Atom.atom "_") of EQUAL=> NONE |_ => SOME (hd k))
+						|true => NONE
 					) prod_list
 				)
 			end
@@ -207,29 +209,45 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 
 
 
-		fun lhs_update lhs cur_map= 
+
+		fun lhs_update lhs cur_map=
 			let
-				val rhs_heads:Atom.atom list = map hd (ret_prod_list (rulemap,lhs))
+				val prod_list = ret_prod_list (rulemap,lhs)
 
-				fun f k =
-					let
-						val corresponding_first_list = case AtomMap.find(cur_map,k) of
-														NONE => []
-														|SOME x => (AtomSet.listItems x)
-					in
-						(print (green^(Atom.toString k)^" cfl:");map (fn k=>print (yellow^(Atom.toString k)^" ")) corresponding_first_list    )
-					end
-				 
+				fun first_of_current_prodn (symtok::symtok_ls) = 
+					(
+					case AtomSet.member(sym_table,symtok) of
+						false   =>(case Atom.compare (symtok ,Atom.atom "_") of
+							EQUAL =>AtomSet.empty
+							|_ =>AtomSet.singleton(symtok)
+							)
+						|true =>(
+						let 
+								val this_symtok_first = (case AtomMap.find(cur_map,symtok) of
+														SOME x=>(x)
+														|NONE =>(AtomSet.empty))
+							in
+							case AtomSet.member(nullable_set,symtok) of
+								false =>(
+										this_symtok_first
+									)
+								|true =>(
+										AtomSet.union(this_symtok_first,first_of_current_prodn symtok_ls)
+									)
+							end
+							)
+					)
+					|first_of_current_prodn [] = AtomSet.empty
+				val new_first_of_prod_set_list = map first_of_current_prodn prod_list
+				val new_lhs_first_set = foldl (AtomSet.union) (AtomSet.empty) new_first_of_prod_set_list
+				val sing_map = AtomMap.singleton(lhs,new_lhs_first_set)
+				val union_map = AtomMap.unionWith (AtomSet.union) (sing_map,cur_map)
+				(*val _ = print "pass-\n"
+				val _ = AtomMap.appi (fn (key,first_set)=>  (print ((Atom.toString key)^" :{"); (printSet first_set);print "}\n")  ) union_map
+				val _ = print "\n"*)
 
-				val _ = (print ((Atom.toString lhs)^"->"); map f rhs_heads)
-
-
-				val first_head_list:AtomSet.set list = filter (fn k=>AtomMap.find(cur_map,k)) rhs_heads
-				val first_head_set = foldl  (AtomSet.union) (AtomSet.empty) first_head_list
-
-				val _ = print ("\n"^reset)
 			in
-				AtomMap.unionWith (AtomSet.union) (AtomMap.singleton(lhs,first_head_set) , cur_map)
+				union_map
 			end
 
 		fun calc_next_map (x::xs) this_map = 
@@ -239,7 +257,7 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 			in
 				AtomMap.unionWith (AtomSet.union) (new_map,x_updated_map)
 			end
-			|calc_next_map [] this_map= (print "\n";this_map)
+			|calc_next_map [] this_map= (this_map)
 
 		fun recursive_first base_map = 
 			let
