@@ -1,0 +1,15 @@
+P: ES $;
+
+ES: E SEMI ES;
+ES: E SEMI;
+ES: _;
+
+
+E: T PLUS E;
+E: T;
+
+T: F MUL T;
+T: F;
+
+F: LPAREN E RPAREN;
+F: NUM;

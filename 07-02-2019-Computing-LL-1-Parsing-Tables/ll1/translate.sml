@@ -435,6 +435,42 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
 
+	structure MapKey =
+	struct
+    	type ord_key = Atom.atom*Atom.atom
+    	fun compare ((x1,x2),(y1,y2)) = case Atom.compare(x1,y1) of
+    									EQUAL => Atom.compare(x2,y2)
+    									| LESS => LESS
+    									| GREATER => GREATER 
+
+    	fun convToRhs (x:ord_key) :Atom.atom*Atom.atom = x
+	end
+
+	structure TableMap = RedBlackMapFn(MapKey)
+
+	fun calc_lli_table (
+		rulemap,
+		sym_table,
+		tok_table,
+		nullable_set,
+		first_map,
+		follow_map
+		)=
+		let
+			val symbols = AtomSet.listItems(sym_table)
+			val tokens = AtomSet.listItems(tok_table)
+			
+
+			fun  loop_tok (tok::tok_ls) cur_sym= (TableMap.singleton((cur_sym,tok),0) )
+				|loop_tok []			cur_sym= (TableMap.empty)
+
+			fun loop_sym  (sym::sym_ls)	= (loop_tok tokens sym)
+				|loop_sym []			= (TableMap.empty)
+
+			val final = loop_sym symbols
+		in
+			final
+		end
 
 
 
