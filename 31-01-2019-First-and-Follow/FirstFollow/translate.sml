@@ -66,7 +66,8 @@ fun compile l rule_map sym_set tok_set= case l of
 
 									val ret_sym_table = AtomSet.union(this_sym_table,new_sym_table)
 									val ret_tok_table = AtomSet.union(new_tok_table,this_tok_table)
-									val ret_tok_table = AtomSet.difference(ret_tok_table,new_sym_table)
+									val ret_tok_table = AtomSet.difference(ret_tok_table,ret_sym_table)
+									val ret_tok_table = AtomSet.difference(ret_tok_table,AtomSet.singleton(Atom.atom "_"))
 									
 
 								in 
@@ -74,7 +75,7 @@ fun compile l rule_map sym_set tok_set= case l of
 						    	end)
 				| []	=> (AtomMap.empty,AtomSet.empty,AtomSet.empty)
 
-
+(*there is something wrong with the tok_table*)
 
 fun printmap (rulemap,sym_table,tok_table)=
 	let
@@ -108,6 +109,15 @@ fun filter f (x::xs) = (case (f x) of
 	)
 |filter f [] = []
 
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*======================================================CALCULATION OF NULLABLE=====================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
 
 fun calc_nullable (rulemap,sym_table,tok_table) = let
 
@@ -167,15 +177,15 @@ in
 	map (fn k=> print(green^(Atom.toString k)^reset^"\n")) (AtomSet.listItems (nullable_set));nullable_set
 end
 
-
-fun nullability_of_sym_set (x::xs) nullable_set=( case AtomSet.member(nullable_set,x) of
-													true=>nullability_of_sym_set xs nullable_set
-													|false=>false
-												)
-	|nullability_of_sym_set [] _ = true
-
-
-
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*======================================================CALCULATION OF FIRST========================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
 
 
 
@@ -187,9 +197,9 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 				val prod_list = ret_prod_list (rulemap,lhs)
 			in
 				AtomSet.fromList( filter (
-					fn k=>case AtomSet.member(sym_table,(hd k)) of
-						 false  => (case Atom.compare((hd k),Atom.atom "_") of EQUAL=> NONE |_ => SOME (hd k))
-						|true => NONE
+					fn k=>case AtomSet.member(tok_table,(hd k)) of
+						 true  => SOME (hd k)
+						|false => NONE
 					) prod_list
 				)
 			end
@@ -204,11 +214,7 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 			| calc_base_map [] = AtomMap.empty
 
 		val base_map = calc_base_map (AtomSet.listItems sym_table)
-
-		fun printSet set= map (fn k=>print((Atom.toString k) ^ " ")) (AtomSet.listItems set) 
-
-
-
+ 
 
 		fun lhs_update lhs cur_map=
 			let
@@ -268,7 +274,7 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 					 	val m2_val = AtomMap.find(map2,k)
 					 in
 					 	case (m1_val,m2_val) of
-					 		(SOME v1,SOME v2) =>AtomSet.equal(v1,v2) andalso (map_equality map1 map2 ks)
+					 		(SOME v1,SOME v2) 	  =>AtomSet.equal(v1,v2) andalso (map_equality map1 map2 ks)
 					 		|(NONE,NONE)		  =>true andalso (map_equality map1 map2 ks)
 					 		|_					  =>false
 					 end
@@ -279,24 +285,178 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 					|false => recursive_first next_map
 			end
 
-		val f_base_map = calc_next_map (AtomSet.listItems sym_table) base_map
-		val f_base_map = recursive_first base_map
+		val final_map = recursive_first base_map
+
+		fun printSet set= map (fn k=>print((Atom.toString k) ^ " ")) (AtomSet.listItems set)
 
 	in
 		(*AtomMap.appi (fn (key,first_set) => (print((Atom.toString key)^": ");printSet first_set  ; print "\n" )) base_map*)
 		print "first elements map:\n";
 		map (fn k=>(print ((Atom.toString k)^"->");
 						(
-							case AtomMap.find(f_base_map,k) of
+							case AtomMap.find(final_map,k) of
 								SOME x=>printSet x
 								|NONE =>[()]
 						);
 						print ("\n")
 					)
-			) (AtomSet.listItems sym_table)
+			) (AtomSet.listItems sym_table);final_map
 	end
 
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*======================================================CALCULATION OF FOLLOW=======================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+
+
+	fun calc_follow(rulemap,sym_table,tok_table,nullable_set,first_map)=
+		let
+			val lhs_list = AtomSet.listItems(sym_table)
+
+			fun string_first (symtok::symtok_ls) f_map= 
+					(
+					case AtomSet.member(sym_table,symtok) of
+						false   =>(case Atom.compare (symtok ,Atom.atom "_") of
+							EQUAL =>(string_first symtok_ls f_map)
+							|_ =>AtomSet.singleton(symtok)
+							)
+						|true =>(
+						let 
+								val this_symtok_first = (case AtomMap.find(f_map,symtok) of
+														SOME x=>(x)
+														|NONE =>(AtomSet.empty))
+							in
+							case AtomSet.member(nullable_set,symtok) of
+								false =>(
+										this_symtok_first
+									)
+								|true =>(
+										AtomSet.union(this_symtok_first,string_first symtok_ls f_map)
+									)
+							end
+							)
+					)
+				|string_first [] f_map	 = (AtomSet.empty)
+
+			fun current_follow lhs a cur_flw_map= 
+				let
+					val prod_list = ret_prod_list(rulemap,lhs)
+					fun nullable_string (x::xs) = AtomSet.member(nullable_set,x) andalso nullable_string xs
+						|nullable_string []		= true
+
+					val prodn_list = ret_prod_list(rulemap,lhs)
+					fun presence x (y::ys) = (case Atom.compare(x,y) of
+												EQUAL => true
+												|_ => presence x ys)
+						| presence x []    = false
+
+					fun substringer x (y::ys) = (case Atom.compare(x,y) of
+												EQUAL => ys
+												|_	  => (substringer x ys)	)
+						|substringer x []	  = []
+
+					fun flw prodn = 
+						let
+							val string_after_a = substringer a prodn
+						in
+							case (presence a prodn) of
+							true=> (case (nullable_string string_after_a) of 
+										false  => (string_first string_after_a first_map)
+										| true => (case AtomMap.find(cur_flw_map,lhs) of
+													SOME x => AtomSet.union(x,(string_first string_after_a first_map))
+													|NONE => string_first string_after_a first_map
+									)
+							)
+							|false => (AtomSet.empty)
+						end
+					val next_follow_set_list = map flw prod_list
+					val next_follow_set = foldl (AtomSet.union) (AtomSet.empty) next_follow_set_list
+				in
+					AtomMap.unionWith (AtomSet.union) (cur_flw_map,(AtomMap.singleton(a,next_follow_set)))
+				end
+
+			fun rec_follow cur_map = 
+				let
+					val symbols = AtomSet.listItems(sym_table)
+					fun map_over_lhs a = 
+						let
+							val map_list = map (fn k=>(current_follow k a cur_map)) symbols
+							val new_map = foldl ( fn (x,y)=>(AtomMap.unionWith AtomSet.union (x,y))  ) (AtomMap.empty) map_list
+						in
+							new_map
+						end
+					val next_rec_map_list = map map_over_lhs symbols
+					val next_rec_map = foldl ( fn (x,y)=>(AtomMap.unionWith AtomSet.union (x,y))  ) (AtomMap.empty) next_rec_map_list
+					fun map_equality map1 map2 (k::ks) = 
+					let
+					 	val m1_val = AtomMap.find(map1,k)
+					 	val m2_val = AtomMap.find(map2,k)
+					 in
+					 	case (m1_val,m2_val) of
+					 		(SOME v1,SOME v2) 	  =>AtomSet.equal(v1,v2) andalso (map_equality map1 map2 ks)
+					 		|(NONE,NONE)		  =>true andalso (map_equality map1 map2 ks)
+					 		|_					  =>false
+					 end
+					 |map_equality map1 map2 [] = true
+				in
+					case map_equality cur_map next_rec_map symbols of
+						true => (cur_map)
+						|false => (rec_follow next_rec_map)
+				end
+
+			val first_map_final = rec_follow AtomMap.empty
+
+			fun printSet set= map (fn k=>print((Atom.toString k) ^ " ")) (AtomSet.listItems set)
+		in
+			print "follow elements map:\n";
+			map (fn k=>(print ((Atom.toString k)^"->");
+						(
+							case AtomMap.find(first_map_final,k) of
+								SOME x=>printSet x
+								|NONE =>[()]
+						);
+						print ("\n")
+					)
+			) lhs_list;first_map_final
+		end
+
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*===================================================CALCULATION OF LL(1) TABLE=====================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+(*==================================================================================================================================*)
+
+	fun calc_lli_table (
+		rulemap,
+		sym_table,
+		tok_table,
+		nullable_set,
+		first_map,
+		follow_map
+		)=
+		let
+			val symbols = AtomSet.listItems(sym_table)
+			val tokens = AtomSet.listItems(tok_table)
+			
+		in
+			AtomMap.empty
+		end
+
+
+
+(*end of translate structure*)
 end
+
+
 
 (*
 	Type definitions:

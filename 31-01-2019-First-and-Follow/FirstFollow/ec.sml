@@ -37,7 +37,9 @@ val _ = print ("compiled productions : \n")
 val _ = Translate.printmap (rule_map,sym_table,tok_table)
 
 val nullable_set = Translate.calc_nullable(rule_map,sym_table,tok_table)
-val first_table = Translate.calc_first(rule_map,sym_table,tok_table,nullable_set)
+val first_map = Translate.calc_first(rule_map,sym_table,tok_table,nullable_set)
+val follow_map = Translate.calc_follow(rule_map,sym_table,tok_table,nullable_set,first_map)
+val lli_table = Translate.calc_lli_table(rule_map,sym_table,tok_table,nullable_set,first_map,follow_map)
 
 
 end

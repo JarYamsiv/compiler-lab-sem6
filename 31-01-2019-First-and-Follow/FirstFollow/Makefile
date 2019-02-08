@@ -35,7 +35,7 @@ ec: ec.sml ec.mlb expr.grm.sml expr.lex.sml ${COMMON} translate.sml
 
 
 test: all
-	${CURDIR}/ec test.txt
+	${CURDIR}/ec test3.txt
 
 atest:atomsettest.sml
 	sml atomsettest.sml
