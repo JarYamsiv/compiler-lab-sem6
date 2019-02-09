@@ -457,19 +457,99 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 		follow_map
 		)=
 		let
+
 			val symbols = AtomSet.listItems(sym_table)
 			val tokens = AtomSet.listItems(tok_table)
+
+			fun string_first (symtok::symtok_ls) f_map= 
+					(
+					case AtomSet.member(sym_table,symtok) of
+						false   =>(case Atom.compare (symtok ,Atom.atom "_") of
+							EQUAL =>(string_first symtok_ls f_map)
+							|_ =>AtomSet.singleton(symtok)
+							)
+						|true =>(
+						let 
+								val this_symtok_first = (case AtomMap.find(f_map,symtok) of
+														SOME x=>(x)
+														|NONE =>(AtomSet.empty))
+							in
+							case AtomSet.member(nullable_set,symtok) of
+								false =>(this_symtok_first)
+								|true =>(AtomSet.union(this_symtok_first,string_first symtok_ls f_map))
+							end
+							)
+					)
+				|string_first [] f_map	 = (AtomSet.empty)
+
+			fun nullable_string (x::xs) = AtomSet.member(nullable_set,x) andalso nullable_string xs
+						|nullable_string []		= true
 			
 
-			fun  loop_tok (tok::tok_ls) cur_sym= (TableMap.singleton((cur_sym,tok),0) )
+			fun  loop_tok (tok::tok_ls) cur_sym= (
+				let
+				 	
+				 	val prodns_of_cur_sym = ret_prod_list (rulemap,cur_sym)
+
+				 	fun should_add prodn = 
+				 		case (nullable_string prodn) of
+				 			 true  => (
+				 						case AtomMap.find(follow_map,cur_sym) of
+				 							SOME x=> ( AtomSet.member(x,tok) )
+				 							| NONE=> (false)
+				 					)
+
+				 			|false => (
+				 						AtomSet.member((string_first prodn follow_map),tok)
+				 					)
+
+				 	fun addableProdnsMaker (x::xs) = (case (should_add x) of
+				 										true => [x]@(addableProdnsMaker xs)
+				 										|false => (addableProdnsMaker xs)
+				 									)
+				 		|addableProdnsMaker []	  = []
+
+				 	val addableProdns:Atom.atom list list = addableProdnsMaker prodns_of_cur_sym
+
+
+				 	val this_map = TableMap.singleton((cur_sym,tok),  addableProdns  )
+				 	val next_map = loop_tok tok_ls cur_sym
+				 in
+				 	TableMap.unionWith (fn (x,y) => (x@y)) (this_map,next_map)
+				 end 
+				)
 				|loop_tok []			cur_sym= (TableMap.empty)
 
-			fun loop_sym  (sym::sym_ls)	= (loop_tok tokens sym)
+			fun loop_sym  (sym::sym_ls)	= 
+				let
+					val this_map = loop_tok tokens sym
+					val next_map = loop_sym sym_ls
+				in
+					TableMap.unionWith (fn (x,y) => (x@y)) (this_map,next_map)
+				end
+				
 				|loop_sym []			= (TableMap.empty)
 
 			val final = loop_sym symbols
+
+			fun prntkey (x,y) (lhs_prod_list)= 
+				let
+					val lhs = x
+					val prod_list = lhs_prod_list
+					val _ = print ( "("^(Atom.toString x)^" "^(Atom.toString y)^ ") :")
+
+					fun prntprodn (lhs,prodn) =( print ((Atom.toString lhs)^"->"); (map (fn k=>print ((Atom.toString k)^" ")) prodn);print " | "  )
+
+					val _ = map (fn k=>prntprodn(lhs,k)) prod_list
+
+					val _ = print "\n"
+					
+				in
+					()
+				end
+				
 		in
-			final
+			print "\n LL1 TABLE \n";TableMap.appi  (  fn(key,lhs_prod_list)=>  (prntkey key lhs_prod_list)  ) final;final
 		end
 
 
