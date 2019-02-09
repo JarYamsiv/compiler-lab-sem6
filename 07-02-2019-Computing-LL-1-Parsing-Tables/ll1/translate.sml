@@ -172,7 +172,7 @@ fun calc_nullable (rulemap,sym_table,tok_table) = let
 				|false => (recursive_nullable next_set)
 		end
 
-		val nullable_set = recursive_nullable base_nullable_set
+		val nullable_set = AtomSet.union(AtomSet.singleton(Atom.atom "_"),recursive_nullable base_nullable_set)
 in
 	map (fn k=> print(green^(Atom.toString k)^reset^"\n")) (AtomSet.listItems (nullable_set));nullable_set
 end
