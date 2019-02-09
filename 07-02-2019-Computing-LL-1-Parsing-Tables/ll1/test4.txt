@@ -1,0 +1,9 @@
+S : E $;
+
+E  : X Ed;
+
+Ed : _;
+Ed : a E;
+
+X : LPAR E RPAR;
+X : b;
