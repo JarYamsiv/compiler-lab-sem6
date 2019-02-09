@@ -500,7 +500,7 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 				 					)
 
 				 			|false => (
-				 						AtomSet.member((string_first prodn follow_map),tok)
+				 						AtomSet.member((string_first prodn first_map),tok)
 				 					)
 
 				 	fun addableProdnsMaker (x::xs) = (case (should_add x) of
