@@ -77,6 +77,7 @@ fun compile l rule_map sym_set tok_set= case l of
 
 (*there is something wrong with the tok_table*)
 
+
 fun printmap (rulemap,sym_table,tok_table)=
 	let
 		val a =10
