@@ -459,11 +459,11 @@ structure LR0_itemSet = RedBlackSetFn(LR0_key)
 type state_t = int*LR0_itemSet.set
 
 
-fun print_production prodn = let val new_prodn = [Atom.atom "."]@prodn in(
+fun print_production prodn = (
 									print "[";
 									map (fn k=>print (  (Atom.toString k)^" "  )) prodn;
 									print "]"
-								)end
+								)
 
 
 fun calc_lr0 (
@@ -476,45 +476,132 @@ fun calc_lr0 (
 	starting_symbol
 	)=
 	let
-		fun state_closure state = 
+		fun split_on_dot ((x::xs),(y::ys) )= (
+												case Atom.compare(y,Atom.atom ".") of
+												EQUAL => (  ((x::xs)) , ys  )
+												|_	  => split_on_dot (  ((x::xs)@[y]) , ys  )
+											   )
+			|split_on_dot ([] , (y::ys)) = (
+											case Atom.compare(y,Atom.atom ".") of
+											EQUAL => ( [],ys)
+											|_	  => split_on_dot ([y],ys)
+										   )
+
+			|split_on_dot ((x::xs),[])			 = ([],[])
+			|split_on_dot ([],[])			 = ([],[])
+
+		
+
+
+
+		fun after_dot (x::xs) = (case Atom.compare(x,Atom.atom ".") of
+									EQUAL => (case xs of
+												(x::xs) => SOME x
+												|[]		=> NONE
+											 )
+									|_ =>(after_dot xs))
+			| after_dot []	  = NONE
+
+		fun create_action_map (state_num,lr0_set,action_map) = 
 			let
-				val lro_list = LR0_itemSet.listItems( #2(state) )
+				val lr0_list = LR0_itemSet.listItems(lr0_set)
+				val after_dot_list = map  (fn (lhs,production) =>  (after_dot production) )  (lr0_list) 
 
-				(*fun split_on_dot ((x::xs),(y::ys) )= case Atom.compare(y,Atom.atom ".") of
-													EQUAL => (  ((x::xs)@[y]) , ys  )
-													|_	  => split_on_dot*)
-
-				fun after_dot (x::xs) = (case Atom.compare(x,Atom.atom ".") of
-											EQUAL => (case xs of
-														(x::xs) => SOME x
-														|[]		=> NONE
-													 )
-											|_ =>(after_dot xs))
-					| after_dot []	  = NONE
-
-				val current_production_list = LR0_itemSet.listItems(state_item_set)
+				(*
+					1 - symbol - ie, goto action
+					2 - token - ie,  shift action
+					3 - empty - ie , reduce action
+				*)
+				val map_item_list = map (fn SOME symtok => 
+												(
+													case AtomSet.member(sym_table,symtok) of
+														 true=>( symtok , 1 )
+														|false =>( symtok , 2 )
+												)
+											| NONE => ( Atom.atom " ",3)
+										) after_dot_list
+				val singleton_map_list = map (AtomMap.singleton) map_item_list
+				fun val_union (x,y) = x (*if there is a symbol with two actions then one is taken arbitarily*)
+				val final_map = foldl (AtomMap.unionWith val_union) AtomMap.empty singleton_map_list
 			in
-				()
+				(state_num,lr0_set,final_map)
+			end
+
+
+		fun state_closure (state_num,lr0_set,action_map) = 
+			let
+				val lr0_list = LR0_itemSet.listItems( lr0_set )
+
+				fun findprodns_attachDot lhs = 
+					let
+						val prod_list = ret_prod_list (rulemap,lhs)
+						val new_prod_list = map (fn k=>  (Atom.atom "."::k)  ) prod_list
+						val lr0_item_list = map (fn k=> (lhs,k) ) new_prod_list
+					in
+						LR0_itemSet.fromList(lr0_item_list)
+					end
+
+				val new_lr0item_set_list = map (fn (lhs,p)=> (findprodns_attachDot lhs) ) lr0_list
+				val new_lr0item_set = foldl (LR0_itemSet.union) lr0_set new_lr0item_set_list
+
+				val next_lr0item_set_list = map (fn (lhs,p)=>  
+													case (after_dot p) of
+														SOME x=>(
+																case AtomSet.member(sym_table,x) of
+																	true=>(findprodns_attachDot x)
+																	|false=>(LR0_itemSet.empty)
+															)
+														|NONE =>(LR0_itemSet.empty)
+					) (LR0_itemSet.listItems(new_lr0item_set))
+
+				val next_lr0item_set = foldl (LR0_itemSet.union) new_lr0item_set next_lr0item_set_list
+
+			in
+				(state_num,next_lr0item_set,action_map)
+			end
+
+		fun rec_state_closure (state_num,lr0_set,action_map)=
+			let
+				val next_state = state_closure (state_num,lr0_set,action_map)
+
+			in
+				case LR0_itemSet.equal(lr0_set,#2(next_state)) of
+					true => next_state
+					|false => rec_state_closure next_state
 			end
 
 		fun printState state = 
 			let
 				val lr0_list = LR0_itemSet.listItems(#2(state))
+				val _ = print ("state"^ (Int.toString (#1(state)) ) ^ ":\n" )
+				val _ = map ( fn(lhs,prod)=>( print( (Atom.toString lhs)^" ->" );print_production prod;print "\n"  ) ) lr0_list 
+				val _ = print ("actios of state"^(Int.toString (#1(state)) )^":\n")
+				val _ = AtomMap.appi (fn (k,v) =>
+										(
+											print ((Atom.toString k)^" has action ");
+											(case v of
+												1 => print "goto\n"
+												|2 => print "shift\n"
+												|3 => print "reduce\n"
+												|_ =>print "\n"
+												) 
+										)
+								) (#3(state))
 			in
-				map ( fn(lhs,prod)=>( print( (Atom.toString lhs)^" ->" );print_production prod  ) ) lr0_list ;
 				()
 			end
 	in
-		(case AtomMap.find(rulemap,starting_symbol) of
-			SOME x=>(print " ";
+		print "lr0:\n";(case AtomMap.find(rulemap,starting_symbol) of
+			SOME x=>(print ("given starting symbol is "^(Atom.toString starting_symbol)^"\n" ) ;
 				let
 					val first_prod = (Atom.atom ".")::(hd   (ret_prod_list(rulemap,starting_symbol))    )
-					val state0 = (  0,LR0_itemSet.singleton( (starting_symbol,first_prod))  )
+					val state0 = (  0,LR0_itemSet.singleton( (starting_symbol,first_prod)), AtomMap.empty  )
+					val state0_closure = create_action_map(rec_state_closure state0)
 				in
-					printState state0
+					printState state0_closure
 				end
 				)
-			|NONE =>(print "  ")
+			|NONE =>(print "false starting symbol\n")
 		)
 	end
 
