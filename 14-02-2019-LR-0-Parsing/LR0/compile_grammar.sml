@@ -1,95 +1,35 @@
-structure Translate =
+structure CompGram = 
 struct
+	val red = "\u001b[31;1m"
+	val green = "\u001b[32;1m"
+	val white = "\u001b[37;1m"
+	val yellow = "\u001b[33;1m"
+	val grey = "\u001b[30;1m"
+	val reset = "\u001b[0m"
+	type RHS = Atom.atom list
+	structure StringKey =
+	struct
+	    type ord_key = RHS
+	    fun compare ((x::xs),(y::ys)) = (case Atom.compare (x,y) of
+	        								  GREATER => GREATER
+	        								| LESS	  => LESS
+	        								| EQUAL	  => compare (xs,ys))
+	    	|compare ((x::xs),[])	  = GREATER
+	    	|compare ([]	,(y::ys)) = LESS
+	    	|compare ([],	[])		  = EQUAL 
 
-
-
-val red = "\u001b[31;1m"
-val green = "\u001b[32;1m"
-val white = "\u001b[37;1m"
-val yellow = "\u001b[33;1m"
-val grey = "\u001b[30;1m"
-val reset = "\u001b[0m"
-
-
-
-
-
-
-
-fun compileProdElem y :Atom.atom = case y of
-				(Ast.St x) => (print((Atom.toString x)^" ");(x:Atom.atom))
-				|(Ast.EPSILON) => (print("_");Atom.atom "_")
-				|(Ast.EOP) => (print("$");Atom.atom "$") 
-
-
-
-fun compileRHS (Ast.Rh y)  :HelpFun.RHS    = (map compileProdElem y)
-
-fun compileRule (Ast.Rul(x,y)) = let 
-									val _ = print (x^"->")
-									val atom_val_x = (Atom.atom x)
-									val prod_list = compileRHS y
-									val tok_set = AtomSet.fromList(prod_list)
-									val ret_list_set = HelpFun.ProductionSet.singleton(prod_list)
-
-								in
-								(	
-									print ("\n");
-									(atom_val_x,ret_list_set,tok_set)
-									
-								 )end
-
-
-fun compile l rule_map sym_set tok_set= case l of
-				(x::xs) =>	( let 
-									val a = compileRule x
-									val lhskey_compiled    = #1(a)
-									val prodnlist_compiled = #2(a)
-									val this_tok_table = #3(a)
-									val this_map = AtomMap.singleton(lhskey_compiled,prodnlist_compiled)
-									val this_sym_table = AtomSet.singleton(lhskey_compiled)									
-									val (new_map,new_sym_table,new_tok_table) = compile xs rule_map sym_set tok_set
-
-									val ret_sym_table = AtomSet.union(this_sym_table,new_sym_table)
-									val ret_tok_table = AtomSet.union(new_tok_table,this_tok_table)
-									val ret_tok_table = AtomSet.difference(ret_tok_table,ret_sym_table)
-									val ret_tok_table = AtomSet.difference(ret_tok_table,AtomSet.singleton(Atom.atom "_"))
-									
-
-								in 
-									  ( AtomMap.unionWith (HelpFun.ProductionSet.union) (this_map,new_map) , ret_sym_table ,ret_tok_table  ) 
-						    	end)
-				| []	=> (AtomMap.empty,AtomSet.empty,AtomSet.empty)
-
-(*there is something wrong with the tok_table*)
-
-fun printmap (rulemap,sym_table,tok_table)=
-	let
-		fun print_prodns rhs_from_map=
-					let
-						val rhs_from_map_e =valOf rhs_from_map
-						val prodn_list = map HelpFun.StringKey.convToRhs (HelpFun.ProductionSet.listItems rhs_from_map_e)
-
-						fun print_symtok x = case AtomSet.member(sym_table,x) of
-							true => (print (green^(Atom.toString x)^reset^" "))
-							|false => (print (red^(Atom.toString x)^reset^" "))
-
-						fun  prnt_rhs_list [x] = (map print_symtok x;())
-							|prnt_rhs_list []	=()
-							|prnt_rhs_list (x::xs)=(map print_symtok x;print " | ";prnt_rhs_list xs)
-					in
-						(prnt_rhs_list prodn_list)
-					end
-		fun print_rule symbol = (print (green^(Atom.toString symbol)^reset^"->");print_prodns (AtomMap.find(rulemap,symbol));print "\n")
-	in
-		map print_rule (AtomSet.listItems sym_table)
+	    fun convToRhs (x:ord_key) :RHS = x
 	end
 
-fun ret_prod_list (rulemap,lhs):HelpFun.RHS list = map HelpFun.StringKey.convToRhs (HelpFun.ProductionSet.listItems (valOf  (AtomMap.find (rulemap,lhs))))
+	structure ProductionSet = RedBlackSetFn(StringKey)
+	fun ret_prod_list (rulemap,lhs):RHS list = map StringKey.convToRhs (ProductionSet.listItems (valOf  (AtomMap.find (rulemap,lhs))))
 
 
-
-
+	fun filter f (x::xs) = (case (f x) of
+		SOME y=>[y]@(filter f xs)
+		|NONE =>(filter f xs)
+		)
+	|filter f [] = []
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
@@ -99,19 +39,35 @@ fun ret_prod_list (rulemap,lhs):HelpFun.RHS list = map HelpFun.StringKey.convToR
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
+	fun calc_nullable (rulemap,sym_table,tok_table) = let
 
-fun calc_nullable (rulemap,sym_table,tok_table) = let
+	fun base_nullable lhs = 
+		let
+			val (prodn_list:RHS list) = ret_prod_list (rulemap,lhs)
+
+			fun isEpsilon [x:Atom.atom] = if Atom.compare(x,Atom.atom "_") = EQUAL then SOME x else NONE
+				|isEpsilon _	 = NONE
+				
+			val isEpsilon_productions = filter isEpsilon prodn_list
+
+			val _ = print ((Atom.toString lhs)^"->")
+		in
+			case isEpsilon_productions of
+				[] => (print "no first epsilon\n";NONE)
+				|_ => (print "first epsilon\n";SOME lhs)
+		end
+
+	val base_nullable_set =AtomSet.fromList (filter base_nullable (AtomSet.listItems(sym_table)))
 
 	fun next_nullable_set cur_set =
 		let
 			fun singularProdn lhs = 
 				let
-					fun string_nullable [s] = if Atom.compare(s,Atom.atom "_") = EQUAL then true else AtomSet.member(cur_set,s)
-						|string_nullable (s::tring) = AtomSet.member(cur_set,s) andalso string_nullable tring
+					fun string_nullable (s::tring) = AtomSet.member(cur_set,s) andalso string_nullable tring
 						|string_nullable []		   = true
 
 					val prod_list = ret_prod_list (rulemap,lhs)
-					val sing_prodn = HelpFun.filter (fn k=>case (string_nullable k) of
+					val sing_prodn = filter (fn k=>case (string_nullable k) of
 													true =>SOME k
 													|false =>NONE
 						)
@@ -121,7 +77,7 @@ fun calc_nullable (rulemap,sym_table,tok_table) = let
 						[] =>(NONE)
 						|_ =>(SOME lhs)
 				end
-			val next_set = HelpFun.filter singularProdn (AtomSet.listItems sym_table)
+			val next_set = filter singularProdn (AtomSet.listItems sym_table)
 		in
 			AtomSet.fromList(next_set)
 		end
@@ -136,11 +92,9 @@ fun calc_nullable (rulemap,sym_table,tok_table) = let
 				|false => (recursive_nullable next_set)
 		end
 
-		val nullable_set = recursive_nullable AtomSet.empty
-		val _ = print "nullable set:\n"
+		val nullable_set = recursive_nullable base_nullable_set
 in
-	map (fn k=> print(green^(Atom.toString k)^reset^"\n")) (AtomSet.listItems (nullable_set));
-	nullable_set
+	map (fn k=> print(green^(Atom.toString k)^reset^"\n")) (AtomSet.listItems (nullable_set));nullable_set
 end
 
 (*==================================================================================================================================*)
@@ -162,7 +116,7 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 			let
 				val prod_list = ret_prod_list (rulemap,lhs)
 			in
-				AtomSet.fromList( HelpFun.filter (
+				AtomSet.fromList( filter (
 					fn k=>case AtomSet.member(tok_table,(hd k)) of
 						 true  => SOME (hd k)
 						|false => NONE
@@ -571,24 +525,4 @@ fun calc_lr0 (
 			|NONE =>(print "false starting symbol\n")
 		)
 	end
-
-
-
-
-(*end of translate structure*)
 end
-
-
-
-(*
-	Type definitions:
-
-	Map : 
-		Key : Atom.atom
-		Element: HelpFun.ProductionSet.set
-
-
-
-
-*)
-
