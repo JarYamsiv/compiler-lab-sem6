@@ -131,44 +131,34 @@ fun ret_prod_list (rulemap,lhs):HelpFun.RHS list = map HelpFun.RHSKey.convToRhs 
 (*==================================================================================================================================*)
 
 fun calc_nullable (gram:HelpFun.Grammar_t) = let
+
 	val rulemap = #rules gram
 	val sym_table = #sym_table gram
 	val tok_table = #tok_table gram
 
 	fun next_nullable_set cur_set =
 		let
+			val string_nullable = HelpFun.forall (fn k=>  AtomSet.member(cur_set,k)  )
+
 			fun singularProdn lhs = 
 				let
-					fun string_nullable (s::tring) = AtomSet.member(cur_set,s) andalso string_nullable tring
-						|string_nullable []		   = true
-
 					val prod_list = ret_prod_list (rulemap,lhs)
-					
 					val sing_prodn = HelpFun.filter (fn k=>case (string_nullable k) of true =>SOME k |false =>NONE) prod_list
 				in
-					case sing_prodn of
-						[] =>(NONE)
-						|_ =>(SOME lhs)
+					case sing_prodn of [] =>(NONE) |_ =>(SOME lhs)
 				end
 			val next_set = HelpFun.filter singularProdn (AtomSet.listItems sym_table)
 		in
 			AtomSet.fromList(next_set)
 		end
 
-	fun recursive_nullable base_set = 
-		let
-			val next_set = AtomSet.union(base_set,(next_nullable_set base_set))
+	val fixedPointNullable = HelpFun.MakeFixedPointFn (next_nullable_set) (AtomSet.equal)
 
-		in
-			case AtomSet.equal(next_set,base_set) of
-				 true  => next_set
-				|false => (recursive_nullable next_set)
-		end
+	val nullable_set = fixedPointNullable AtomSet.empty
 
-		val nullable_set = recursive_nullable AtomSet.empty
-		val _ = print "nullable set:\n"
+	val _ = print "nullable set:\n"
 in
-	map (fn k=> print(green^(Atom.toString k)^reset^"\n")) (AtomSet.listItems (nullable_set));
+	HelpFun.PrintSet nullable_set;
 	nullable_set
 end
 
@@ -184,8 +174,11 @@ end
 
 
 
-(*fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
+fun calc_first (gram:HelpFun.Grammar_t,nullable_set)=
 	let
+		val rulemap = #rules gram
+		val sym_table = #sym_table gram
+		val tok_table = #tok_table gram
 
 		fun base_first lhs=
 			let
@@ -294,7 +287,7 @@ end
 						print ("\n")
 					)
 			) (AtomSet.listItems sym_table);final_map
-	end*)
+	end
 
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)

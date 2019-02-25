@@ -39,7 +39,7 @@ val _ = print ("compiled productions : \n")
 val _ = Translate.printmap (grammar)
 
 val nullable_set = Translate.calc_nullable(grammar)
-(*val first_map = Translate.calc_first(rule_map,sym_table,tok_table,nullable_set)*)
+val first_map = Translate.calc_first(grammar,nullable_set)
 (*val follow_map = Translate.calc_follow(rule_map,sym_table,tok_table,nullable_set,first_map)*)
 (*val lr0_table = Translate.calc_lr0(rule_map,sym_table,tok_table,nullable_set,first_map,follow_map,Atom.atom "S")*)
 
