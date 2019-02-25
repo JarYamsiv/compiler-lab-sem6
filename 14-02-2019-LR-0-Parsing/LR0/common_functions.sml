@@ -7,6 +7,28 @@ end
 
 structure HelpFun = 
 struct
+
+	fun id x =x
+
+	fun filter f (x::xs) =( case (f x) of
+							SOME y=>[y]@(filter f xs)
+							|NONE =>(filter f xs)
+						)
+	
+		|filter f [] = []
+
+	fun forall f (x::xs) = (f x) andalso (forall f xs)
+		|forall f []		 = true
+
+	fun array_redn (x::xs) = x@(array_redn xs) 
+		|array_redn [] = []
+
+	fun bool_to_op f x = if (f x) then (SOME x) else (NONE)
+
+
+
+
+
 	type RHS = Atom.atom list
 
 	structure RHSKey =
@@ -26,35 +48,27 @@ struct
 	structure ProductionSet = RedBlackSetFn(RHSKey)
 
 
-	fun id x =x
-
-	fun filter f (x::xs) =( case (f x) of
-							SOME y=>[y]@(filter f xs)
-							|NONE =>(filter f xs)
-						)
 	
-		|filter f [] = []
-
-	fun forall f (x::xs) = (f x) andalso (forall f xs)
-		|forall f []		 = true
-
-	fun array_redn (x::xs) = x@(array_redn xs) 
-		|array_redn [] = []
-
-	fun bool_to_op f x = if (f x) then (SOME x) else (NONE)
 
 	type Productions_t = ProductionSet.set
 	type Rules_t = Productions_t AtomMap.map
 	type Grammar_t    = { sym_table : AtomSet.set, tok_table : AtomSet.set, rules : Rules_t }
 
+
+
+
 	fun ret_prod_list (rulemap,lhs):RHS list = map RHSKey.convToRhs (ProductionSet.listItems (valOf  (AtomMap.find (rulemap,lhs))))
 
 	fun PrintSet (set:AtomSet.set):unit =
 		 (
-		 	print "{";
+		 	print "{ ";
 		(map ( fn k=>print((Atom.toString k)^" ")  ) (AtomSet.listItems(set)) ); 
-		print "}\n"
+		print " }\n"
 			)
+
+
+
+
 
 	fun forall_symbols_g f (gram:Grammar_t)=map f (AtomSet.listItems(#sym_table gram))
 		
@@ -77,13 +91,13 @@ struct
 		let
 			fun fp_helper cur=
 				case compare(update cur,cur) of
-					true=>cur
+					true=>update cur
 					|false => fp_helper (update cur)
 		in
 			fp_helper
 		end
 
-	fun MapComapreFn (listKeyFn) (compKeyFn) (findFn) (compElemFn) = 
+	fun MakeMapCompareFn (listKeyFn) (compKeyFn) (findFn) (compElemFn) = 
 		let
 			fun eq (m1,m2)=
 				let

@@ -156,7 +156,7 @@ fun calc_nullable (gram:HelpFun.Grammar_t) = let
 
 	val nullable_set = fixedPointNullable AtomSet.empty
 
-	val _ = print "nullable set:\n"
+	val _ = print "nullable set:"
 in
 	HelpFun.PrintSet nullable_set;
 	nullable_set
@@ -179,30 +179,7 @@ fun calc_first (gram:HelpFun.Grammar_t,nullable_set)=
 		val rulemap = #rules gram
 		val sym_table = #sym_table gram
 		val tok_table = #tok_table gram
-
-		fun base_first lhs=
-			let
-				val prod_list = ret_prod_list (rulemap,lhs)
-			in
-				AtomSet.fromList( HelpFun.filter (
-					fn k=>case AtomSet.member(tok_table,(hd k)) of
-						 true  => SOME (hd k)
-						|false => NONE
-					) prod_list
-				)
-			end
-
-		fun calc_base_map (x::xs) = 
-			let
-				val this_map = AtomMap.singleton(x,base_first x)
-				val new_map = calc_base_map xs
-			in
-				AtomMap.unionWith (AtomSet.union) (this_map,new_map)
-			end
-			| calc_base_map [] = AtomMap.empty
-
-		val base_map = calc_base_map (AtomSet.listItems sym_table)
- 
+		val sym_list = AtomSet.listItems sym_table
 
 		fun lhs_update lhs cur_map=
 			let
@@ -210,28 +187,20 @@ fun calc_first (gram:HelpFun.Grammar_t,nullable_set)=
 
 				fun first_of_current_prodn (symtok::symtok_ls) = 
 					(
-					case AtomSet.member(sym_table,symtok) of
-						false   =>(case Atom.compare (symtok ,Atom.atom "_") of
-							EQUAL =>AtomSet.empty
-							|_ =>AtomSet.singleton(symtok)
-							)
-						|true =>(
-						let 
-								val this_symtok_first = (case AtomMap.find(cur_map,symtok) of
-														SOME x=>(x)
-														|NONE =>(AtomSet.empty))
+						if AtomSet.member(sym_table,symtok) then
+							let
+								val this_symtok_first = (case AtomMap.find(cur_map,symtok) of SOME x=>(x) |NONE =>(AtomSet.empty) )
 							in
-							case AtomSet.member(nullable_set,symtok) of
-								false =>(
-										this_symtok_first
-									)
-								|true =>(
-										AtomSet.union(this_symtok_first,first_of_current_prodn symtok_ls)
-									)
+								if AtomSet.member(nullable_set,symtok) then
+									AtomSet.union(this_symtok_first,first_of_current_prodn symtok_ls)
+								else
+									this_symtok_first
 							end
-							)
+						else
+							AtomSet.singleton(symtok)
 					)
 					|first_of_current_prodn [] = AtomSet.empty
+
 				val new_first_of_prod_set_list = map first_of_current_prodn prod_list
 				val new_lhs_first_set = foldl (AtomSet.union) (AtomSet.empty) new_first_of_prod_set_list
 				val sing_map = AtomMap.singleton(lhs,new_lhs_first_set)
@@ -251,29 +220,14 @@ fun calc_first (gram:HelpFun.Grammar_t,nullable_set)=
 			end
 			|calc_next_map [] this_map= (this_map)
 
-		fun recursive_first base_map = 
-			let
-				val next_map = AtomMap.unionWith (AtomSet.union) (base_map,(calc_next_map (AtomSet.listItems sym_table) base_map))
-				fun map_equality map1 map2 (k::ks) = 
-					let
-					 	val m1_val = AtomMap.find(map1,k)
-					 	val m2_val = AtomMap.find(map2,k)
-					 in
-					 	case (m1_val,m2_val) of
-					 		(SOME v1,SOME v2) 	  =>AtomSet.equal(v1,v2) andalso (map_equality map1 map2 ks)
-					 		|(NONE,NONE)		  =>true andalso (map_equality map1 map2 ks)
-					 		|_					  =>false
-					 end
-					 |map_equality map1 map2 [] = true
-			in
-				case map_equality base_map next_map (AtomSet.listItems sym_table) of
-					true   => next_map
-					|false => recursive_first next_map
-			end
+		val mapCompare = HelpFun.MakeMapCompareFn (AtomMap.listKeys) (fn (x,y)=>Atom.compare(x,y)=EQUAL) (AtomMap.find) (AtomSet.equal)
 
-		val final_map = recursive_first base_map
 
-		fun printSet set= map (fn k=>print((Atom.toString k) ^ " ")) (AtomSet.listItems set)
+		val FPupdateFn = fn k=>( AtomMap.unionWith AtomSet.union  (k, calc_next_map sym_list k)  )
+		val FPcompareFn = mapCompare
+		val FP_Fn = HelpFun.MakeFixedPointFn (FPupdateFn) (FPcompareFn)
+
+		val final_map = FP_Fn AtomMap.empty
 
 	in
 		
@@ -281,10 +235,9 @@ fun calc_first (gram:HelpFun.Grammar_t,nullable_set)=
 		map (fn k=>(print ((Atom.toString k)^"->");
 						(
 							case AtomMap.find(final_map,k) of
-								SOME x=>printSet x
-								|NONE =>[()]
-						);
-						print ("\n")
+								SOME x=>HelpFun.PrintSet x
+								|NONE =>()
+						)
 					)
 			) (AtomSet.listItems sym_table);final_map
 	end
