@@ -2,7 +2,7 @@ structure HelpFun =
 struct
 	type RHS = Atom.atom list
 
-	structure StringKey =
+	structure RHSKey =
 	struct
 	    type ord_key = RHS
 	    fun compare ((x::xs),(y::ys)) = (case Atom.compare (x,y) of
@@ -16,9 +16,10 @@ struct
 	    fun convToRhs (x:ord_key) :RHS = x
 	end
 
-	structure ProductionSet = RedBlackSetFn(StringKey)
+	structure ProductionSet = RedBlackSetFn(RHSKey)
 
 
+	fun id x =x
 
 	fun filter f (x::xs) =( case (f x) of
 							SOME y=>[y]@(filter f xs)
@@ -26,6 +27,10 @@ struct
 						)
 	
 		|filter f [] = []
+
+	type Productions_t = ProductionSet.set
+	type Rules_t = Productions_t AtomMap.map
+	type Grammar_t    = { sym_table : AtomSet.set, tok_table : AtomSet.set, rules : Rules_t }
 
 
 end

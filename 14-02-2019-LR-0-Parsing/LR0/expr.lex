@@ -63,7 +63,7 @@ digit = [0-9]+;
 		 );
 "/*".*"*/"              => (lex());
 
-"e"                     => ( Tokens.EPS(!lineRef, !lineRef));
+"_"                     => ( Tokens.EPS(!lineRef, !lineRef));
 [a-zA-Z_][a-zA-Z0-9_]*  => ( Tokens.IDENTIFIER(yytext ,!lineRef, !lineRef));
 ":"                     => ( Tokens.COLON(!lineRef, !lineRef));
 "|"                     => ( Tokens.BAR(!lineRef, !lineRef));

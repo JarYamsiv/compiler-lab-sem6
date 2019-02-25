@@ -16,14 +16,15 @@ val reset = "\u001b[0m"
 
 
 
-fun compileProdElem y :Atom.atom = case y of
-				(Ast.St x) => (print((Atom.toString x)^" ");(x:Atom.atom))
-				|(Ast.EPSILON) => (print("_");Atom.atom "_")
-				|(Ast.EOP) => (print("$");Atom.atom "$") 
+fun compileProdElem y :(Atom.atom option) = 
+	case y of
+				(Ast.St x) => (print((Atom.toString x)^" ");  (SOME x)  )
+				|(Ast.EPSILON) => (print("EPSILON");   NONE  )
+				|(Ast.EOP) => (print("dollar");  (SOME (Atom.atom "$"))  ) 
 
 
 
-fun compileRHS (Ast.Rh y)  :HelpFun.RHS    = (map compileProdElem y)
+fun compileRHS (Ast.Rh y)  :HelpFun.RHS    =HelpFun.filter HelpFun.id (map compileProdElem y)
 
 fun compileRule (Ast.Rul(x,y)) = let 
 									val _ = print (x^"->")
@@ -40,15 +41,25 @@ fun compileRule (Ast.Rul(x,y)) = let
 								 )end
 
 
-fun compile l rule_map sym_set tok_set= case l of
-				(x::xs) =>	( let 
+fun compile l (grammar:HelpFun.Grammar_t)  :HelpFun.Grammar_t= 
+	case l of
+				(x::xs) =>	( let
+									val rulemap = #rules grammar
+									val sym_table = #sym_table grammar
+									val tok_table = #tok_table grammar
+
 									val a = compileRule x
 									val lhskey_compiled    = #1(a)
 									val prodnlist_compiled = #2(a)
 									val this_tok_table = #3(a)
+
 									val this_map = AtomMap.singleton(lhskey_compiled,prodnlist_compiled)
 									val this_sym_table = AtomSet.singleton(lhskey_compiled)									
-									val (new_map,new_sym_table,new_tok_table) = compile xs rule_map sym_set tok_set
+									val (new_gram) = compile xs grammar
+
+									val new_map = #rules (new_gram)
+									val new_sym_table = #sym_table (new_gram)
+									val new_tok_table = #tok_table (new_gram)
 
 									val ret_sym_table = AtomSet.union(this_sym_table,new_sym_table)
 									val ret_tok_table = AtomSet.union(new_tok_table,this_tok_table)
@@ -57,26 +68,45 @@ fun compile l rule_map sym_set tok_set= case l of
 									
 
 								in 
-									  ( AtomMap.unionWith (HelpFun.ProductionSet.union) (this_map,new_map) , ret_sym_table ,ret_tok_table  ) 
+									  ( {
+									  		rules= AtomMap.unionWith (HelpFun.ProductionSet.union) (this_map,new_map) , 
+									  		sym_table= ret_sym_table ,
+									  		tok_table= ret_tok_table  
+									  	}
+									  	) 
 						    	end)
-				| []	=> (AtomMap.empty,AtomSet.empty,AtomSet.empty)
+				| []	=> ({
+								rules= AtomMap.empty,
+								sym_table= AtomSet.empty,
+								tok_table= AtomSet.empty
+					}
+					)
 
 (*there is something wrong with the tok_table*)
 
-fun printmap (rulemap,sym_table,tok_table)=
+fun printmap (gram:HelpFun.Grammar_t)=
 	let
+		val rulemap = #rules gram
+		val sym_table = #sym_table gram
+		val tok_table = #tok_table gram
 		fun print_prodns rhs_from_map=
 					let
 						val rhs_from_map_e =valOf rhs_from_map
-						val prodn_list = map HelpFun.StringKey.convToRhs (HelpFun.ProductionSet.listItems rhs_from_map_e)
+						val prodn_list = map HelpFun.RHSKey.convToRhs (HelpFun.ProductionSet.listItems rhs_from_map_e)
+
+
 
 						fun print_symtok x = case AtomSet.member(sym_table,x) of
 							true => (print (green^(Atom.toString x)^reset^" "))
 							|false => (print (red^(Atom.toString x)^reset^" "))
 
-						fun  prnt_rhs_list [x] = (map print_symtok x;())
+						fun print_prodn p =(case p of 
+							(x::xs) => map print_symtok (x::xs)
+							|_		=> (print "_";[()]) )
+
+						fun  prnt_rhs_list [x] = (print_prodn x;())
 							|prnt_rhs_list []	=()
-							|prnt_rhs_list (x::xs)=(map print_symtok x;print " | ";prnt_rhs_list xs)
+							|prnt_rhs_list (x::xs)=(print_prodn x;print " | ";prnt_rhs_list xs)
 					in
 						(prnt_rhs_list prodn_list)
 					end
@@ -85,7 +115,7 @@ fun printmap (rulemap,sym_table,tok_table)=
 		map print_rule (AtomSet.listItems sym_table)
 	end
 
-fun ret_prod_list (rulemap,lhs):HelpFun.RHS list = map HelpFun.StringKey.convToRhs (HelpFun.ProductionSet.listItems (valOf  (AtomMap.find (rulemap,lhs))))
+fun ret_prod_list (rulemap,lhs):HelpFun.RHS list = map HelpFun.RHSKey.convToRhs (HelpFun.ProductionSet.listItems (valOf  (AtomMap.find (rulemap,lhs))))
 
 
 
@@ -100,22 +130,21 @@ fun ret_prod_list (rulemap,lhs):HelpFun.RHS list = map HelpFun.StringKey.convToR
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
 
-fun calc_nullable (rulemap,sym_table,tok_table) = let
+fun calc_nullable (gram:HelpFun.Grammar_t) = let
+	val rulemap = #rules gram
+	val sym_table = #sym_table gram
+	val tok_table = #tok_table gram
 
 	fun next_nullable_set cur_set =
 		let
 			fun singularProdn lhs = 
 				let
-					fun string_nullable [s] = if Atom.compare(s,Atom.atom "_") = EQUAL then true else AtomSet.member(cur_set,s)
-						|string_nullable (s::tring) = AtomSet.member(cur_set,s) andalso string_nullable tring
+					fun string_nullable (s::tring) = AtomSet.member(cur_set,s) andalso string_nullable tring
 						|string_nullable []		   = true
 
 					val prod_list = ret_prod_list (rulemap,lhs)
-					val sing_prodn = HelpFun.filter (fn k=>case (string_nullable k) of
-													true =>SOME k
-													|false =>NONE
-						)
-					prod_list
+					
+					val sing_prodn = HelpFun.filter (fn k=>case (string_nullable k) of true =>SOME k |false =>NONE) prod_list
 				in
 					case sing_prodn of
 						[] =>(NONE)
@@ -155,7 +184,7 @@ end
 
 
 
-fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
+(*fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 	let
 
 		fun base_first lhs=
@@ -214,9 +243,7 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 				val new_lhs_first_set = foldl (AtomSet.union) (AtomSet.empty) new_first_of_prod_set_list
 				val sing_map = AtomMap.singleton(lhs,new_lhs_first_set)
 				val union_map = AtomMap.unionWith (AtomSet.union) (sing_map,cur_map)
-				(*val _ = print "pass-\n"
-				val _ = AtomMap.appi (fn (key,first_set)=>  (print ((Atom.toString key)^" :{"); (printSet first_set);print "}\n")  ) union_map
-				val _ = print "\n"*)
+
 
 			in
 				union_map
@@ -256,7 +283,7 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 		fun printSet set= map (fn k=>print((Atom.toString k) ^ " ")) (AtomSet.listItems set)
 
 	in
-		(*AtomMap.appi (fn (key,first_set) => (print((Atom.toString key)^": ");printSet first_set  ; print "\n" )) base_map*)
+		
 		print "first elements map:\n";
 		map (fn k=>(print ((Atom.toString k)^"->");
 						(
@@ -267,7 +294,7 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 						print ("\n")
 					)
 			) (AtomSet.listItems sym_table);final_map
-	end
+	end*)
 
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
@@ -280,7 +307,7 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 (*==================================================================================================================================*)
 
 
-	fun calc_follow(rulemap,sym_table,tok_table,nullable_set,first_map)=
+	(*fun calc_follow(rulemap,sym_table,tok_table,nullable_set,first_map)=
 		let
 			val lhs_list = AtomSet.listItems(sym_table)
 
@@ -389,7 +416,7 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 						print ("\n")
 					)
 			) lhs_list;first_map_final
-		end
+		end*)
 
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
@@ -401,6 +428,7 @@ fun calc_first (rulemap,sym_table,tok_table,nullable_set)=
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
 
+(*
 structure LR0_key =
 struct
     type ord_key = (Atom.atom*Atom.atom list)
@@ -575,6 +603,7 @@ fun calc_lr0 (
 
 
 
+*)
 (*end of translate structure*)
 end
 

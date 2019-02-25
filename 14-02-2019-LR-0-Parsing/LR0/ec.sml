@@ -32,14 +32,16 @@ fun print_error (s,i:int,_) = TextIO.output(TextIO.stdErr,
 (* The portion of the code that does the actual compiling *)
 
 val (program,_) = ExprParser.parse (0,thisLexer,print_error,())
-val (rule_map,sym_table,tok_table)  = Translate.compile program AtomMap.empty AtomSet.empty AtomSet.empty
-val _ = print ("compiled productions : \n")
-val _ = Translate.printmap (rule_map,sym_table,tok_table)
 
-val nullable_set = Translate.calc_nullable(rule_map,sym_table,tok_table)
-val first_map = Translate.calc_first(rule_map,sym_table,tok_table,nullable_set)
-val follow_map = Translate.calc_follow(rule_map,sym_table,tok_table,nullable_set,first_map)
-val lr0_table = Translate.calc_lr0(rule_map,sym_table,tok_table,nullable_set,first_map,follow_map,Atom.atom "S")
+val (grammar)  = Translate.compile program ({rules=AtomMap.empty, sym_table=AtomSet.empty, tok_table=AtomSet.empty})
+
+val _ = print ("compiled productions : \n")
+val _ = Translate.printmap (grammar)
+
+val nullable_set = Translate.calc_nullable(grammar)
+(*val first_map = Translate.calc_first(rule_map,sym_table,tok_table,nullable_set)*)
+(*val follow_map = Translate.calc_follow(rule_map,sym_table,tok_table,nullable_set,first_map)*)
+(*val lr0_table = Translate.calc_lr0(rule_map,sym_table,tok_table,nullable_set,first_map,follow_map,Atom.atom "S")*)
 
 
 end
