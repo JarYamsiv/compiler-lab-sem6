@@ -2,7 +2,6 @@ structure Translate =
 struct
 
 
-
 val red = "\u001b[31;1m"
 val green = "\u001b[32;1m"
 val white = "\u001b[37;1m"
@@ -11,16 +10,11 @@ val grey = "\u001b[30;1m"
 val reset = "\u001b[0m"
 
 
-
-
-
-
-
 fun compileProdElem y :(Atom.atom option) = 
 	case y of
 				(Ast.St x) => (print((Atom.toString x)^" ");  (SOME x)  )
-				|(Ast.EPSILON) => (print("EPSILON");   NONE  )
-				|(Ast.EOP) => (print("dollar");  (SOME (Atom.atom "$"))  ) 
+				|(Ast.EPSILON) => (print("_");   NONE  )
+				|(Ast.EOP) => (print("$");  (SOME (Atom.atom "$"))  ) 
 
 
 
@@ -132,27 +126,12 @@ fun ret_prod_list (rulemap,lhs):HelpFun.RHS list = map HelpFun.RHSKey.convToRhs 
 
 fun calc_nullable (gram:HelpFun.Grammar_t) = let
 
-	val rulemap = #rules gram
-	val sym_table = #sym_table gram
-	val tok_table = #tok_table gram
+	(*up - for each production (lsh->prod) it will return a set if lhs is nulalble from that prodn empty o/w*)
+	fun up cur_set (lhs,prod) = if (HelpFun.forall (fn k=>  AtomSet.member(cur_set,k)  )) prod then AtomSet.singleton(lhs) else AtomSet.empty
 
-	fun next_nullable_set cur_set =
-		let
-			val string_nullable = HelpFun.forall (fn k=>  AtomSet.member(cur_set,k)  )
+	fun upd cur_set = foldl (AtomSet.union) (AtomSet.empty) (HelpFun.map_lhs_productions gram  (up cur_set)   )
 
-			fun singularProdn lhs = 
-				let
-					val prod_list = ret_prod_list (rulemap,lhs)
-					val sing_prodn = HelpFun.filter (fn k=>case (string_nullable k) of true =>SOME k |false =>NONE) prod_list
-				in
-					case sing_prodn of [] =>(NONE) |_ =>(SOME lhs)
-				end
-			val next_set = HelpFun.filter singularProdn (AtomSet.listItems sym_table)
-		in
-			AtomSet.fromList(next_set)
-		end
-
-	val fixedPointNullable = HelpFun.MakeFixedPointFn (next_nullable_set) (AtomSet.equal)
+	val fixedPointNullable = HelpFun.MakeFixedPointFn (upd) (AtomSet.equal)
 
 	val nullable_set = fixedPointNullable AtomSet.empty
 
@@ -171,8 +150,6 @@ end
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
-
-
 
 fun calc_first (gram:HelpFun.Grammar_t,nullable_set)=
 	let
@@ -205,7 +182,6 @@ fun calc_first (gram:HelpFun.Grammar_t,nullable_set)=
 				val new_lhs_first_set = foldl (AtomSet.union) (AtomSet.empty) new_first_of_prod_set_list
 				val sing_map = AtomMap.singleton(lhs,new_lhs_first_set)
 				val union_map = AtomMap.unionWith (AtomSet.union) (sing_map,cur_map)
-
 
 			in
 				union_map
@@ -253,116 +229,114 @@ fun calc_first (gram:HelpFun.Grammar_t,nullable_set)=
 (*==================================================================================================================================*)
 
 
-	(*fun calc_follow(rulemap,sym_table,tok_table,nullable_set,first_map)=
-		let
-			val lhs_list = AtomSet.listItems(sym_table)
+fun calc_follow(gram:HelpFun.Grammar_t,nullable_set,first_map)=
+	let
+		val rulemap = #rules gram
+		val sym_table = #sym_table gram
+		val tok_table = #tok_table gram
+		val lhs_list = AtomSet.listItems(sym_table)
 
-			fun string_first (symtok::symtok_ls) f_map= 
-					(
-					case AtomSet.member(sym_table,symtok) of
-						false   =>(case Atom.compare (symtok ,Atom.atom "_") of
-							EQUAL =>(string_first symtok_ls f_map)
-							|_ =>AtomSet.singleton(symtok)
-							)
-						|true =>(
+		fun string_first (symtok::symtok_ls) f_map= 
+				(
+				case AtomSet.member(sym_table,symtok) of
+					false   =>(AtomSet.singleton(symtok))
+					|true =>(
 						let 
-								val this_symtok_first = (case AtomMap.find(f_map,symtok) of
-														SOME x=>(x)
-														|NONE =>(AtomSet.empty))
-							in
-							case AtomSet.member(nullable_set,symtok) of
-								false =>(
-										this_symtok_first
-									)
-								|true =>(
-										AtomSet.union(this_symtok_first,string_first symtok_ls f_map)
-									)
-							end
-							)
-					)
-				|string_first [] f_map	 = (AtomSet.empty)
-
-			fun current_follow lhs a cur_flw_map= 
-				let
-					val prod_list = ret_prod_list(rulemap,lhs)
-					fun nullable_string (x::xs) = AtomSet.member(nullable_set,x) andalso nullable_string xs
-						|nullable_string []		= true
-
-					val prodn_list = ret_prod_list(rulemap,lhs)
-					fun presence x (y::ys) = (case Atom.compare(x,y) of
-												EQUAL => true
-												|_ => presence x ys)
-						| presence x []    = false
-
-					fun substringer x (y::ys) = (case Atom.compare(x,y) of
-												EQUAL => ys
-												|_	  => (substringer x ys)	)
-						|substringer x []	  = []
-
-					fun flw prodn = 
-						let
-							val string_after_a = substringer a prodn
+							val this_symtok_first = (case AtomMap.find(f_map,symtok) of SOME x=>(x) |NONE =>(AtomSet.empty))
 						in
-							case (presence a prodn) of
-							true=> (case (nullable_string string_after_a) of 
-										false  => (string_first string_after_a first_map)
-										| true => (case AtomMap.find(cur_flw_map,lhs) of
-													SOME x => AtomSet.union(x,(string_first string_after_a first_map))
-													|NONE => string_first string_after_a first_map
-									)
-							)
-							|false => (AtomSet.empty)
+						case AtomSet.member(nullable_set,symtok) of
+							false =>(
+									this_symtok_first
+								)
+							|true =>(
+									AtomSet.union(this_symtok_first,string_first symtok_ls f_map)
+								)
 						end
-					val next_follow_set_list = map flw prod_list
-					val next_follow_set = foldl (AtomSet.union) (AtomSet.empty) next_follow_set_list
-				in
-					AtomMap.unionWith (AtomSet.union) (cur_flw_map,(AtomMap.singleton(a,next_follow_set)))
-				end
+						)
+				)
+			|string_first [] f_map	 = (AtomSet.empty)
 
-			fun rec_follow cur_map = 
-				let
-					val symbols = AtomSet.listItems(sym_table)
-					fun map_over_lhs a = 
-						let
-							val map_list = map (fn k=>(current_follow k a cur_map)) symbols
-							val new_map = foldl ( fn (x,y)=>(AtomMap.unionWith AtomSet.union (x,y))  ) (AtomMap.empty) map_list
-						in
-							new_map
-						end
-					val next_rec_map_list = map map_over_lhs symbols
-					val next_rec_map = foldl ( fn (x,y)=>(AtomMap.unionWith AtomSet.union (x,y))  ) (AtomMap.empty) next_rec_map_list
-					fun map_equality map1 map2 (k::ks) = 
+		fun current_follow lhs a cur_flw_map= 
+			let
+				val prod_list = ret_prod_list(rulemap,lhs)
+				fun nullable_string (x::xs) = AtomSet.member(nullable_set,x) andalso nullable_string xs
+					|nullable_string []		= true
+
+				val prodn_list = ret_prod_list(rulemap,lhs)
+				fun presence x (y::ys) = (case Atom.compare(x,y) of
+											EQUAL => true
+											|_ => presence x ys)
+					| presence x []    = false
+
+				fun substringer x (y::ys) = (case Atom.compare(x,y) of
+											EQUAL => ys
+											|_	  => (substringer x ys)	)
+					|substringer x []	  = []
+
+				fun flw prodn = 
 					let
-					 	val m1_val = AtomMap.find(map1,k)
-					 	val m2_val = AtomMap.find(map2,k)
-					 in
-					 	case (m1_val,m2_val) of
-					 		(SOME v1,SOME v2) 	  =>AtomSet.equal(v1,v2) andalso (map_equality map1 map2 ks)
-					 		|(NONE,NONE)		  =>true andalso (map_equality map1 map2 ks)
-					 		|_					  =>false
-					 end
-					 |map_equality map1 map2 [] = true
-				in
-					case map_equality cur_map next_rec_map symbols of
-						true => (cur_map)
-						|false => (rec_follow next_rec_map)
-				end
+						val string_after_a = substringer a prodn
+					in
+						case (presence a prodn) of
+						true=> (case (nullable_string string_after_a) of 
+									false  => (string_first string_after_a first_map)
+									| true => (case AtomMap.find(cur_flw_map,lhs) of
+												SOME x => AtomSet.union(x,(string_first string_after_a first_map))
+												|NONE => string_first string_after_a first_map
+								)
+						)
+						|false => (AtomSet.empty)
+					end
+				val next_follow_set_list = map flw prod_list
+				val next_follow_set = foldl (AtomSet.union) (AtomSet.empty) next_follow_set_list
+			in
+				AtomMap.unionWith (AtomSet.union) (cur_flw_map,(AtomMap.singleton(a,next_follow_set)))
+			end
 
-			val first_map_final = rec_follow AtomMap.empty
+		fun rec_follow cur_map = 
+			let
+				val symbols = AtomSet.listItems(sym_table)
+				fun map_over_lhs a = 
+					let
+						val map_list = map (fn k=>(current_follow k a cur_map)) symbols
+						val new_map = foldl ( fn (x,y)=>(AtomMap.unionWith AtomSet.union (x,y))  ) (AtomMap.empty) map_list
+					in
+						new_map
+					end
+				val next_rec_map_list = map map_over_lhs symbols
+				val next_rec_map = foldl ( fn (x,y)=>(AtomMap.unionWith AtomSet.union (x,y))  ) (AtomMap.empty) next_rec_map_list
+				fun map_equality map1 map2 (k::ks) = 
+				let
+				 	val m1_val = AtomMap.find(map1,k)
+				 	val m2_val = AtomMap.find(map2,k)
+				 in
+				 	case (m1_val,m2_val) of
+				 		(SOME v1,SOME v2) 	  =>AtomSet.equal(v1,v2) andalso (map_equality map1 map2 ks)
+				 		|(NONE,NONE)		  =>true andalso (map_equality map1 map2 ks)
+				 		|_					  =>false
+				 end
+				 |map_equality map1 map2 [] = true
+			in
+				case map_equality cur_map next_rec_map symbols of
+					true => (cur_map)
+					|false => (rec_follow next_rec_map)
+			end
 
-			fun printSet set= map (fn k=>print((Atom.toString k) ^ " ")) (AtomSet.listItems set)
-		in
-			print "follow elements map:\n";
-			map (fn k=>(print ((Atom.toString k)^"->");
-						(
-							case AtomMap.find(first_map_final,k) of
-								SOME x=>printSet x
-								|NONE =>[()]
-						);
-						print ("\n")
-					)
-			) lhs_list;first_map_final
-		end*)
+		val first_map_final = rec_follow AtomMap.empty
+
+		fun printSet set= map (fn k=>print((Atom.toString k) ^ " ")) (AtomSet.listItems set)
+	in
+		print "follow elements map:\n";
+		map (fn k=>(print ((Atom.toString k)^"->");
+					(
+						case AtomMap.find(first_map_final,k) of
+							SOME x=>printSet x
+							|NONE =>[()]
+					);
+					print ("\n")
+				)
+		) lhs_list;first_map_final
+	end
 
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)

@@ -1,10 +1,3 @@
-signature MAP_EQ_SIG = 
-sig
-	type t
-	val compare: t*t -> bool
-	structure map:ORD_MAP
-end
-
 structure HelpFun = 
 struct
 
@@ -71,17 +64,20 @@ struct
 
 
 	fun forall_symbols_g f (gram:Grammar_t)=map f (AtomSet.listItems(#sym_table gram))
+
+		
 		
 
-	fun forall_productions (f:RHS -> 'a) (gram:Grammar_t):'a list=
+	fun map_lhs_productions (gram:Grammar_t) (f:Atom.atom*RHS -> 'a) :'a list=
 	let
 		val symbols =AtomSet.listItems(#sym_table gram)
 
 		fun for_prodns_of_lhs (lhs:Atom.atom):'a list=
 			let
 				val prod_list = ret_prod_list ((#rules gram),lhs)
+				val lhs_prod = map (fn k=>(lhs,k)) prod_list
 			in
-				map f prod_list
+				map f lhs_prod
 			end
 	in
 		array_redn (map for_prodns_of_lhs symbols)
@@ -111,7 +107,6 @@ struct
 					fun helper (x::xs) = (
 											case ( findFn(m1,x) , findFn(m2,x) ) of
 											(SOME x,SOME y) => helper xs
-											|(NONE,NONE)	=> helper xs
 											|_				=>false
 										 )
 						|helper []	   = true
