@@ -348,7 +348,7 @@ fun calc_follow(gram:HelpFun.Grammar_t,nullable_set,first_map)=
 (*==================================================================================================================================*)
 (*==================================================================================================================================*)
 
-(*
+
 structure LR0_key =
 struct
     type ord_key = (Atom.atom*Atom.atom list)
@@ -382,15 +382,16 @@ fun print_production prodn = (
 
 
 fun calc_lr0 (
-	rulemap,
-	sym_table,
-	tok_table,
+	gram:HelpFun.Grammar_t,
 	nullable_set,
 	first_map,
 	follow_map,
 	starting_symbol
 	)=
 	let
+		val rulemap = #rules gram
+		val sym_table = #sym_table gram
+		val tok_table = #tok_table gram
 		fun split_on_dot ((x::xs),(y::ys) )= (
 												case Atom.compare(y,Atom.atom ".") of
 												EQUAL => (  ((x::xs)) , ys  )
@@ -523,7 +524,7 @@ fun calc_lr0 (
 
 
 
-*)
+
 (*end of translate structure*)
 end
 
