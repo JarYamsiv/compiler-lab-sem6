@@ -9,6 +9,11 @@ val yellow = "\u001b[33;1m"
 val grey = "\u001b[30;1m"
 val reset = "\u001b[0m"
 
+val isStart = ref 0
+val startSym = ref (Atom.atom "S")
+
+fun change x =  (isStart := 1; startSym := (Atom.atom x));
+
 
 fun compileProdElem y :(Atom.atom option) = 
 	case y of
@@ -20,7 +25,9 @@ fun compileProdElem y :(Atom.atom option) =
 
 fun compileRHS (Ast.Rh y)  :HelpFun.RHS    =HelpFun.filter HelpFun.id (map compileProdElem y)
 
-fun compileRule (Ast.Rul(x,y)) = let 
+fun compileRule (Ast.Rul(x,y)) = let
+									val _ =if !isStart = 0 then (change x) else ()
+
 									val _ = print (x^"->")
 									val atom_val_x = (Atom.atom x)
 									val prod_list = compileRHS y
@@ -65,14 +72,16 @@ fun compile l (grammar:HelpFun.Grammar_t)  :HelpFun.Grammar_t=
 									  ( {
 									  		rules= AtomMap.unionWith (HelpFun.ProductionSet.union) (this_map,new_map) , 
 									  		sym_table= ret_sym_table ,
-									  		tok_table= ret_tok_table  
+									  		tok_table= ret_tok_table  ,
+									  		starting_sym = !startSym
 									  	}
 									  	) 
 						    	end)
 				| []	=> ({
 								rules= AtomMap.empty,
 								sym_table= AtomSet.empty,
-								tok_table= AtomSet.empty
+								tok_table= AtomSet.empty,
+								starting_sym = !startSym
 					}
 					)
 
@@ -349,29 +358,7 @@ fun calc_follow(gram:HelpFun.Grammar_t,nullable_set,first_map)=
 (*==================================================================================================================================*)
 
 
-structure LR0_key =
-struct
-    type ord_key = (Atom.atom*Atom.atom list)
 
-    fun compare_list ((x::xs),(y::ys)) = (case Atom.compare (x,y) of
-        								  GREATER => GREATER
-        								| LESS	  => LESS
-        								| EQUAL	  => compare_list (xs,ys))
-    	|compare_list ((x::xs),[])	  = GREATER
-    	|compare_list ([]	,(y::ys)) = LESS
-    	|compare_list ([],	[])		  = EQUAL
-
-    fun compare ( (x_lhs,x_list) , (y_lhs,y_list) ) = 
-    	case Atom.compare (x_lhs,y_lhs) of
-    		EQUAL => compare_list (x_list,y_list)
-    		| x => x
-
-    fun convToRhs (x:ord_key) :Atom.atom*Atom.atom list = x
-end
-
-structure LR0_itemSet = RedBlackSetFn(LR0_key)
-
-type state_t = int*LR0_itemSet.set
 
 
 fun print_production prodn = (
@@ -385,13 +372,13 @@ fun calc_lr0 (
 	gram:HelpFun.Grammar_t,
 	nullable_set,
 	first_map,
-	follow_map,
-	starting_symbol
+	follow_map
 	)=
 	let
 		val rulemap = #rules gram
 		val sym_table = #sym_table gram
 		val tok_table = #tok_table gram
+		val starting_symbol = #starting_sym gram
 		fun split_on_dot ((x::xs),(y::ys) )= (
 												case Atom.compare(y,Atom.atom ".") of
 												EQUAL => (  ((x::xs)) , ys  )
@@ -408,19 +395,54 @@ fun calc_lr0 (
 
 		
 
+		
+
 
 
 		fun after_dot (x::xs) = (case Atom.compare(x,Atom.atom ".") of
 									EQUAL => (case xs of
-												(x::xs) => SOME x
+												(y::ys) => SOME y
 												|[]		=> NONE
 											 )
 									|_ =>(after_dot xs))
 			| after_dot []	  = NONE
 
+		fun move_dot (y::ys) (x::xs) = (case Atom.compare(x,Atom.atom ".")  of 
+											EQUAL =>( case xs of 
+														[] => (y::ys)@[x]
+														|(z::zs) => (y::ys)@[z]@[x]@zs )
+											|_ => move_dot ((y::ys)@[x]) xs
+
+										)
+			|move_dot [] 	(x::xs)	 =  (case Atom.compare(x,Atom.atom ".")  of 
+											EQUAL =>( case xs of 
+														[] => [x]
+														|(z::zs) => [z]@[x]@zs )
+											|_ => move_dot [x] xs
+
+										)
+			|move_dot temp  []		 = temp
+
+
+		fun filter_dot (x:Atom.atom) lr0_set = 
+			let
+				val lr0_list = HelpFun.LR0_itemSet.listItems(lr0_set)
+				val filter_x = map (fn (lhs,rhs)=>
+
+					(case after_dot(rhs) of 
+						NONE => NONE
+						| SOME y=> (if Atom.compare(y,x)=EQUAL then (SOME (lhs,move_dot [] rhs)) else NONE)
+
+						) )lr0_list
+				val new_lr0_list = HelpFun.filter (HelpFun.id) filter_x
+				val _ = map ( fn(lhs,prod)=>( print( "\t"^(Atom.toString lhs)^" ->" );print_production prod;print "\n"  ) ) new_lr0_list 
+			in
+				HelpFun.LR0_itemSet.fromList(new_lr0_list)
+			end
+
 		fun create_action_map (state_num,lr0_set,action_map) = 
 			let
-				val lr0_list = LR0_itemSet.listItems(lr0_set)
+				val lr0_list = HelpFun.LR0_itemSet.listItems(lr0_set)
 				val after_dot_list = map  (fn (lhs,production) =>  (after_dot production) )  (lr0_list) 
 
 				(*
@@ -446,7 +468,7 @@ fun calc_lr0 (
 
 		fun state_closure (state_num,lr0_set,action_map) = 
 			let
-				val lr0_list = LR0_itemSet.listItems( lr0_set )
+				val lr0_list = HelpFun.LR0_itemSet.listItems( lr0_set )
 
 				fun findprodns_attachDot lhs = 
 					let
@@ -454,23 +476,23 @@ fun calc_lr0 (
 						val new_prod_list = map (fn k=>  (Atom.atom "."::k)  ) prod_list
 						val lr0_item_list = map (fn k=> (lhs,k) ) new_prod_list
 					in
-						LR0_itemSet.fromList(lr0_item_list)
+						HelpFun.LR0_itemSet.fromList(lr0_item_list)
 					end
 
 				val new_lr0item_set_list = map (fn (lhs,p)=> (findprodns_attachDot lhs) ) lr0_list
-				val new_lr0item_set = foldl (LR0_itemSet.union) lr0_set new_lr0item_set_list
+				val new_lr0item_set = foldl (HelpFun.LR0_itemSet.union) lr0_set new_lr0item_set_list
 
 				val next_lr0item_set_list = map (fn (lhs,p)=>  
 													case (after_dot p) of
 														SOME x=>(
 																case AtomSet.member(sym_table,x) of
 																	true=>(findprodns_attachDot x)
-																	|false=>(LR0_itemSet.empty)
+																	|false=>(HelpFun.LR0_itemSet.empty)
 															)
-														|NONE =>(LR0_itemSet.empty)
-					) (LR0_itemSet.listItems(new_lr0item_set))
+														|NONE =>(HelpFun.LR0_itemSet.empty)
+					) (HelpFun.LR0_itemSet.listItems(new_lr0item_set))
 
-				val next_lr0item_set = foldl (LR0_itemSet.union) new_lr0item_set next_lr0item_set_list
+				val next_lr0item_set = foldl (HelpFun.LR0_itemSet.union) new_lr0item_set next_lr0item_set_list
 
 			in
 				(state_num,next_lr0item_set,action_map)
@@ -481,23 +503,23 @@ fun calc_lr0 (
 				val next_state = state_closure (state_num,lr0_set,action_map)
 
 			in
-				case LR0_itemSet.equal(lr0_set,#2(next_state)) of
+				case HelpFun.LR0_itemSet.equal(lr0_set,#2(next_state)) of
 					true => next_state
 					|false => rec_state_closure next_state
 			end
 
 		fun printState state = 
 			let
-				val lr0_list = LR0_itemSet.listItems(#2(state))
+				val lr0_list = HelpFun.LR0_itemSet.listItems(#2(state))
 				val _ = print ("state"^ (Int.toString (#1(state)) ) ^ ":\n" )
 				val _ = map ( fn(lhs,prod)=>( print( (Atom.toString lhs)^" ->" );print_production prod;print "\n"  ) ) lr0_list 
 				val _ = print ("actios of state"^(Int.toString (#1(state)) )^":\n")
 				val _ = AtomMap.appi (fn (k,v) =>
 										(
-											print ((Atom.toString k)^" has action ");
+											print ("on "^(Atom.toString k)^" has action ");
 											(case v of
-												1 => print "goto\n"
-												|2 => print "shift\n"
+												1 => (print "goto\n"; (filter_dot k (#2(state))) ;())
+												|2 => (print "shift\n"; (filter_dot k (#2(state))); ()  )
 												|3 => print "reduce\n"
 												|_ =>print "\n"
 												) 
@@ -508,10 +530,10 @@ fun calc_lr0 (
 			end
 	in
 		print "lr0:\n";(case AtomMap.find(rulemap,starting_symbol) of
-			SOME x=>(print ("given starting symbol is "^(Atom.toString starting_symbol)^"\n" ) ;
+			SOME x=>(print ("given starting symbol is "^(Atom.toString starting_symbol)^"\n\n\n" ) ;
 				let
 					val first_prod = (Atom.atom ".")::(hd   (ret_prod_list(rulemap,starting_symbol))    )
-					val state0 = (  0,LR0_itemSet.singleton( (starting_symbol,first_prod)), AtomMap.empty  )
+					val state0 = (  0,HelpFun.LR0_itemSet.singleton( (starting_symbol,first_prod)), AtomMap.empty  )
 					val state0_closure = create_action_map(rec_state_closure state0)
 				in
 					printState state0_closure

@@ -33,7 +33,7 @@ fun print_error (s,i:int,_) = TextIO.output(TextIO.stdErr,
 
 val (program,_) = ExprParser.parse (0,thisLexer,print_error,())
 
-val (grammar)  = Translate.compile program ({rules=AtomMap.empty, sym_table=AtomSet.empty, tok_table=AtomSet.empty})
+val (grammar)  = Translate.compile program ({rules=AtomMap.empty, sym_table=AtomSet.empty, tok_table=AtomSet.empty , starting_sym=Atom.atom "S"})
 
 val _ = print ("compiled productions : \n")
 val _ = Translate.printmap (grammar)
@@ -41,7 +41,7 @@ val _ = Translate.printmap (grammar)
 val nullable_set = Translate.calc_nullable(grammar)
 val first_map = Translate.calc_first(grammar,nullable_set)
 val follow_map = Translate.calc_follow(grammar,nullable_set,first_map)
-val lr0_table = Translate.calc_lr0(grammar,nullable_set,first_map,follow_map,Atom.atom "S")
+val lr0_table = Translate.calc_lr0(grammar,nullable_set,first_map,follow_map)
 
 
 end

@@ -45,7 +45,7 @@ struct
 
 	type Productions_t = ProductionSet.set
 	type Rules_t = Productions_t AtomMap.map
-	type Grammar_t    = { sym_table : AtomSet.set, tok_table : AtomSet.set, rules : Rules_t }
+	type Grammar_t    = { sym_table : AtomSet.set, tok_table : AtomSet.set, rules : Rules_t ,starting_sym: Atom.atom}
 
 
 
@@ -118,6 +118,31 @@ struct
 		in
 			eq
 		end
+
+
+		structure LR0_key =
+		struct
+		    type ord_key = (Atom.atom*Atom.atom list)
+
+		    fun compare_list ((x::xs),(y::ys)) = (case Atom.compare (x,y) of
+		        								  GREATER => GREATER
+		        								| LESS	  => LESS
+		        								| EQUAL	  => compare_list (xs,ys))
+		    	|compare_list ((x::xs),[])	  = GREATER
+		    	|compare_list ([]	,(y::ys)) = LESS
+		    	|compare_list ([],	[])		  = EQUAL
+
+		    fun compare ( (x_lhs,x_list) , (y_lhs,y_list) ) = 
+		    	case Atom.compare (x_lhs,y_lhs) of
+		    		EQUAL => compare_list (x_list,y_list)
+		    		| x => x
+
+		    fun convToRhs (x:ord_key) :Atom.atom*Atom.atom list = x
+		end
+
+		structure LR0_itemSet = RedBlackSetFn(LR0_key)
+
+		type state_t = {num:int,items:LR0_itemSet.set,actions:int AtomMap.map}
 
 
 
