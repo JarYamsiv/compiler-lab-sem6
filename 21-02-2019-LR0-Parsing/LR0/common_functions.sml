@@ -130,42 +130,34 @@ struct
 	    	|compare_list ([]	,(y::ys)) = LESS
 	    	|compare_list ([],	[])		  = EQUAL
 
-	    fun compare_lr0 ( (x_lhs,x_list) , (y_lhs,y_list) ) = 
-	    	case Atom.compare (x_lhs,y_lhs) of
-	    		EQUAL => compare_list (x_list,y_list)
-	    		| x => x
+	    type lr0i_t= {lhs:Atom.atom,bef:(Atom.atom list),aft:(Atom.atom list)}
+
+	    fun compare_lr0 ((x:lr0i_t),(y:lr0i_t)) = 
+	    	let
+	    		val xlhs = #lhs x
+	    		val xbef = #bef x
+	    		val xaft = #aft x
+
+	    		val ylhs = #lhs y
+	    		val ybef = #bef y
+	    		val yaft = #aft y
+	    	in
+	    		case Atom.compare(xlhs,ylhs) of
+	    			EQUAL => (case compare_list(xbef,ybef) of
+	    						EQUAL => compare_list(xaft,yaft)
+	    						|y 	  => y
+	    				)
+	    			|x 	  => x
+	    	end
 
 
-		structure LR0_key =
+		structure LR0_ITEM_KEY = 
 		struct
-		    type ord_key = (Atom.atom*Atom.atom list)
-
-		    val compare = compare_lr0
-
-		    fun convToRhs (x:ord_key) :Atom.atom*Atom.atom list = x
+			type ord_key= lr0i_t
+			val compare = compare_lr0
 		end
 
-		structure LR0_itemSet = RedBlackSetFn(LR0_key)
-
-		type state_t = (int*LR0_itemSet.set*int AtomMap.map)
-
-		structure INT_TO_LR0_KEY = 
-		struct
-			type ord_key = int
-			val compare = Int.compare
-		end
-
-		structure LR0_SET_MAP_KEY = 
-		struct
-			type ord_key= LR0_itemSet.set
-			val compare = LR0_itemSet.compare
-		end
-
-		structure IntMap = RedBlackMapFn(INT_TO_LR0_KEY)
-
-		structure ItemMap = RedBlackMapFn(LR0_key)
-
-		structure SetMap = RedBlackMapFn(LR0_SET_MAP_KEY)
+		structure ItemSet = RedBlackSetFn(LR0_ITEM_KEY)
 
 
 

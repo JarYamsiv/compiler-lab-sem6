@@ -1,0 +1,11 @@
+S : E $;
+
+E  : T Ed;
+
+Ed :  PLUS T Ed;
+Ed : _;
+
+T  : N Td;
+
+Td : MUL N Td;
+Td : _;
