@@ -159,6 +159,14 @@ struct
 
 		structure ItemSet = RedBlackSetFn(LR0_ITEM_KEY)
 
+		fun printProdn (p:Atom.atom list) = map (fn k=> print((Atom.toString k)^" ")) p
+
+		fun printLr0Elem (e:lr0i_t) = ( (print o Atom.toString) (#lhs e);
+										print "-> [";
+										printProdn (#bef e);print ".";printProdn (#aft e);(print "]\n"))
+
+		fun printItemSet set=ItemSet.app printLr0Elem set
+
 
 
 end

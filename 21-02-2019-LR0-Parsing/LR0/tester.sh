@@ -1,7 +1,7 @@
 #!/bin/bash
 echo ""
 
-TESTS_FILES=(test2)
+TESTS_FILES=(test1)
 
 for p in ${TESTS_FILES[*]}
 do

@@ -1,6 +1,9 @@
 P:A $;
 
 A: NUM B;
+A: C;
+
+C:B NUM;
 
 B: A B;
 B: END;

@@ -369,10 +369,38 @@ fun calc_lr0 (
 		val rulemap = #rules gram
 		val sym_table = #sym_table gram
 		val tok_table = #tok_table gram
-		val sym_list = AtomSet.listItems sym_table
-		val statr_symbol = #starting_sym gram
+
+
+		val start_symbol = #starting_sym gram
+		val first_prodn =hd (ret_prod_list (rulemap,start_symbol))
+
+		val first_lr0_item = {lhs=start_symbol , bef=[] , aft=first_prodn}
+
+		val st0_base_set = HelpFun.ItemSet.singleton(first_lr0_item)
+
+		fun ret_base_lr0_of_sym sym=
+			let
+				val prod_list = ret_prod_list(rulemap,sym)
+				val item_list =map (fn k=>{lhs=sym,bef=[],aft=k}) prod_list
+			in
+				HelpFun.ItemSet.fromList(item_list)
+			end
+
+		fun set_closure (set) = 
+			let
+				val lr0_list = HelpFun.ItemSet.listItems(set)
+				val afterdot_symtok_list =HelpFun.filter  (fn k=>(case k of (x::xs)=> SOME x | [] => NONE)) (map #aft lr0_list) 
+				val issym = fn k=>(case AtomSet.member(sym_table,k) of true=>SOME k| false => NONE)
+				val potential_sym_list =HelpFun.filter HelpFun.id (map issym afterdot_symtok_list)
+			in
+				foldl (HelpFun.ItemSet.union) (set) (map ret_base_lr0_of_sym potential_sym_list)
+			end
+
+		val rec_set_closure = HelpFun.MakeFixedPointFn (set_closure) (fn (x,y) => HelpFun.ItemSet.compare(x,y) = EQUAL)
+
+	val _ = print (red^"\n=====LR0=====\n\n"^reset)
 	in
-		()
+		HelpFun.printItemSet  (rec_set_closure st0_base_set)
 	end
 
 
