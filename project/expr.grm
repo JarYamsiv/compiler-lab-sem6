@@ -10,6 +10,7 @@ it is empty *)
 
 (* The terminals or tokens of the language *)
 %term CONST of int
+    | TAB
     | PLUS
     | MINUS
     | MUL
@@ -27,14 +28,11 @@ it is empty *)
     | FUN
 
 (* The nonterminals of the language *)
-%nonterm EXP     of Ast.Expr
-       | PROGRAM of Ast.ProgramElement list
-       | PROGRAMELEM of Ast.ProgramElement
-       | STATEMENT of Ast.Statement
-       | STATEMENTS of Ast.Statement list
-       | CODEBLOCK of Ast.CodeBlock
-       | CODEBLOCKS of Ast.CodeBlock list
-       | CONDITION of Ast.Condition
+%nonterm PROGRAM of Ast.Program_t
+       | PROGRAMELEM of Ast.ProgramElement_t
+       | INDENT of int
+       | STATEMENT of Ast.Statement_t
+
 
 %noshift EOF
 (*
@@ -58,39 +56,11 @@ left associative and the precedence increase as you go down this list.
 PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
         |   PROGRAMELEM           ([PROGRAMELEM])
 
-STATEMENT:IDENTIFIER                  (Ast.Id IDENTIFIER)
-          |IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
-          |IDENTIFIER LPAREN RPAREN  (Ast.FnCl IDENTIFIER)
+PROGRAMELEM : STATEMENT           ()
 
-STATEMENTS:STATEMENT SEMICOLON             ([STATEMENT]) 
-          |STATEMENT SEMICOLON STATEMENTS  (STATEMENT::STATEMENTS)
-
-CODEBLOCK: STATEMENTS                (Ast.Stlist STATEMENTS)
-          |IF LPAREN CONDITION RPAREN LCURL CODEBLOCKS RCURL (Ast.Cblock (CONDITION,CODEBLOCKS))
-          |IF LPAREN CONDITION RPAREN LCURL CODEBLOCKS RCURL ELSE LCURL CODEBLOCKS RCURL (Ast.CEblock (CONDITION,CODEBLOCKS1,CODEBLOCKS2))
-
-CODEBLOCKS:CODEBLOCK CODEBLOCKS    (CODEBLOCK::CODEBLOCKS)
-          |CODEBLOCK                ([CODEBLOCK])
+STATEMENT: INDENT                 ()
 
 
 
-PROGRAMELEM : STATEMENT SEMICOLON  (Ast.St STATEMENT)
-            | FUN IDENTIFIER LPAREN RPAREN LCURL 
-            CODEBLOCKS 
-            RCURL(Ast.Fn (Ast.Fun (IDENTIFIER,CODEBLOCKS)))
 
-CONDITION : CONST                       ( Ast.CConst CONST)
-          | IDENTIFIER                  ( Ast.CVar IDENTIFIER)
-          | CONDITION EQ CONDITION      ( Ast.eq CONDITION1 CONDITION2)
-          | CONDITION LT CONDITION      ( Ast.lt CONDITION1 CONDITION2)
-          | CONDITION GT CONDITION      ( Ast.gt CONDITION1 CONDITION2)
-          | CONDITION AND CONDITION     ( Ast.nd CONDITION1 CONDITION2)
-          | CONDITION OR CONDITION      ( Ast.or CONDITION1 CONDITION2)
-          | LPAREN CONDITION RPAREN     ( CONDITION )
-          
 
-EXP     : CONST                ( Ast.Const CONST     )
-        | EXP PLUS EXP         ( Ast.plus  EXP1 EXP2 )
-        | LPAREN EXP RPAREN    ( EXP )
-	      | EXP MINUS EXP        ( Ast.minus EXP1 EXP2 )
-	      | EXP MUL   EXP        ( Ast.mul   EXP1 EXP2 )

@@ -25,6 +25,7 @@ val EOF:  'a * 'a -> (svalue,'a) token
 val MUL:  'a * 'a -> (svalue,'a) token
 val MINUS:  'a * 'a -> (svalue,'a) token
 val PLUS:  'a * 'a -> (svalue,'a) token
+val TAB:  'a * 'a -> (svalue,'a) token
 val CONST: (int) *  'a * 'a -> (svalue,'a) token
 end
 signature Expr_LRVALS=
