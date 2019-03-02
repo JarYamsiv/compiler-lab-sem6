@@ -167,6 +167,21 @@ struct
 
 		fun printItemSet set=ItemSet.app printLr0Elem set
 
+		fun printActionMap m = 
+			let
+				fun helper (k,t) = ( print ( (Atom.toString k)^" has action " );
+
+					(case t of
+					1 =>  (print " goto \n")
+					|2 => (print " shift \n")
+					|3 => (print " reduce \n")
+					|_ => (print "\n")
+					)
+				)
+			in
+				AtomMap.appi helper m
+			end
+
 
 
 end

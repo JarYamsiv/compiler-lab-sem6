@@ -398,9 +398,68 @@ fun calc_lr0 (
 
 		val rec_set_closure = HelpFun.MakeFixedPointFn (set_closure) (fn (x,y) => HelpFun.ItemSet.compare(x,y) = EQUAL)
 
+		(*
+			1 - sym - goto
+			2 - tok - shift
+			3 - [] - reduce
+		*)
+		fun make_action_map (set) = 
+			let
+				val after_dot_list:(Atom.atom option) list=map (fn k=>case k of (x::xs) => SOME x |[]=> NONE)(map #aft (HelpFun.ItemSet.listItems set))
+
+				fun t m (x::xs)  = (case x of
+										SOME y=>(
+												case AtomSet.member(sym_table,y) of
+													true => AtomMap.insert((t m xs),y,1)
+													|false => AtomMap.insert((t m xs),y,2)
+											)
+										|NONE =>(AtomMap.insert((t m xs),(Atom.atom "_"),3))
+									)
+					|t m []	   = AtomMap.empty
+			in
+				t AtomMap.empty after_dot_list
+			end
+
+		fun filter_and_move_dot set sym = 
+			let
+				fun base_filter (sym:Atom.atom)  (item:HelpFun.lr0i_t) = 
+					case List.getItem(#aft item) of
+						NONE => NONE
+						|SOME (head,tail) => (
+								case Atom.compare(head,sym) of
+									EQUAL => SOME item
+									|_	  => NONE
+							)
+
+				val lr0_list = HelpFun.ItemSet.listItems(set)
+				val new_lr0_list = HelpFun.filter (base_filter sym) lr0_list
+
+				fun advance_dot (item:HelpFun.lr0i_t) = {lhs = #lhs item,bef = (#bef item)@[hd (#aft item)] ,aft = tl(#aft item) }
+
+				val dot_moved_list = map advance_dot new_lr0_list
+
+			in
+				HelpFun.ItemSet.fromList(dot_moved_list)
+			end
+
+		fun create_next_set set action_map = 
+			let
+				val available_lhs = AtomMap.listKeys(action_map)
+				fun next_set sym =( print (green^(Atom.toString sym)^" "^reset);HelpFun.printItemSet(rec_set_closure (filter_and_move_dot set sym)))
+			in
+				map next_set available_lhs
+			end
+
 	val _ = print (red^"\n=====LR0=====\n\n"^reset)
+
+	val st0_closure_set = rec_set_closure st0_base_set
+	val st0_a_map = make_action_map st0_closure_set
+	val _ = HelpFun.printItemSet  (st0_closure_set)
+	val _ = HelpFun.printActionMap st0_a_map
+	val _ = create_next_set st0_closure_set st0_a_map
+
 	in
-		HelpFun.printItemSet  (rec_set_closure st0_base_set)
+		()
 	end
 
 
