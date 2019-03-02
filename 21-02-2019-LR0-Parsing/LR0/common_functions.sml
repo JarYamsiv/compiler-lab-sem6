@@ -1,5 +1,18 @@
+signature NEW_ORD_KEY = 
+sig
+	type ord_key;
+	val compare: ord_key*ord_key-> order
+	val empty:ord_key;
+end
+
 structure HelpFun = 
 struct
+	val red = "\u001b[31;1m"
+	val green = "\u001b[32;1m"
+	val white = "\u001b[37;1m"
+	val yellow = "\u001b[33;1m"
+	val grey = "\u001b[30;1m"
+	val reset = "\u001b[0m"
 
 	fun id x =x
 
@@ -109,7 +122,7 @@ struct
 
 					fun helper (x::xs) = (
 											case ( findFn(m1,x) , findFn(m2,x) ) of
-											(SOME x,SOME y) => helper xs
+											(SOME x,SOME y)   =>( compElemFn(x,y)=EQUAL andalso helper xs )
 											|_				=>false
 										 )
 						|helper []	   = true
@@ -165,15 +178,15 @@ struct
 										print "-> [";
 										printProdn (#bef e);print ".";printProdn (#aft e);(print "]\n"))
 
-		fun printItemSet set=ItemSet.app printLr0Elem set
+		fun printItemSet set= ItemSet.app printLr0Elem set
 
 		fun printActionMap m = 
 			let
-				fun helper (k,t) = ( print ( (Atom.toString k)^" has action " );
+				fun helper (k,(t,s)) = ( print ( (Atom.toString k)^" has action " );
 
 					(case t of
-					1 =>  (print " goto \n")
-					|2 => (print " shift \n")
+					1 =>  (print (" goto "^(Int.toString s)^"\n" )  )
+					|2 => (print (" shift to "^(Int.toString s)^"\n")  )
 					|3 => (print " reduce \n")
 					|_ => (print "\n")
 					)
@@ -182,55 +195,136 @@ struct
 				AtomMap.appi helper m
 			end
 
+		type state_t = {num:int,set:ItemSet.set,aMap:(int*int) AtomMap.map}
 
-
-end
-
-
-signature FIXED_POINT_KEY = 
-sig
-	type t
-	val update:t->t
-	val compare:t*t->bool
-end
-
-functor FP_Constructor (S:FIXED_POINT_KEY) = 
-struct
-	type t = S.t
-	fun fixed_point (start_point:t)=
-		let
-			val (next:t) = S.update(start_point)
-		in
-			case S.compare(next,start_point) of
-				true => next
-				|false => fixed_point(next)
+		structure State:NEW_ORD_KEY = 
+		struct
+			type ord_key = state_t
+			fun compare ((x:state_t),(y:state_t)) =ItemSet.compare((#set x),(#set y))
+			val empty = {num=0,set=ItemSet.empty,aMap=AtomMap.empty}:state_t
 		end
+
+		structure StateSet = RedBlackSetFn(State)
+
+		fun printState (s:state_t) = 
+			let
+				val _ = print (red^"\n\n=== "^(Int.toString(#num s))^" ===\n"^reset)
+				val _ = printItemSet (#set s)
+				val _ = printActionMap (#aMap s)
+			in
+				print (red^"======\n\n"^reset)
+			end
+
+		fun prntState (n,(s:state_t)) = 
+			let
+				val _ = print (red^"\n\n=== "^(Int.toString(n))^" ===\n"^reset)
+				val _ = printItemSet (#set s)
+				val _ = printActionMap (#aMap s)
+			in
+				print (red^"======\n\n"^reset)
+			end
+
+
+
 end
 
 
 
+signature PROXY = sig
+   type proxy_t
+   type actual_t
 
-signature MAP_EQ_SIG = 
-sig
-	type t
-	val compare: t*t -> bool
-	structure map:ORD_MAP
+
+   (*val proxy  : actual -> proxy
+   val actual : proxy -> actual*)
+
+   val makeItem:(int*HelpFun.ItemSet.set*(int*int) AtomMap.map)->HelpFun.state_t
+   val addItem:actual_t -> unit
+   val getCount:unit -> int
+   val listItems:unit -> actual_t list
+
+   val checkItem:actual_t -> bool
+   val getItemId:actual_t -> proxy_t option
+   val getItemIdEP:actual_t -> proxy_t
+   val getItem : proxy_t -> actual_t option
+   val getItemEP : proxy_t -> actual_t
+
+   val headItem:unit -> actual_t option
+
+   val lastInsertedItem:unit -> actual_t
+
+   val correctReverseMap:unit->unit
+
+
 end
 
-functor MakeMapEqualityStruct (S:MAP_EQ_SIG) = 
+
+
+functor Proxy (A:NEW_ORD_KEY):PROXY = 
 struct
-	type tp=S.t
-	fun eq (map1,map2) = 
+	type proxy_t = int
+	type actual_t = A.ord_key
+
+	structure Proxy_Map_key = 
+	struct
+		type ord_key = A.ord_key
+		val compare = A.compare
+	end
+
+	structure Proxymap =  RedBlackMapFn(Proxy_Map_key)
+
+	val count = ref 0
+	val pMap = ref Proxymap.empty: (int Proxymap.map) ref
+	val rMap = ref IntRedBlackMap.empty: (A.ord_key IntRedBlackMap.map) ref
+
+	val lastItem = ref A.empty
+
+
+	fun makeItem(n,s,a):HelpFun.state_t = {num=n,set=s,aMap=a}
+
+	fun addNewItem (i:actual_t) = (	
+								pMap := Proxymap.insert(!pMap,i,!count);
+								rMap := IntRedBlackMap.insert(!rMap,!count,i) ;
+								count := !count+1;
+								lastItem := i
+								);
+
+	fun addToExistingItem (i:actual_t) = (
+		pMap := Proxymap.insert(!pMap,i,!count)
+		);
+
+	fun addItem (i:actual_t) = 
+		case Proxymap.find(!pMap,i) of
+			SOME x=>(*addToExistingItem(i)*)()
+			|NONE =>addNewItem(i)
+
+	fun correctReverseMap () = 
 		let
-			val key_list = S.map.listKeys(map1)
-			fun helper (x::xs) =
-				(case (S.map.find(map1,x),S.map.find(map2,x)) of
-					(SOME (v1:tp),SOME (v2:tp)) => S.compare(v1,v2) andalso helper xs
-					|(NONE,NONE)	=> helper xs
-					|_				=> false
-				)
-				|helper [] = true
+			val actual_list = Proxymap.listKeys(!pMap)
+			val _ =map (fn k=> rMap := IntRedBlackMap.insert(!rMap,Proxymap.lookup(!pMap,k),k)) actual_list
 		in
-			helper key_list
+			()
 		end
+
+	fun getItemId (i:actual_t) = (Proxymap.find(!pMap,i))
+
+	fun getItemIdEP (i:actual_t) = (Proxymap.lookup(!pMap,i))
+
+	fun checkItem (i:actual_t) = (case Proxymap.find(!pMap,i) of SOME x=>true | NONE => false)
+
+	fun getItem (p:proxy_t) = IntRedBlackMap.find(!rMap,p)
+
+	fun getItemEP (p:proxy_t) = IntRedBlackMap.lookup(!rMap,p)
+
+	fun getCount () = !count
+
+	fun listItems () = Proxymap.listKeys(!pMap)
+
+	fun headItem () = case Proxymap.listKeys(!pMap) of (x::xs) => SOME x | [] => NONE
+
+	fun lastInsertedItem () = !lastItem
+
 end
+
+structure StateProxy = Proxy(HelpFun.State)
+

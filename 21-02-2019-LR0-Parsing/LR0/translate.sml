@@ -205,7 +205,7 @@ fun calc_first (gram:HelpFun.Grammar_t,nullable_set)=
 			end
 			|calc_next_map [] this_map= (this_map)
 
-		val mapCompare = HelpFun.MakeMapCompareFn (AtomMap.listKeys) (fn (x,y)=>Atom.compare(x,y)=EQUAL) (AtomMap.find) (AtomSet.equal)
+		val mapCompare = HelpFun.MakeMapCompareFn (AtomMap.listKeys) (fn (x,y)=>Atom.compare(x,y)=EQUAL) (AtomMap.find) (AtomSet.compare)
 
 
 		val FPupdateFn = fn k=>( AtomMap.unionWith AtomSet.union  (k, calc_next_map sym_list k)  )
@@ -403,22 +403,6 @@ fun calc_lr0 (
 			2 - tok - shift
 			3 - [] - reduce
 		*)
-		fun make_action_map (set) = 
-			let
-				val after_dot_list:(Atom.atom option) list=map (fn k=>case k of (x::xs) => SOME x |[]=> NONE)(map #aft (HelpFun.ItemSet.listItems set))
-
-				fun t m (x::xs)  = (case x of
-										SOME y=>(
-												case AtomSet.member(sym_table,y) of
-													true => AtomMap.insert((t m xs),y,1)
-													|false => AtomMap.insert((t m xs),y,2)
-											)
-										|NONE =>(AtomMap.insert((t m xs),(Atom.atom "_"),3))
-									)
-					|t m []	   = AtomMap.empty
-			in
-				t AtomMap.empty after_dot_list
-			end
 
 		fun filter_and_move_dot set sym = 
 			let
@@ -442,21 +426,100 @@ fun calc_lr0 (
 				HelpFun.ItemSet.fromList(dot_moved_list)
 			end
 
+		fun make_action_map (set) = 
+			let
+				val after_dot_list:(Atom.atom option) list=map (fn k=>case k of (x::xs) => SOME x |[]=> NONE)(map #aft (HelpFun.ItemSet.listItems set))
+
+				fun t m (x::xs)  = (case x of
+										SOME y=>(
+
+												let 
+													val expanded_set = rec_set_closure (filter_and_move_dot set y)
+													val temp_state = StateProxy.makeItem(0,expanded_set,AtomMap.empty)
+													val next_state = case StateProxy.getItemId(temp_state) of
+																		SOME x=>x | NONE => ~1
+												in
+												(case AtomSet.member(sym_table,y) of
+													true => AtomMap.insert((t m xs),y,(1,next_state)  )
+													|false => AtomMap.insert((t m xs),y,  (2,next_state)  )
+												)
+												end
+											)
+										|NONE =>(AtomMap.insert((t m xs),(Atom.atom "_"),  (3,0)  ))
+									)
+					|t m []	   = AtomMap.empty
+			in
+				t AtomMap.empty after_dot_list
+			end
+
+		
+
 		fun create_next_set set action_map = 
 			let
 				val available_lhs = AtomMap.listKeys(action_map)
-				fun next_set sym =( print (green^(Atom.toString sym)^" "^reset);HelpFun.printItemSet(rec_set_closure (filter_and_move_dot set sym)))
+				fun next_set sym =(rec_set_closure (filter_and_move_dot set sym))
 			in
 				map next_set available_lhs
 			end
 
-	val _ = print (red^"\n=====LR0=====\n\n"^reset)
+		fun propogate (state:HelpFun.state_t) = 
+			let
+				val next_set_list =HelpFun.filter (fn k=>case HelpFun.ItemSet.isEmpty(k) of false => SOME k | true => NONE)
 
-	val st0_closure_set = rec_set_closure st0_base_set
-	val st0_a_map = make_action_map st0_closure_set
-	val _ = HelpFun.printItemSet  (st0_closure_set)
-	val _ = HelpFun.printActionMap st0_a_map
-	val _ = create_next_set st0_closure_set st0_a_map
+					(create_next_set (#set state) (#aMap state))
+
+				fun make_temp_state s :HelpFun.state_t={num=(StateProxy.getCount()),set=s,aMap=make_action_map s}
+				val next_state_list = map make_temp_state next_set_list 
+
+				val shouldContinueList = map (not o StateProxy.checkItem) (next_state_list)
+				val _ = map StateProxy.addItem next_state_list
+			in
+				case (List.exists (HelpFun.id) shouldContinueList) of
+					true => (   (map propogate (StateProxy.listItems()) ) ; () )
+					|false =>()
+			end
+
+
+
+		val _ = print (red^"\n=====LR0=====\n\n"^reset)
+
+		val st0_closure_set = rec_set_closure st0_base_set
+		val st0_a_map = make_action_map st0_closure_set
+
+		(*val _ = HelpFun.printItemSet  (st0_closure_set)
+		val _ = HelpFun.printActionMap st0_a_map*)
+
+		(*val _ = create_next_set st0_closure_set st0_a_map*)
+
+		val s0 = StateProxy.makeItem(0,st0_closure_set,st0_a_map)
+		val _ = StateProxy.addItem(s0)
+
+		val _ = propogate(StateProxy.lastInsertedItem())
+
+		val _ = StateProxy.correctReverseMap()
+
+		val total_state_count = (StateProxy.getCount())
+
+		val state_list = StateProxy.listItems ()
+
+		val state_list =List.tabulate(total_state_count,StateProxy.getItemEP)
+
+
+
+		fun final_correction (state:HelpFun.state_t):HelpFun.state_t = 
+			let
+				val state_num = StateProxy.getItemIdEP(state)
+				val new_map = make_action_map(#set state)
+			in
+				{num=state_num,set = (#set state),aMap = new_map}
+			end
+
+		val final_state_list = map final_correction state_list
+
+		(*val _ =map ( fn k=>(HelpFun.prntState(StateProxy.getItemIdEP(k),k)) ) state_list*)
+
+		val _ = map HelpFun.printState final_state_list
+
 
 	in
 		()
