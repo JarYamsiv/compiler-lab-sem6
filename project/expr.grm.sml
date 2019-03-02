@@ -19,27 +19,37 @@ structure Token = Token
 local open LrTable in 
 val table=let val actionRows =
 "\
-\\001\000\000\000\
+\\001\000\002\000\006\000\006\000\014\000\008\000\019\000\000\000\
 \\001\000\006\000\000\000\000\000\
-\\008\000\000\000\
-\\009\000\000\000\
-\\010\000\000\000\
-\\011\000\000\000\
+\\001\000\008\000\007\000\000\000\
+\\001\000\015\000\011\000\000\000\
+\\013\000\000\000\
+\\015\000\000\000\
+\\016\000\014\000\010\000\000\000\
+\\017\000\000\000\
+\\018\000\000\000\
+\\019\000\002\000\006\000\000\000\
 \"
 val actionRowNumbers =
-"\000\000\004\000\005\000\003\000\
-\\002\000\001\000"
+"\009\000\005\000\002\000\000\000\
+\\009\000\006\000\004\000\008\000\
+\\003\000\007\000\001\000"
 val gotoT =
 "\
-\\001\000\005\000\002\000\003\000\003\000\002\000\004\000\001\000\000\000\
+\\001\000\010\000\002\000\003\000\003\000\002\000\004\000\001\000\000\000\
 \\000\000\
 \\000\000\
-\\001\000\004\000\002\000\003\000\003\000\002\000\004\000\001\000\000\000\
+\\001\000\006\000\002\000\003\000\003\000\002\000\004\000\001\000\000\000\
+\\003\000\007\000\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
 \\000\000\
 \\000\000\
 \"
-val numstates = 6
-val numrules = 4
+val numstates = 11
+val numrules = 7
 val s = ref "" and index = ref 0
 val string_to_int = fn () => 
 let val i = !index
@@ -101,10 +111,10 @@ type pos = int
 type arg = unit
 structure MlyValue = 
 struct
-datatype svalue = VOID | ntVOID of unit | IDENTIFIER of  (string) | CONST of  (int) | STATEMENT of  (Ast.Statement_t) | INDENT of  (int) | PROGRAMELEM of  (Ast.ProgramElement_t) | PROGRAM of  (Ast.Program_t)
+datatype svalue = VOID | ntVOID of unit | IDENTIFIER of  (string) | CONST of  (int) | STATEMENT of  (Ast.Statement_t) | INDENT of  (int) | PROGRAMELEM of  (Ast.ProgramElement_t) | PROGRAM of  (Ast.ProgramElement_t list)
 end
 type svalue = MlyValue.svalue
-type result = Ast.Program_t
+type result = Ast.ProgramElement_t list
 end
 structure EC=
 struct
@@ -158,21 +168,33 @@ val actions =
 fn (i392,defaultPos,stack,
     (()):arg) =>
 case (i392,stack)
-of  ( 0, ( ( _, ( MlyValue.PROGRAM PROGRAM, _, PROGRAM1right)) :: ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 56.35 "expr.grm"*)PROGRAMELEM::PROGRAM(*#line 161.1 "expr.grm.sml"*)
+of  ( 0, ( ( _, ( MlyValue.PROGRAM PROGRAM, _, PROGRAM1right)) :: ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 56.36 "expr.grm"*)PROGRAMELEM::PROGRAM(*#line 171.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, PROGRAMELEM1left, PROGRAM1right), rest671)
 end
-|  ( 1, ( ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, PROGRAMELEM1right)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 57.36 "expr.grm"*)[PROGRAMELEM](*#line 165.1 "expr.grm.sml"*)
+|  ( 1, ( ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, PROGRAMELEM1right)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 57.36 "expr.grm"*)[PROGRAMELEM](*#line 175.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, PROGRAMELEM1left, PROGRAMELEM1right), rest671)
 end
-|  ( 2, ( ( _, ( _, STATEMENT1left, STATEMENT1right)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 59.36 "expr.grm"*)(*#line 169.1 "expr.grm.sml"*)
+|  ( 2, ( ( _, ( MlyValue.STATEMENT STATEMENT, STATEMENT1left, STATEMENT1right)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 59.36 "expr.grm"*)Ast.C_Statement STATEMENT(*#line 179.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 1, ( result, STATEMENT1left, STATEMENT1right), rest671)
 end
-|  ( 3, ( ( _, ( _, INDENT1left, INDENT1right)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 61.36 "expr.grm"*)(*#line 173.1 "expr.grm.sml"*)
+|  ( 3, ( ( _, ( MlyValue.IDENTIFIER IDENTIFIER, _, IDENTIFIER1right)) :: ( _, ( MlyValue.INDENT INDENT, INDENT1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 61.36 "expr.grm"*)Ast.C_St_Identifier (INDENT,IDENTIFIER)(*#line 183.1 "expr.grm.sml"*)
 )
- in ( LrTable.NT 3, ( result, INDENT1left, INDENT1right), rest671)
+ in ( LrTable.NT 3, ( result, INDENT1left, IDENTIFIER1right), rest671)
+end
+|  ( 4, ( ( _, ( _, _, RPAREN1right)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, _, _)) :: ( _, ( MlyValue.INDENT INDENT, INDENT1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 62.45 "expr.grm"*)Ast.C_St_FunCall (INDENT,IDENTIFIER)(*#line 187.1 "expr.grm.sml"*)
+)
+ in ( LrTable.NT 3, ( result, INDENT1left, RPAREN1right), rest671)
+end
+|  ( 5, ( ( _, ( MlyValue.INDENT INDENT, _, INDENT1right)) :: ( _, ( _, TAB1left, _)) :: rest671)) => let val  result = MlyValue.INDENT ((*#line 64.37 "expr.grm"*)INDENT+1(*#line 191.1 "expr.grm.sml"*)
+)
+ in ( LrTable.NT 2, ( result, TAB1left, INDENT1right), rest671)
+end
+|  ( 6, ( rest671)) => let val  result = MlyValue.INDENT ((*#line 65.37 "expr.grm"*)0(*#line 195.1 "expr.grm.sml"*)
+)
+ in ( LrTable.NT 2, ( result, defaultPos, defaultPos), rest671)
 end
 | _ => raise (mlyAction i392)
 end

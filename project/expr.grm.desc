@@ -7,13 +7,14 @@ state 0:
 	PROGRAM : . PROGRAMELEM PROGRAM 
 	PROGRAM : . PROGRAMELEM 
 
+	TAB	shift 4
 
-	PROGRAM	goto 5
+	PROGRAM	goto 10
 	PROGRAMELEM	goto 3
 	INDENT	goto 2
 	STATEMENT	goto 1
 
-	.	error
+	.	reduce by rule 6
 
 
 state 1:
@@ -27,11 +28,13 @@ state 1:
 
 state 2:
 
-	STATEMENT : INDENT .  (reduce by rule 3)
+	STATEMENT : INDENT . IDENTIFIER 
+	STATEMENT : INDENT . IDENTIFIER LPAREN RPAREN 
+
+	IDENTIFIER	shift 5
 
 
-
-	.	reduce by rule 3
+	.	error
 
 
 state 3:
@@ -39,16 +42,41 @@ state 3:
 	PROGRAM : PROGRAMELEM . PROGRAM 
 	PROGRAM : PROGRAMELEM .  (reduce by rule 1)
 
+	TAB	shift 4
+	EOF	reduce by rule 1
+	IDENTIFIER	reduce by rule 6
 
-	PROGRAM	goto 4
+	PROGRAM	goto 6
 	PROGRAMELEM	goto 3
 	INDENT	goto 2
 	STATEMENT	goto 1
 
-	.	reduce by rule 1
+	.	error
 
 
 state 4:
+
+	INDENT : TAB . INDENT 
+
+	TAB	shift 4
+
+	INDENT	goto 7
+
+	.	reduce by rule 6
+
+
+state 5:
+
+	STATEMENT : INDENT IDENTIFIER .  (reduce by rule 3)
+	STATEMENT : INDENT IDENTIFIER . LPAREN RPAREN 
+
+	LPAREN	shift 8
+
+
+	.	reduce by rule 3
+
+
+state 6:
 
 	PROGRAM : PROGRAMELEM PROGRAM .  (reduce by rule 0)
 
@@ -57,7 +85,35 @@ state 4:
 	.	reduce by rule 0
 
 
-state 5:
+state 7:
+
+	INDENT : TAB INDENT .  (reduce by rule 5)
+
+
+
+	.	reduce by rule 5
+
+
+state 8:
+
+	STATEMENT : INDENT IDENTIFIER LPAREN . RPAREN 
+
+	RPAREN	shift 9
+
+
+	.	error
+
+
+state 9:
+
+	STATEMENT : INDENT IDENTIFIER LPAREN RPAREN .  (reduce by rule 4)
+
+
+
+	.	reduce by rule 4
+
+
+state 10:
 
 
 	EOF	accept
@@ -65,5 +121,5 @@ state 5:
 
 	.	error
 
-1 of 7 action table entries left after compaction
-8 goto table entries
+8 of 20 action table entries left after compaction
+9 goto table entries

@@ -10,7 +10,7 @@ it is empty *)
 
 (* The terminals or tokens of the language *)
 %term CONST of int
-    | TAB
+    | TAB 
     | PLUS
     | MINUS
     | MUL
@@ -28,7 +28,7 @@ it is empty *)
     | FUN
 
 (* The nonterminals of the language *)
-%nonterm PROGRAM of Ast.Program_t
+%nonterm PROGRAM of Ast.ProgramElement_t list
        | PROGRAMELEM of Ast.ProgramElement_t
        | INDENT of int
        | STATEMENT of Ast.Statement_t
@@ -53,12 +53,16 @@ left associative and the precedence increase as you go down this list.
 
 %%
 
-PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
+PROGRAM :   PROGRAMELEM PROGRAM   (PROGRAMELEM::PROGRAM)
         |   PROGRAMELEM           ([PROGRAMELEM])
 
-PROGRAMELEM : STATEMENT           ()
+PROGRAMELEM : STATEMENT           (Ast.C_Statement STATEMENT)
 
-STATEMENT: INDENT                 ()
+STATEMENT: INDENT IDENTIFIER      (Ast.C_St_Identifier (INDENT,IDENTIFIER))
+         | INDENT IDENTIFIER LPAREN RPAREN (Ast.C_St_FunCall (INDENT,IDENTIFIER))
+
+INDENT : TAB INDENT                (INDENT+1)
+       |                           (0)
 
 
 
