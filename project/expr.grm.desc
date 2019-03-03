@@ -1,84 +1,89 @@
 start symbol used on the rhs of 1 rule
 
-warning: start symbol appears on the rhs of <PROGRAM : PROGRAMELEM PROGRAM >
+warning: start symbol appears on the rhs of <PROGRAM : STATEMENT PROGRAM >
 
 state 0:
 
-	PROGRAM : . PROGRAMELEM PROGRAM 
-	PROGRAM : . PROGRAMELEM 
+	PROGRAM : . STATEMENT PROGRAM 
+	PROGRAM : . STATEMENT 
 
-	TAB	shift 4
+	TAB	shift 3
 
-	PROGRAM	goto 10
-	PROGRAMELEM	goto 3
-	INDENT	goto 2
-	STATEMENT	goto 1
+	PROGRAM	goto 31
+	STATEMENT	goto 2
+	INDENT	goto 1
 
-	.	reduce by rule 6
+	.	reduce by rule 15
 
 
 state 1:
 
-	PROGRAMELEM : STATEMENT .  (reduce by rule 2)
+	STATEMENT : INDENT . IDENTIFIER 
+	STATEMENT : INDENT . IDENTIFIER LPAREN RPAREN 
+	STATEMENT : INDENT . IDENTIFIER EQUALSIGN IDENTIFIER 
+	STATEMENT : INDENT . IF LPAREN CONDITION RPAREN COLON 
+
+	IDENTIFIER	shift 5
+	IF	shift 4
 
 
-
-	.	reduce by rule 2
+	.	error
 
 
 state 2:
 
-	STATEMENT : INDENT . IDENTIFIER 
-	STATEMENT : INDENT . IDENTIFIER LPAREN RPAREN 
+	PROGRAM : STATEMENT . PROGRAM 
+	PROGRAM : STATEMENT .  (reduce by rule 1)
 
-	IDENTIFIER	shift 5
+	TAB	shift 3
+	EOF	reduce by rule 1
+	IDENTIFIER	reduce by rule 15
+	IF	reduce by rule 15
 
+	PROGRAM	goto 6
+	STATEMENT	goto 2
+	INDENT	goto 1
 
 	.	error
 
 
 state 3:
 
-	PROGRAM : PROGRAMELEM . PROGRAM 
-	PROGRAM : PROGRAMELEM .  (reduce by rule 1)
+	INDENT : TAB . INDENT 
 
-	TAB	shift 4
-	EOF	reduce by rule 1
-	IDENTIFIER	reduce by rule 6
+	TAB	shift 3
 
-	PROGRAM	goto 6
-	PROGRAMELEM	goto 3
-	INDENT	goto 2
-	STATEMENT	goto 1
+	INDENT	goto 7
 
-	.	error
+	.	reduce by rule 15
 
 
 state 4:
 
-	INDENT : TAB . INDENT 
-
-	TAB	shift 4
-
-	INDENT	goto 7
-
-	.	reduce by rule 6
-
-
-state 5:
-
-	STATEMENT : INDENT IDENTIFIER .  (reduce by rule 3)
-	STATEMENT : INDENT IDENTIFIER . LPAREN RPAREN 
+	STATEMENT : INDENT IF . LPAREN CONDITION RPAREN COLON 
 
 	LPAREN	shift 8
 
 
-	.	reduce by rule 3
+	.	error
+
+
+state 5:
+
+	STATEMENT : INDENT IDENTIFIER .  (reduce by rule 2)
+	STATEMENT : INDENT IDENTIFIER . LPAREN RPAREN 
+	STATEMENT : INDENT IDENTIFIER . EQUALSIGN IDENTIFIER 
+
+	EQUALSIGN	shift 10
+	LPAREN	shift 9
+
+
+	.	reduce by rule 2
 
 
 state 6:
 
-	PROGRAM : PROGRAMELEM PROGRAM .  (reduce by rule 0)
+	PROGRAM : STATEMENT PROGRAM .  (reduce by rule 0)
 
 
 
@@ -87,33 +92,306 @@ state 6:
 
 state 7:
 
-	INDENT : TAB INDENT .  (reduce by rule 5)
+	INDENT : TAB INDENT .  (reduce by rule 14)
 
 
 
-	.	reduce by rule 5
+	.	reduce by rule 14
 
 
 state 8:
 
-	STATEMENT : INDENT IDENTIFIER LPAREN . RPAREN 
+	STATEMENT : INDENT IF LPAREN . CONDITION RPAREN COLON 
 
-	RPAREN	shift 9
+	CONST	shift 14
+	IDENTIFIER	shift 13
+	LPAREN	shift 12
 
+	CONDITION	goto 11
 
 	.	error
 
 
 state 9:
 
-	STATEMENT : INDENT IDENTIFIER LPAREN RPAREN .  (reduce by rule 4)
+	STATEMENT : INDENT IDENTIFIER LPAREN . RPAREN 
+
+	RPAREN	shift 15
+
+
+	.	error
+
+
+state 10:
+
+	STATEMENT : INDENT IDENTIFIER EQUALSIGN . IDENTIFIER 
+
+	IDENTIFIER	shift 16
+
+
+	.	error
+
+
+state 11:
+
+	STATEMENT : INDENT IF LPAREN CONDITION . RPAREN COLON 
+	CONDITION : CONDITION . EQ CONDITION 
+	CONDITION : CONDITION . LT CONDITION 
+	CONDITION : CONDITION . GT CONDITION 
+	CONDITION : CONDITION . AND CONDITION 
+	CONDITION : CONDITION . OR CONDITION 
+
+	RPAREN	shift 22
+	EQ	shift 21
+	GT	shift 20
+	LT	shift 19
+	AND	shift 18
+	OR	shift 17
+
+
+	.	error
+
+
+state 12:
+
+	CONDITION : LPAREN . CONDITION RPAREN 
+
+	CONST	shift 14
+	IDENTIFIER	shift 13
+	LPAREN	shift 12
+
+	CONDITION	goto 23
+
+	.	error
+
+
+state 13:
+
+	CONDITION : IDENTIFIER .  (reduce by rule 7)
+
+
+
+	.	reduce by rule 7
+
+
+state 14:
+
+	CONDITION : CONST .  (reduce by rule 6)
+
+
+
+	.	reduce by rule 6
+
+
+state 15:
+
+	STATEMENT : INDENT IDENTIFIER LPAREN RPAREN .  (reduce by rule 3)
+
+
+
+	.	reduce by rule 3
+
+
+state 16:
+
+	STATEMENT : INDENT IDENTIFIER EQUALSIGN IDENTIFIER .  (reduce by rule 4)
 
 
 
 	.	reduce by rule 4
 
 
-state 10:
+state 17:
+
+	CONDITION : CONDITION OR . CONDITION 
+
+	CONST	shift 14
+	IDENTIFIER	shift 13
+	LPAREN	shift 12
+
+	CONDITION	goto 24
+
+	.	error
+
+
+state 18:
+
+	CONDITION : CONDITION AND . CONDITION 
+
+	CONST	shift 14
+	IDENTIFIER	shift 13
+	LPAREN	shift 12
+
+	CONDITION	goto 25
+
+	.	error
+
+
+state 19:
+
+	CONDITION : CONDITION LT . CONDITION 
+
+	CONST	shift 14
+	IDENTIFIER	shift 13
+	LPAREN	shift 12
+
+	CONDITION	goto 26
+
+	.	error
+
+
+state 20:
+
+	CONDITION : CONDITION GT . CONDITION 
+
+	CONST	shift 14
+	IDENTIFIER	shift 13
+	LPAREN	shift 12
+
+	CONDITION	goto 27
+
+	.	error
+
+
+state 21:
+
+	CONDITION : CONDITION EQ . CONDITION 
+
+	CONST	shift 14
+	IDENTIFIER	shift 13
+	LPAREN	shift 12
+
+	CONDITION	goto 28
+
+	.	error
+
+
+state 22:
+
+	STATEMENT : INDENT IF LPAREN CONDITION RPAREN . COLON 
+
+	COLON	shift 29
+
+
+	.	error
+
+
+state 23:
+
+	CONDITION : CONDITION . EQ CONDITION 
+	CONDITION : CONDITION . LT CONDITION 
+	CONDITION : CONDITION . GT CONDITION 
+	CONDITION : CONDITION . AND CONDITION 
+	CONDITION : CONDITION . OR CONDITION 
+	CONDITION : LPAREN CONDITION . RPAREN 
+
+	RPAREN	shift 30
+	EQ	shift 21
+	GT	shift 20
+	LT	shift 19
+	AND	shift 18
+	OR	shift 17
+
+
+	.	error
+
+
+state 24:
+
+	CONDITION : CONDITION . EQ CONDITION 
+	CONDITION : CONDITION . LT CONDITION 
+	CONDITION : CONDITION . GT CONDITION 
+	CONDITION : CONDITION . AND CONDITION 
+	CONDITION : CONDITION . OR CONDITION 
+	CONDITION : CONDITION OR CONDITION .  (reduce by rule 12)
+
+	AND	shift 18
+
+
+	.	reduce by rule 12
+
+
+state 25:
+
+	CONDITION : CONDITION . EQ CONDITION 
+	CONDITION : CONDITION . LT CONDITION 
+	CONDITION : CONDITION . GT CONDITION 
+	CONDITION : CONDITION . AND CONDITION 
+	CONDITION : CONDITION AND CONDITION .  (reduce by rule 11)
+	CONDITION : CONDITION . OR CONDITION 
+
+
+
+	.	reduce by rule 11
+
+
+state 26:
+
+	CONDITION : CONDITION . EQ CONDITION 
+	CONDITION : CONDITION . LT CONDITION 
+	CONDITION : CONDITION LT CONDITION .  (reduce by rule 9)
+	CONDITION : CONDITION . GT CONDITION 
+	CONDITION : CONDITION . AND CONDITION 
+	CONDITION : CONDITION . OR CONDITION 
+
+	AND	shift 18
+	OR	shift 17
+
+
+	.	reduce by rule 9
+
+
+state 27:
+
+	CONDITION : CONDITION . EQ CONDITION 
+	CONDITION : CONDITION . LT CONDITION 
+	CONDITION : CONDITION . GT CONDITION 
+	CONDITION : CONDITION GT CONDITION .  (reduce by rule 10)
+	CONDITION : CONDITION . AND CONDITION 
+	CONDITION : CONDITION . OR CONDITION 
+
+	AND	shift 18
+	OR	shift 17
+
+
+	.	reduce by rule 10
+
+
+state 28:
+
+	CONDITION : CONDITION . EQ CONDITION 
+	CONDITION : CONDITION EQ CONDITION .  (reduce by rule 8)
+	CONDITION : CONDITION . LT CONDITION 
+	CONDITION : CONDITION . GT CONDITION 
+	CONDITION : CONDITION . AND CONDITION 
+	CONDITION : CONDITION . OR CONDITION 
+
+	AND	shift 18
+	OR	shift 17
+
+
+	.	reduce by rule 8
+
+
+state 29:
+
+	STATEMENT : INDENT IF LPAREN CONDITION RPAREN COLON .  (reduce by rule 5)
+
+
+
+	.	reduce by rule 5
+
+
+state 30:
+
+	CONDITION : LPAREN CONDITION RPAREN .  (reduce by rule 13)
+
+
+
+	.	reduce by rule 13
+
+
+state 31:
 
 
 	EOF	accept
@@ -121,5 +399,5 @@ state 10:
 
 	.	error
 
-8 of 20 action table entries left after compaction
-9 goto table entries
+36 of 87 action table entries left after compaction
+14 goto table entries

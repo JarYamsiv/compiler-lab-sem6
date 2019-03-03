@@ -1,6 +1,8 @@
 (* This is the preamble where you can have arbitrary sml code. For us
 it is empty *)
 
+
+
 %%
 
 %eop EOF
@@ -28,10 +30,10 @@ it is empty *)
     | FUN
 
 (* The nonterminals of the language *)
-%nonterm PROGRAM of Ast.ProgramElement_t list
-       | PROGRAMELEM of Ast.ProgramElement_t
-       | INDENT of int
-       | STATEMENT of Ast.Statement_t
+%nonterm PROGRAM of Ast.Statement list
+         |STATEMENT of Ast.Statement
+         |INDENT of int
+         | CONDITION of Ast.Condition
 
 
 %noshift EOF
@@ -48,18 +50,39 @@ left associative and the precedence increase as you go down this list.
 %left PLUS MINUS  (* + and - are of same precedence *)
 %left MUL         (* higher than + and -            *)
 
+
+
 (* The type that captures position in the input *)
 %pos int
 
 %%
 
-PROGRAM :   PROGRAMELEM PROGRAM   (PROGRAMELEM::PROGRAM)
-        |   PROGRAMELEM           ([PROGRAMELEM])
+PROGRAM :  STATEMENT PROGRAM       (STATEMENT::PROGRAM)
+        |  STATEMENT               ([STATEMENT])
 
-PROGRAMELEM : STATEMENT           (Ast.C_Statement STATEMENT)
+STATEMENT :INDENT IDENTIFIER                        
+            (Ast.Ident (INDENT,IDENTIFIER))
 
-STATEMENT: INDENT IDENTIFIER      (Ast.C_St_Identifier (INDENT,IDENTIFIER))
-         | INDENT IDENTIFIER LPAREN RPAREN (Ast.C_St_FunCall (INDENT,IDENTIFIER))
+          |INDENT IDENTIFIER LPAREN RPAREN          
+            (Ast.FunCall (INDENT,IDENTIFIER))
+
+          |INDENT IDENTIFIER EQUALSIGN IDENTIFIER   
+            (Ast.Assignment (INDENT,IDENTIFIER1,IDENTIFIER2))
+
+          |INDENT IF LPAREN CONDITION RPAREN COLON
+            (Ast.Empty INDENT)
+
+
+
+CONDITION : CONST                       ( Ast.CConst CONST)
+          | IDENTIFIER                  ( Ast.CVar IDENTIFIER)
+          | CONDITION EQ CONDITION      ( Ast.eq CONDITION1 CONDITION2)
+          | CONDITION LT CONDITION      ( Ast.lt CONDITION1 CONDITION2)
+          | CONDITION GT CONDITION      ( Ast.gt CONDITION1 CONDITION2)
+          | CONDITION AND CONDITION     ( Ast.nd CONDITION1 CONDITION2)
+          | CONDITION OR CONDITION      ( Ast.or CONDITION1 CONDITION2)
+          | LPAREN CONDITION RPAREN     ( CONDITION )
+
 
 INDENT : TAB INDENT                (INDENT+1)
        |                           (0)
