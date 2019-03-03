@@ -78,7 +78,7 @@ val s = [
 \\000"
 ),
  (1, 
-"\000\000\000\000\000\000\000\000\000\043\041\000\000\000\000\000\
+"\000\000\000\000\000\000\000\000\000\040\041\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\040\000\000\038\000\000\036\000\035\034\033\032\000\031\000\027\
 \\025\025\025\025\025\025\025\025\025\025\024\023\022\020\019\000\
@@ -254,7 +254,7 @@ val s = [
 \\038"
 ),
  (40, 
-"\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+"\000\000\000\000\000\000\000\000\000\040\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\040\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
@@ -265,7 +265,7 @@ val s = [
 \\000"
 ),
  (41, 
-"\000\000\000\000\000\000\000\000\000\000\041\000\000\000\000\000\
+"\000\000\000\000\000\000\000\000\000\042\041\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\042\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
@@ -286,47 +286,46 @@ in Vector.fromList(map g
 [{fin = [], trans = 0},
 {fin = [], trans = 1},
 {fin = [], trans = 1},
-{fin = [(N 39)], trans = 0},
-{fin = [], trans = 4},
-{fin = [(N 72)], trans = 0},
 {fin = [(N 37)], trans = 0},
-{fin = [(N 75)], trans = 7},
-{fin = [(N 75)], trans = 8},
-{fin = [(N 54),(N 75)], trans = 7},
-{fin = [(N 75)], trans = 10},
-{fin = [(N 75)], trans = 11},
-{fin = [(N 51),(N 75)], trans = 7},
-{fin = [(N 75)], trans = 13},
-{fin = [(N 75)], trans = 14},
-{fin = [(N 75)], trans = 15},
-{fin = [(N 59),(N 75)], trans = 7},
-{fin = [(N 43)], trans = 0},
+{fin = [], trans = 4},
+{fin = [(N 70)], trans = 0},
+{fin = [(N 35)], trans = 0},
+{fin = [(N 73)], trans = 7},
+{fin = [(N 73)], trans = 8},
+{fin = [(N 52),(N 73)], trans = 7},
+{fin = [(N 73)], trans = 10},
+{fin = [(N 73)], trans = 11},
+{fin = [(N 49),(N 73)], trans = 7},
+{fin = [(N 73)], trans = 13},
+{fin = [(N 73)], trans = 14},
+{fin = [(N 73)], trans = 15},
+{fin = [(N 57),(N 73)], trans = 7},
 {fin = [(N 41)], trans = 0},
-{fin = [(N 64)], trans = 0},
-{fin = [(N 31)], trans = 20},
+{fin = [(N 39)], trans = 0},
 {fin = [(N 62)], trans = 0},
-{fin = [(N 66)], trans = 0},
+{fin = [(N 29)], trans = 20},
+{fin = [(N 60)], trans = 0},
+{fin = [(N 64)], trans = 0},
+{fin = [(N 43)], trans = 0},
 {fin = [(N 45)], trans = 0},
-{fin = [(N 47)], trans = 0},
-{fin = [(N 23)], trans = 25},
-{fin = [(N 23)], trans = 25},
+{fin = [(N 21)], trans = 25},
+{fin = [(N 21)], trans = 25},
 {fin = [], trans = 27},
 {fin = [], trans = 28},
 {fin = [], trans = 29},
-{fin = [(N 18)], trans = 28},
-{fin = [(N 27)], trans = 0},
+{fin = [(N 16)], trans = 28},
 {fin = [(N 25)], trans = 0},
-{fin = [(N 29)], trans = 0},
-{fin = [(N 35)], trans = 0},
+{fin = [(N 23)], trans = 0},
+{fin = [(N 27)], trans = 0},
 {fin = [(N 33)], trans = 0},
+{fin = [(N 31)], trans = 0},
 {fin = [], trans = 36},
-{fin = [(N 69)], trans = 0},
+{fin = [(N 67)], trans = 0},
 {fin = [], trans = 38},
 {fin = [(N 3)], trans = 0},
 {fin = [(N 6)], trans = 40},
 {fin = [(N 10)], trans = 41},
-{fin = [], trans = 41},
-{fin = [(N 12)], trans = 0}])
+{fin = [], trans = 41}])
 end
 structure StartStates =
 	struct
@@ -372,59 +371,57 @@ let fun continue() = lex() in
   10 => let val yytext=yymktext() in (*#line 60.19 "expr.lex"*) let val old = !lineRef
 		   in updateLine (newlineCount yytext); lex()
 		   end
-		 (*#line 375.1 "expr.lex.sml"*)
+		 (*#line 374.1 "expr.lex.sml"*)
  end
-| 12 => ((*#line 64.29 "expr.lex"*) Tokens.TAB (!lineRef , !lineRef) (*#line 377.1 "expr.lex.sml"*)
+| 16 => ((*#line 64.29 "expr.lex"*)lex()(*#line 376.1 "expr.lex.sml"*)
 )
-| 18 => ((*#line 65.29 "expr.lex"*)lex()(*#line 379.1 "expr.lex.sml"*)
-)
-| 23 => let val yytext=yymktext() in (*#line 66.29 "expr.lex"*) Tokens.CONST (toInt yytext, !lineRef, !lineRef) (*#line 381.1 "expr.lex.sml"*)
+| 21 => let val yytext=yymktext() in (*#line 65.29 "expr.lex"*) Tokens.CONST (toInt yytext, !lineRef, !lineRef) (*#line 378.1 "expr.lex.sml"*)
  end
-| 25 => ((*#line 67.29 "expr.lex"*) Tokens.PLUS  (!lineRef,!lineRef) (*#line 383.1 "expr.lex.sml"*)
+| 23 => ((*#line 66.29 "expr.lex"*) Tokens.PLUS  (!lineRef,!lineRef) (*#line 380.1 "expr.lex.sml"*)
 )
-| 27 => ((*#line 68.29 "expr.lex"*) Tokens.MINUS  (!lineRef,!lineRef) (*#line 385.1 "expr.lex.sml"*)
+| 25 => ((*#line 67.29 "expr.lex"*) Tokens.MINUS  (!lineRef,!lineRef) (*#line 382.1 "expr.lex.sml"*)
 )
-| 29 => ((*#line 69.29 "expr.lex"*) Tokens.MUL (!lineRef,!lineRef) (*#line 387.1 "expr.lex.sml"*)
+| 27 => ((*#line 68.29 "expr.lex"*) Tokens.MUL (!lineRef,!lineRef) (*#line 384.1 "expr.lex.sml"*)
 )
-| 3 => ((*#line 58.19 "expr.lex"*) updateLine 1; lex ()(*#line 389.1 "expr.lex.sml"*)
+| 29 => ((*#line 69.29 "expr.lex"*) Tokens.EQUALSIGN (!lineRef,!lineRef) (*#line 386.1 "expr.lex.sml"*)
 )
-| 31 => ((*#line 70.29 "expr.lex"*) Tokens.EQUALSIGN (!lineRef,!lineRef) (*#line 391.1 "expr.lex.sml"*)
+| 3 => ((*#line 58.19 "expr.lex"*) updateLine 1; lex ()(*#line 388.1 "expr.lex.sml"*)
 )
-| 33 => ((*#line 71.29 "expr.lex"*) Tokens.LPAREN (!lineRef,!lineRef) (*#line 393.1 "expr.lex.sml"*)
+| 31 => ((*#line 70.29 "expr.lex"*) Tokens.LPAREN (!lineRef,!lineRef) (*#line 390.1 "expr.lex.sml"*)
 )
-| 35 => ((*#line 72.29 "expr.lex"*) Tokens.RPAREN (!lineRef,!lineRef) (*#line 395.1 "expr.lex.sml"*)
+| 33 => ((*#line 71.29 "expr.lex"*) Tokens.RPAREN (!lineRef,!lineRef) (*#line 392.1 "expr.lex.sml"*)
 )
-| 37 => ((*#line 73.29 "expr.lex"*) Tokens.LCURL (!lineRef,!lineRef) (*#line 397.1 "expr.lex.sml"*)
+| 35 => ((*#line 72.29 "expr.lex"*) Tokens.LCURL (!lineRef,!lineRef) (*#line 394.1 "expr.lex.sml"*)
 )
-| 39 => ((*#line 74.29 "expr.lex"*) Tokens.RCURL (!lineRef,!lineRef) (*#line 399.1 "expr.lex.sml"*)
+| 37 => ((*#line 73.29 "expr.lex"*) Tokens.RCURL (!lineRef,!lineRef) (*#line 396.1 "expr.lex.sml"*)
 )
-| 41 => ((*#line 75.29 "expr.lex"*) Tokens.LSQUARE (!lineRef,!lineRef) (*#line 401.1 "expr.lex.sml"*)
+| 39 => ((*#line 74.29 "expr.lex"*) Tokens.LSQUARE (!lineRef,!lineRef) (*#line 398.1 "expr.lex.sml"*)
 )
-| 43 => ((*#line 76.29 "expr.lex"*) Tokens.RSQUARE (!lineRef,!lineRef) (*#line 403.1 "expr.lex.sml"*)
+| 41 => ((*#line 75.29 "expr.lex"*) Tokens.RSQUARE (!lineRef,!lineRef) (*#line 400.1 "expr.lex.sml"*)
 )
-| 45 => ((*#line 77.29 "expr.lex"*) Tokens.SEMICOLON (!lineRef,!lineRef) (*#line 405.1 "expr.lex.sml"*)
+| 43 => ((*#line 76.29 "expr.lex"*) Tokens.SEMICOLON (!lineRef,!lineRef) (*#line 402.1 "expr.lex.sml"*)
 )
-| 47 => ((*#line 78.29 "expr.lex"*) Tokens.COLON (!lineRef,!lineRef) (*#line 407.1 "expr.lex.sml"*)
+| 45 => ((*#line 77.29 "expr.lex"*) Tokens.COLON (!lineRef,!lineRef) (*#line 404.1 "expr.lex.sml"*)
 )
-| 51 => ((*#line 80.29 "expr.lex"*) Tokens.FUN (!lineRef,!lineRef)(*#line 409.1 "expr.lex.sml"*)
+| 49 => ((*#line 79.29 "expr.lex"*) Tokens.FUN (!lineRef,!lineRef)(*#line 406.1 "expr.lex.sml"*)
 )
-| 54 => ((*#line 82.29 "expr.lex"*) Tokens.IF (!lineRef,!lineRef)(*#line 411.1 "expr.lex.sml"*)
+| 52 => ((*#line 81.29 "expr.lex"*) Tokens.IF (!lineRef,!lineRef)(*#line 408.1 "expr.lex.sml"*)
 )
-| 59 => ((*#line 83.29 "expr.lex"*) Tokens.ELSE (!lineRef,!lineRef)(*#line 413.1 "expr.lex.sml"*)
+| 57 => ((*#line 82.29 "expr.lex"*) Tokens.ELSE (!lineRef,!lineRef)(*#line 410.1 "expr.lex.sml"*)
 )
-| 6 => ((*#line 59.19 "expr.lex"*) lex() (*#line 415.1 "expr.lex.sml"*)
+| 6 => ((*#line 59.19 "expr.lex"*) lex() (*#line 412.1 "expr.lex.sml"*)
 )
-| 62 => ((*#line 84.29 "expr.lex"*) Tokens.EQ (!lineRef,!lineRef) (*#line 417.1 "expr.lex.sml"*)
+| 60 => ((*#line 83.29 "expr.lex"*) Tokens.EQ (!lineRef,!lineRef) (*#line 414.1 "expr.lex.sml"*)
 )
-| 64 => ((*#line 85.29 "expr.lex"*) Tokens.GT (!lineRef,!lineRef) (*#line 419.1 "expr.lex.sml"*)
+| 62 => ((*#line 84.29 "expr.lex"*) Tokens.GT (!lineRef,!lineRef) (*#line 416.1 "expr.lex.sml"*)
 )
-| 66 => ((*#line 86.29 "expr.lex"*) Tokens.LT (!lineRef,!lineRef) (*#line 421.1 "expr.lex.sml"*)
+| 64 => ((*#line 85.29 "expr.lex"*) Tokens.LT (!lineRef,!lineRef) (*#line 418.1 "expr.lex.sml"*)
 )
-| 69 => ((*#line 87.29 "expr.lex"*) Tokens.AND (!lineRef,!lineRef) (*#line 423.1 "expr.lex.sml"*)
+| 67 => ((*#line 86.29 "expr.lex"*) Tokens.AND (!lineRef,!lineRef) (*#line 420.1 "expr.lex.sml"*)
 )
-| 72 => ((*#line 88.29 "expr.lex"*) Tokens.OR (!lineRef,!lineRef) (*#line 425.1 "expr.lex.sml"*)
+| 70 => ((*#line 87.29 "expr.lex"*) Tokens.OR (!lineRef,!lineRef) (*#line 422.1 "expr.lex.sml"*)
 )
-| 75 => let val yytext=yymktext() in (*#line 90.29 "expr.lex"*) Tokens.IDENTIFIER(yytext ,!lineRef, !lineRef)(*#line 427.1 "expr.lex.sml"*)
+| 73 => let val yytext=yymktext() in (*#line 89.29 "expr.lex"*) Tokens.IDENTIFIER(yytext ,!lineRef, !lineRef)(*#line 424.1 "expr.lex.sml"*)
  end
 | _ => raise Internal.LexerError
 
