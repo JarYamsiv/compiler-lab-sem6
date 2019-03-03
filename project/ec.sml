@@ -73,6 +73,6 @@ fun writeFile filename content =
         val _ = TextIO.closeOut fd
     in () end
 
-val _ = writeFile (!outFile) (content)
+val _ = writeFile (!outFile) (executable)
 
 end
