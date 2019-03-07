@@ -28,12 +28,11 @@ datatype Condition = CConst of int
 datatype Statement = Id of string
           | As    of string * Expr
           | FnCl  of string
+          | If of Condition*Statement list
+          | IfEl of Condition*Statement list*Statement list
 
-datatype CodeBlock =  Stlist of Statement list
-					| Cblock of Condition*CodeBlock list
-					| CEblock of Condition*CodeBlock list*CodeBlock list
 
-datatype Function = Fun of string* CodeBlock list
+datatype Function = Fun of string* Statement list
 
 
 datatype ProgramElement = St of Statement

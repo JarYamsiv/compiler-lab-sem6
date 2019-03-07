@@ -32,11 +32,10 @@ it is empty *)
        | PROGRAMELEM of Ast.ProgramElement
        | STATEMENT of Ast.Statement
        | STATEMENTS of Ast.Statement list
-       | CODEBLOCK of Ast.CodeBlock
-       | CODEBLOCKS of Ast.CodeBlock list
        | CONDITION of Ast.Condition
 
 %noshift EOF
+
 (*
 
 Operator precedence and associativity. The %left says the operator is
@@ -50,6 +49,8 @@ left associative and the precedence increase as you go down this list.
 %left PLUS MINUS  (* + and - are of same precedence *)
 %left MUL         (* higher than + and -            *)
 
+
+
 (* The type that captures position in the input *)
 %pos int
 
@@ -61,23 +62,23 @@ PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
 STATEMENT:IDENTIFIER                  (Ast.Id IDENTIFIER)
           |IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
           |IDENTIFIER LPAREN RPAREN  (Ast.FnCl IDENTIFIER)
+          |IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL (Ast.If (CONDITION,STATEMENTS))
+          |IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL ELSE LCURL STATEMENTS RCURL (Ast.IfEl (CONDITION,STATEMENTS1,STATEMENTS2))
 
-STATEMENTS:STATEMENT SEMICOLON             ([STATEMENT]) 
-          |STATEMENT SEMICOLON STATEMENTS  (STATEMENT::STATEMENTS)
 
-CODEBLOCK: STATEMENTS                (Ast.Stlist STATEMENTS)
-          |IF LPAREN CONDITION RPAREN LCURL CODEBLOCKS RCURL (Ast.Cblock (CONDITION,CODEBLOCKS))
-          |IF LPAREN CONDITION RPAREN LCURL CODEBLOCKS RCURL ELSE LCURL CODEBLOCKS RCURL (Ast.CEblock (CONDITION,CODEBLOCKS1,CODEBLOCKS2))
+STATEMENTS:                                ([]) 
+          |STATEMENT STATEMENTS  (STATEMENT::STATEMENTS)
 
-CODEBLOCKS:CODEBLOCK CODEBLOCKS    (CODEBLOCK::CODEBLOCKS)
-          |CODEBLOCK                ([CODEBLOCK])
+          
+
+
 
 
 
 PROGRAMELEM : STATEMENT SEMICOLON  (Ast.St STATEMENT)
             | FUN IDENTIFIER LPAREN RPAREN LCURL 
-            CODEBLOCKS 
-            RCURL(Ast.Fn (Ast.Fun (IDENTIFIER,CODEBLOCKS)))
+            STATEMENTS 
+            RCURL(Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS)))
 
 CONDITION : CONST                       ( Ast.CConst CONST)
           | IDENTIFIER                  ( Ast.CVar IDENTIFIER)

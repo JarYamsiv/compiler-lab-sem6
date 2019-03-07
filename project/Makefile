@@ -1,7 +1,7 @@
 # Makefile to build all standalone programs.
 #
 
-COMMON=ast.sml 
+COMMON=ast.sml utility.sml compiler.sml
 
 
 # Default rules for lex and yacc
