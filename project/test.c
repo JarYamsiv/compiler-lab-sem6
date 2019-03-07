@@ -29,6 +29,6 @@ fun main(){
 fun eeef(){
    if( a == b ){
       ooo();
-      a =  6 ;
+      a =  6 +b;
    }
 }

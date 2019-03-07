@@ -14,8 +14,9 @@ fun addtabs n = if n <= 0 then
 					("   "^( addtabs (n-1)) )
 
 
-fun compileExpr (Ast.Const x)         = (" "^(Int.toString x)^" ")
-  | compileExpr (Ast.Op (x, oper, y)) = ((compileExpr x) ^ (Ast.binOpToString oper) ^ (compileExpr y ))
+fun compileExpr (Ast.Const x )         = (" "^(Int.toString x)^" ")
+  | compileExpr (Ast.EVar  x )		   = (x)	
+  | compileExpr (Ast.Op (x, oper, y))  = ((compileExpr x) ^ (Ast.binOpToString oper) ^ (compileExpr y ))
 
 
 

@@ -90,6 +90,7 @@ CONDITION : CONST                       ( Ast.CConst CONST)
           
 
 EXP     : CONST                ( Ast.Const CONST     )
+        | IDENTIFIER           ( Ast.EVar IDENTIFIER )
         | EXP PLUS EXP         ( Ast.plus  EXP1 EXP2 )
         | LPAREN EXP RPAREN    ( EXP )
 	      | EXP MINUS EXP        ( Ast.minus EXP1 EXP2 )

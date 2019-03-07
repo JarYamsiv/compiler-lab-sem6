@@ -2,8 +2,9 @@
 structure Ast = struct
 
  
-datatype Expr  = Const of int
-	       | Op    of Expr * BinOp * Expr
+datatype Expr  =  Const of int
+		   		| EVar of string 
+	       		| Op    of Expr * BinOp * Expr
          
 
      and BinOp = Plus

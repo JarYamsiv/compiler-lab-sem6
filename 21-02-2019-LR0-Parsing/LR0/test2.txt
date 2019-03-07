@@ -1,6 +1,3 @@
-P:E $;
-
-E:A B C;
-
-B: D;
-C: D;
+Sd : S $;
+S : B;
+B : c;
