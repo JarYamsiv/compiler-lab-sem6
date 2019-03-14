@@ -4,6 +4,7 @@ structure Ast = struct
  
 datatype Expr  =  Const of int
 		   		| EVar of string 
+		   		| ARVar of string*Expr
 	       		| Op    of Expr * BinOp * Expr
          
 
@@ -25,9 +26,9 @@ datatype Condition = CConst of int
 
 
 
-datatype Statement = Id of string
-          | As    of string * Expr
+datatype Statement = As    of string * Expr
           | FnCl  of string
+          | Ret of Expr
           | If of Condition*Statement list
           | IfEl of Condition*Statement list*Statement list
 

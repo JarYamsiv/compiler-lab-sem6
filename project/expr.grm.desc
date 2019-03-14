@@ -7,11 +7,12 @@ state 0:
 	PROGRAM : . PROGRAMELEM PROGRAM 
 	PROGRAM : . PROGRAMELEM 
 
-	IDENTIFIER	shift 5
-	IF	shift 4
-	FUN	shift 3
+	IDENTIFIER	shift 6
+	IF	shift 5
+	FUN	shift 4
+	RET	shift 3
 
-	PROGRAM	goto 56
+	PROGRAM	goto 61
 	PROGRAMELEM	goto 2
 	STATEMENT	goto 1
 
@@ -22,7 +23,7 @@ state 1:
 
 	PROGRAMELEM : STATEMENT . SEMICOLON 
 
-	SEMICOLON	shift 6
+	SEMICOLON	shift 7
 
 
 	.	error
@@ -33,11 +34,12 @@ state 2:
 	PROGRAM : PROGRAMELEM . PROGRAM 
 	PROGRAM : PROGRAMELEM .  (reduce by rule 1)
 
-	IDENTIFIER	shift 5
-	IF	shift 4
-	FUN	shift 3
+	IDENTIFIER	shift 6
+	IF	shift 5
+	FUN	shift 4
+	RET	shift 3
 
-	PROGRAM	goto 7
+	PROGRAM	goto 8
 	PROGRAMELEM	goto 2
 	STATEMENT	goto 1
 
@@ -46,20 +48,22 @@ state 2:
 
 state 3:
 
-	PROGRAMELEM : FUN . IDENTIFIER LPAREN RPAREN LCURL STATEMENTS RCURL 
+	STATEMENT : RET . EXP 
 
-	IDENTIFIER	shift 8
+	CONST	shift 12
+	IDENTIFIER	shift 11
+	LPAREN	shift 10
 
+	EXP	goto 9
 
 	.	error
 
 
 state 4:
 
-	STATEMENT : IF . LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL 
-	STATEMENT : IF . LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL ELSE LCURL STATEMENTS RCURL 
+	PROGRAMELEM : FUN . IDENTIFIER LPAREN RPAREN LCURL STATEMENTS RCURL 
 
-	LPAREN	shift 9
+	IDENTIFIER	shift 13
 
 
 	.	error
@@ -67,18 +71,28 @@ state 4:
 
 state 5:
 
-	STATEMENT : IDENTIFIER .  (reduce by rule 2)
-	STATEMENT : IDENTIFIER . EQUALSIGN EXP 
-	STATEMENT : IDENTIFIER . LPAREN RPAREN 
+	STATEMENT : IF . LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL 
+	STATEMENT : IF . LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL ELSE LCURL STATEMENTS RCURL 
 
-	EQUALSIGN	shift 11
-	LPAREN	shift 10
+	LPAREN	shift 14
 
 
-	.	reduce by rule 2
+	.	error
 
 
 state 6:
+
+	STATEMENT : IDENTIFIER . EQUALSIGN EXP 
+	STATEMENT : IDENTIFIER . LPAREN RPAREN 
+
+	EQUALSIGN	shift 16
+	LPAREN	shift 15
+
+
+	.	error
+
+
+state 7:
 
 	PROGRAMELEM : STATEMENT SEMICOLON .  (reduce by rule 9)
 
@@ -87,7 +101,7 @@ state 6:
 	.	reduce by rule 9
 
 
-state 7:
+state 8:
 
 	PROGRAM : PROGRAMELEM PROGRAM .  (reduce by rule 0)
 
@@ -96,64 +110,180 @@ state 7:
 	.	reduce by rule 0
 
 
-state 8:
-
-	PROGRAMELEM : FUN IDENTIFIER . LPAREN RPAREN LCURL STATEMENTS RCURL 
-
-	LPAREN	shift 12
-
-
-	.	error
-
-
 state 9:
 
-	STATEMENT : IF LPAREN . CONDITION RPAREN LCURL STATEMENTS RCURL 
-	STATEMENT : IF LPAREN . CONDITION RPAREN LCURL STATEMENTS RCURL ELSE LCURL STATEMENTS RCURL 
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+	STATEMENT : RET EXP .  (reduce by rule 4)
 
-	CONST	shift 16
-	IDENTIFIER	shift 15
-	LPAREN	shift 14
+	PLUS	shift 19
+	MINUS	shift 18
+	MUL	shift 17
 
-	CONDITION	goto 13
 
-	.	error
+	.	reduce by rule 4
 
 
 state 10:
 
-	STATEMENT : IDENTIFIER LPAREN . RPAREN 
+	EXP : LPAREN . EXP RPAREN 
 
-	RPAREN	shift 17
+	CONST	shift 12
+	IDENTIFIER	shift 11
+	LPAREN	shift 10
 
+	EXP	goto 20
 
 	.	error
 
 
 state 11:
 
-	STATEMENT : IDENTIFIER EQUALSIGN . EXP 
+	EXP : IDENTIFIER .  (reduce by rule 20)
+	EXP : IDENTIFIER . LSQUARE EXP RSQUARE 
 
-	CONST	shift 21
-	IDENTIFIER	shift 20
-	LPAREN	shift 19
+	LSQUARE	shift 21
 
-	EXP	goto 18
 
-	.	error
+	.	reduce by rule 20
 
 
 state 12:
 
-	PROGRAMELEM : FUN IDENTIFIER LPAREN . RPAREN LCURL STATEMENTS RCURL 
+	EXP : CONST .  (reduce by rule 19)
 
-	RPAREN	shift 22
+
+
+	.	reduce by rule 19
+
+
+state 13:
+
+	PROGRAMELEM : FUN IDENTIFIER . LPAREN RPAREN LCURL STATEMENTS RCURL 
+
+	LPAREN	shift 22
 
 
 	.	error
 
 
-state 13:
+state 14:
+
+	STATEMENT : IF LPAREN . CONDITION RPAREN LCURL STATEMENTS RCURL 
+	STATEMENT : IF LPAREN . CONDITION RPAREN LCURL STATEMENTS RCURL ELSE LCURL STATEMENTS RCURL 
+
+	CONST	shift 26
+	IDENTIFIER	shift 25
+	LPAREN	shift 24
+
+	CONDITION	goto 23
+
+	.	error
+
+
+state 15:
+
+	STATEMENT : IDENTIFIER LPAREN . RPAREN 
+
+	RPAREN	shift 27
+
+
+	.	error
+
+
+state 16:
+
+	STATEMENT : IDENTIFIER EQUALSIGN . EXP 
+
+	CONST	shift 12
+	IDENTIFIER	shift 11
+	LPAREN	shift 10
+
+	EXP	goto 28
+
+	.	error
+
+
+state 17:
+
+	EXP : EXP MUL . EXP 
+
+	CONST	shift 12
+	IDENTIFIER	shift 11
+	LPAREN	shift 10
+
+	EXP	goto 29
+
+	.	error
+
+
+state 18:
+
+	EXP : EXP MINUS . EXP 
+
+	CONST	shift 12
+	IDENTIFIER	shift 11
+	LPAREN	shift 10
+
+	EXP	goto 30
+
+	.	error
+
+
+state 19:
+
+	EXP : EXP PLUS . EXP 
+
+	CONST	shift 12
+	IDENTIFIER	shift 11
+	LPAREN	shift 10
+
+	EXP	goto 31
+
+	.	error
+
+
+state 20:
+
+	EXP : EXP . PLUS EXP 
+	EXP : LPAREN EXP . RPAREN 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+
+	PLUS	shift 19
+	MINUS	shift 18
+	MUL	shift 17
+	RPAREN	shift 32
+
+
+	.	error
+
+
+state 21:
+
+	EXP : IDENTIFIER LSQUARE . EXP RSQUARE 
+
+	CONST	shift 12
+	IDENTIFIER	shift 11
+	LPAREN	shift 10
+
+	EXP	goto 33
+
+	.	error
+
+
+state 22:
+
+	PROGRAMELEM : FUN IDENTIFIER LPAREN . RPAREN LCURL STATEMENTS RCURL 
+
+	RPAREN	shift 34
+
+
+	.	error
+
+
+state 23:
 
 	STATEMENT : IF LPAREN CONDITION . RPAREN LCURL STATEMENTS RCURL 
 	STATEMENT : IF LPAREN CONDITION . RPAREN LCURL STATEMENTS RCURL ELSE LCURL STATEMENTS RCURL 
@@ -163,31 +293,31 @@ state 13:
 	CONDITION : CONDITION . AND CONDITION 
 	CONDITION : CONDITION . OR CONDITION 
 
-	RPAREN	shift 28
-	EQ	shift 27
-	GT	shift 26
-	LT	shift 25
-	AND	shift 24
-	OR	shift 23
+	RPAREN	shift 40
+	EQ	shift 39
+	GT	shift 38
+	LT	shift 37
+	AND	shift 36
+	OR	shift 35
 
 
 	.	error
 
 
-state 14:
+state 24:
 
 	CONDITION : LPAREN . CONDITION RPAREN 
 
-	CONST	shift 16
-	IDENTIFIER	shift 15
-	LPAREN	shift 14
+	CONST	shift 26
+	IDENTIFIER	shift 25
+	LPAREN	shift 24
 
-	CONDITION	goto 29
+	CONDITION	goto 41
 
 	.	error
 
 
-state 15:
+state 25:
 
 	CONDITION : IDENTIFIER .  (reduce by rule 12)
 
@@ -196,7 +326,7 @@ state 15:
 	.	reduce by rule 12
 
 
-state 16:
+state 26:
 
 	CONDITION : CONST .  (reduce by rule 11)
 
@@ -205,148 +335,180 @@ state 16:
 	.	reduce by rule 11
 
 
-state 17:
+state 27:
 
-	STATEMENT : IDENTIFIER LPAREN RPAREN .  (reduce by rule 4)
+	STATEMENT : IDENTIFIER LPAREN RPAREN .  (reduce by rule 3)
 
-
-
-	.	reduce by rule 4
-
-
-state 18:
-
-	EXP : EXP . PLUS EXP 
-	EXP : EXP . MINUS EXP 
-	EXP : EXP . MUL EXP 
-	STATEMENT : IDENTIFIER EQUALSIGN EXP .  (reduce by rule 3)
-
-	PLUS	shift 32
-	MINUS	shift 31
-	MUL	shift 30
 
 
 	.	reduce by rule 3
 
 
-state 19:
+state 28:
 
-	EXP : LPAREN . EXP RPAREN 
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+	STATEMENT : IDENTIFIER EQUALSIGN EXP .  (reduce by rule 2)
 
-	CONST	shift 21
-	IDENTIFIER	shift 20
-	LPAREN	shift 19
+	PLUS	shift 19
+	MINUS	shift 18
+	MUL	shift 17
 
-	EXP	goto 33
+
+	.	reduce by rule 2
+
+
+state 29:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+	EXP : EXP MUL EXP .  (reduce by rule 25)
+
+
+
+	.	reduce by rule 25
+
+
+state 30:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP MINUS EXP .  (reduce by rule 24)
+	EXP : EXP . MUL EXP 
+
+	MUL	shift 17
+
+
+	.	reduce by rule 24
+
+
+state 31:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP PLUS EXP .  (reduce by rule 22)
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+
+	MUL	shift 17
+
+
+	.	reduce by rule 22
+
+
+state 32:
+
+	EXP : LPAREN EXP RPAREN .  (reduce by rule 23)
+
+
+
+	.	reduce by rule 23
+
+
+state 33:
+
+	EXP : IDENTIFIER LSQUARE EXP . RSQUARE 
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+
+	PLUS	shift 19
+	MINUS	shift 18
+	MUL	shift 17
+	RSQUARE	shift 42
+
 
 	.	error
 
 
-state 20:
-
-	EXP : IDENTIFIER .  (reduce by rule 20)
-
-
-
-	.	reduce by rule 20
-
-
-state 21:
-
-	EXP : CONST .  (reduce by rule 19)
-
-
-
-	.	reduce by rule 19
-
-
-state 22:
+state 34:
 
 	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN . LCURL STATEMENTS RCURL 
 
-	LCURL	shift 34
+	LCURL	shift 43
 
 
 	.	error
 
 
-state 23:
+state 35:
 
 	CONDITION : CONDITION OR . CONDITION 
 
-	CONST	shift 16
-	IDENTIFIER	shift 15
-	LPAREN	shift 14
+	CONST	shift 26
+	IDENTIFIER	shift 25
+	LPAREN	shift 24
 
-	CONDITION	goto 35
+	CONDITION	goto 44
 
 	.	error
 
 
-state 24:
+state 36:
 
 	CONDITION : CONDITION AND . CONDITION 
 
-	CONST	shift 16
-	IDENTIFIER	shift 15
-	LPAREN	shift 14
+	CONST	shift 26
+	IDENTIFIER	shift 25
+	LPAREN	shift 24
 
-	CONDITION	goto 36
+	CONDITION	goto 45
 
 	.	error
 
 
-state 25:
+state 37:
 
 	CONDITION : CONDITION LT . CONDITION 
 
-	CONST	shift 16
-	IDENTIFIER	shift 15
-	LPAREN	shift 14
+	CONST	shift 26
+	IDENTIFIER	shift 25
+	LPAREN	shift 24
 
-	CONDITION	goto 37
+	CONDITION	goto 46
 
 	.	error
 
 
-state 26:
+state 38:
 
 	CONDITION : CONDITION GT . CONDITION 
 
-	CONST	shift 16
-	IDENTIFIER	shift 15
-	LPAREN	shift 14
+	CONST	shift 26
+	IDENTIFIER	shift 25
+	LPAREN	shift 24
 
-	CONDITION	goto 38
+	CONDITION	goto 47
 
 	.	error
 
 
-state 27:
+state 39:
 
 	CONDITION : CONDITION EQ . CONDITION 
 
-	CONST	shift 16
-	IDENTIFIER	shift 15
-	LPAREN	shift 14
+	CONST	shift 26
+	IDENTIFIER	shift 25
+	LPAREN	shift 24
 
-	CONDITION	goto 39
+	CONDITION	goto 48
 
 	.	error
 
 
-state 28:
+state 40:
 
 	STATEMENT : IF LPAREN CONDITION RPAREN . LCURL STATEMENTS RCURL 
 	STATEMENT : IF LPAREN CONDITION RPAREN . LCURL STATEMENTS RCURL ELSE LCURL STATEMENTS RCURL 
 
-	LCURL	shift 40
+	LCURL	shift 49
 
 
 	.	error
 
 
-state 29:
+state 41:
 
 	CONDITION : CONDITION . EQ CONDITION 
 	CONDITION : CONDITION . LT CONDITION 
@@ -355,86 +517,41 @@ state 29:
 	CONDITION : CONDITION . OR CONDITION 
 	CONDITION : LPAREN CONDITION . RPAREN 
 
-	RPAREN	shift 41
-	EQ	shift 27
-	GT	shift 26
-	LT	shift 25
-	AND	shift 24
-	OR	shift 23
+	RPAREN	shift 50
+	EQ	shift 39
+	GT	shift 38
+	LT	shift 37
+	AND	shift 36
+	OR	shift 35
 
 
 	.	error
 
 
-state 30:
+state 42:
 
-	EXP : EXP MUL . EXP 
-
-	CONST	shift 21
-	IDENTIFIER	shift 20
-	LPAREN	shift 19
-
-	EXP	goto 42
-
-	.	error
+	EXP : IDENTIFIER LSQUARE EXP RSQUARE .  (reduce by rule 21)
 
 
-state 31:
 
-	EXP : EXP MINUS . EXP 
-
-	CONST	shift 21
-	IDENTIFIER	shift 20
-	LPAREN	shift 19
-
-	EXP	goto 43
-
-	.	error
+	.	reduce by rule 21
 
 
-state 32:
-
-	EXP : EXP PLUS . EXP 
-
-	CONST	shift 21
-	IDENTIFIER	shift 20
-	LPAREN	shift 19
-
-	EXP	goto 44
-
-	.	error
-
-
-state 33:
-
-	EXP : EXP . PLUS EXP 
-	EXP : LPAREN EXP . RPAREN 
-	EXP : EXP . MINUS EXP 
-	EXP : EXP . MUL EXP 
-
-	PLUS	shift 32
-	MINUS	shift 31
-	MUL	shift 30
-	RPAREN	shift 45
-
-
-	.	error
-
-
-state 34:
+state 43:
 
 	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN LCURL . STATEMENTS RCURL 
 
-	IDENTIFIER	shift 5
-	IF	shift 4
+	IDENTIFIER	shift 6
+	IF	shift 5
+	RET	shift 3
 
-	STATEMENT	goto 47
-	STATEMENTS	goto 46
+	STATEMENT	goto 52
+	STATEMENTS	goto 51
 
 	.	reduce by rule 7
 
 
-state 35:
+state 44:
 
 	CONDITION : CONDITION . EQ CONDITION 
 	CONDITION : CONDITION . LT CONDITION 
@@ -443,13 +560,13 @@ state 35:
 	CONDITION : CONDITION . OR CONDITION 
 	CONDITION : CONDITION OR CONDITION .  (reduce by rule 17)
 
-	AND	shift 24
+	AND	shift 36
 
 
 	.	reduce by rule 17
 
 
-state 36:
+state 45:
 
 	CONDITION : CONDITION . EQ CONDITION 
 	CONDITION : CONDITION . LT CONDITION 
@@ -463,7 +580,7 @@ state 36:
 	.	reduce by rule 16
 
 
-state 37:
+state 46:
 
 	CONDITION : CONDITION . EQ CONDITION 
 	CONDITION : CONDITION . LT CONDITION 
@@ -472,14 +589,14 @@ state 37:
 	CONDITION : CONDITION . AND CONDITION 
 	CONDITION : CONDITION . OR CONDITION 
 
-	AND	shift 24
-	OR	shift 23
+	AND	shift 36
+	OR	shift 35
 
 
 	.	reduce by rule 14
 
 
-state 38:
+state 47:
 
 	CONDITION : CONDITION . EQ CONDITION 
 	CONDITION : CONDITION . LT CONDITION 
@@ -488,14 +605,14 @@ state 38:
 	CONDITION : CONDITION . AND CONDITION 
 	CONDITION : CONDITION . OR CONDITION 
 
-	AND	shift 24
-	OR	shift 23
+	AND	shift 36
+	OR	shift 35
 
 
 	.	reduce by rule 15
 
 
-state 39:
+state 48:
 
 	CONDITION : CONDITION . EQ CONDITION 
 	CONDITION : CONDITION EQ CONDITION .  (reduce by rule 13)
@@ -504,28 +621,29 @@ state 39:
 	CONDITION : CONDITION . AND CONDITION 
 	CONDITION : CONDITION . OR CONDITION 
 
-	AND	shift 24
-	OR	shift 23
+	AND	shift 36
+	OR	shift 35
 
 
 	.	reduce by rule 13
 
 
-state 40:
+state 49:
 
 	STATEMENT : IF LPAREN CONDITION RPAREN LCURL . STATEMENTS RCURL 
 	STATEMENT : IF LPAREN CONDITION RPAREN LCURL . STATEMENTS RCURL ELSE LCURL STATEMENTS RCURL 
 
-	IDENTIFIER	shift 5
-	IF	shift 4
+	IDENTIFIER	shift 6
+	IF	shift 5
+	RET	shift 3
 
-	STATEMENT	goto 47
-	STATEMENTS	goto 48
+	STATEMENT	goto 52
+	STATEMENTS	goto 53
 
 	.	reduce by rule 7
 
 
-state 41:
+state 50:
 
 	CONDITION : LPAREN CONDITION RPAREN .  (reduce by rule 18)
 
@@ -534,88 +652,42 @@ state 41:
 	.	reduce by rule 18
 
 
-state 42:
-
-	EXP : EXP . PLUS EXP 
-	EXP : EXP . MINUS EXP 
-	EXP : EXP . MUL EXP 
-	EXP : EXP MUL EXP .  (reduce by rule 24)
-
-
-
-	.	reduce by rule 24
-
-
-state 43:
-
-	EXP : EXP . PLUS EXP 
-	EXP : EXP . MINUS EXP 
-	EXP : EXP MINUS EXP .  (reduce by rule 23)
-	EXP : EXP . MUL EXP 
-
-	MUL	shift 30
-
-
-	.	reduce by rule 23
-
-
-state 44:
-
-	EXP : EXP . PLUS EXP 
-	EXP : EXP PLUS EXP .  (reduce by rule 21)
-	EXP : EXP . MINUS EXP 
-	EXP : EXP . MUL EXP 
-
-	MUL	shift 30
-
-
-	.	reduce by rule 21
-
-
-state 45:
-
-	EXP : LPAREN EXP RPAREN .  (reduce by rule 22)
-
-
-
-	.	reduce by rule 22
-
-
-state 46:
+state 51:
 
 	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN LCURL STATEMENTS . RCURL 
 
-	RCURL	shift 49
+	RCURL	shift 54
 
 
 	.	error
 
 
-state 47:
+state 52:
 
 	STATEMENTS : STATEMENT . STATEMENTS 
 
-	IDENTIFIER	shift 5
-	IF	shift 4
+	IDENTIFIER	shift 6
+	IF	shift 5
+	RET	shift 3
 
-	STATEMENT	goto 47
-	STATEMENTS	goto 50
+	STATEMENT	goto 52
+	STATEMENTS	goto 55
 
 	.	reduce by rule 7
 
 
-state 48:
+state 53:
 
 	STATEMENT : IF LPAREN CONDITION RPAREN LCURL STATEMENTS . RCURL 
 	STATEMENT : IF LPAREN CONDITION RPAREN LCURL STATEMENTS . RCURL ELSE LCURL STATEMENTS RCURL 
 
-	RCURL	shift 51
+	RCURL	shift 56
 
 
 	.	error
 
 
-state 49:
+state 54:
 
 	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN LCURL STATEMENTS RCURL .  (reduce by rule 10)
 
@@ -624,7 +696,7 @@ state 49:
 	.	reduce by rule 10
 
 
-state 50:
+state 55:
 
 	STATEMENTS : STATEMENT STATEMENTS .  (reduce by rule 8)
 
@@ -633,51 +705,52 @@ state 50:
 	.	reduce by rule 8
 
 
-state 51:
+state 56:
 
 	STATEMENT : IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL .  (reduce by rule 5)
 	STATEMENT : IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL . ELSE LCURL STATEMENTS RCURL 
 
-	ELSE	shift 52
+	ELSE	shift 57
 
 
 	.	reduce by rule 5
 
 
-state 52:
+state 57:
 
 	STATEMENT : IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL ELSE . LCURL STATEMENTS RCURL 
 
-	LCURL	shift 53
+	LCURL	shift 58
 
 
 	.	error
 
 
-state 53:
+state 58:
 
 	STATEMENT : IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL ELSE LCURL . STATEMENTS RCURL 
 
-	IDENTIFIER	shift 5
-	IF	shift 4
+	IDENTIFIER	shift 6
+	IF	shift 5
+	RET	shift 3
 
-	STATEMENT	goto 47
-	STATEMENTS	goto 54
+	STATEMENT	goto 52
+	STATEMENTS	goto 59
 
 	.	reduce by rule 7
 
 
-state 54:
+state 59:
 
 	STATEMENT : IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL ELSE LCURL STATEMENTS . RCURL 
 
-	RCURL	shift 55
+	RCURL	shift 60
 
 
 	.	error
 
 
-state 55:
+state 60:
 
 	STATEMENT : IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL ELSE LCURL STATEMENTS RCURL .  (reduce by rule 6)
 
@@ -686,7 +759,7 @@ state 55:
 	.	reduce by rule 6
 
 
-state 56:
+state 61:
 
 
 	EOF	accept
@@ -694,5 +767,5 @@ state 56:
 
 	.	error
 
-58 of 151 action table entries left after compaction
-26 goto table entries
+69 of 176 action table entries left after compaction
+28 goto table entries

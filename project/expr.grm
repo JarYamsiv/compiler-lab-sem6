@@ -25,6 +25,7 @@ it is empty *)
     | IF      | ELSE
     | EQ | GT | LT | AND | OR
     | FUN
+    | RET
 
 (* The nonterminals of the language *)
 %nonterm EXP     of Ast.Expr
@@ -59,9 +60,9 @@ left associative and the precedence increase as you go down this list.
 PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
         |   PROGRAMELEM           ([PROGRAMELEM])
 
-STATEMENT:IDENTIFIER                  (Ast.Id IDENTIFIER)
-          |IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
+STATEMENT:IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
           |IDENTIFIER LPAREN RPAREN  (Ast.FnCl IDENTIFIER)
+          |RET EXP                    (Ast.Ret EXP)
           |IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL (Ast.If (CONDITION,STATEMENTS))
           |IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL ELSE LCURL STATEMENTS RCURL (Ast.IfEl (CONDITION,STATEMENTS1,STATEMENTS2))
 
@@ -92,6 +93,7 @@ CONDITION : CONST                       ( Ast.CConst CONST)
 
 EXP     : CONST                ( Ast.Const CONST     )
         | IDENTIFIER           ( Ast.EVar IDENTIFIER )
+        | IDENTIFIER LSQUARE EXP RSQUARE (Ast.ARVar (IDENTIFIER,EXP))
         | EXP PLUS EXP         ( Ast.plus  EXP1 EXP2 )
         | LPAREN EXP RPAREN    ( EXP )
 	      | EXP MINUS EXP        ( Ast.minus EXP1 EXP2 )

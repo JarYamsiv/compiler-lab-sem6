@@ -73,6 +73,8 @@ fun writeFile filename content =
         val _ = TextIO.closeOut fd
     in () end
 
+val executable = "#include <stdio.h>\n"^executable
+
 val _ = writeFile (!outFile) (executable)
 
 end

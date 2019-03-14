@@ -78,6 +78,8 @@ digit = [0-9]+;
 
 "fun"                   => ( Tokens.FUN (!lineRef,!lineRef));
 
+"return"                => ( Tokens.RET (!lineRef,!lineRef));
+
 "if"                    => ( Tokens.IF (!lineRef,!lineRef));
 "else"                  => ( Tokens.ELSE (!lineRef,!lineRef));
 "=="                    => ( Tokens.EQ (!lineRef,!lineRef) );

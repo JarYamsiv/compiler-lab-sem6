@@ -1,7 +1,8 @@
 fun main()
 {
-	a 
+	a = 0
 	b= 3+a
 	b = b+1
 	b()
+	return 12+b[0]	
 }

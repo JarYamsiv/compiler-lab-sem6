@@ -37,6 +37,10 @@ fun compileExpr (Ast.Const x )         = (" "^(Int.toString x)^" ")
   | compileExpr (Ast.EVar  x )		   = let 
   											val _ = case SymTable.checkkey(Atom.atom x) of true => () | false => (raise undef)
   										 in(x)end	
+
+  | compileExpr (Ast.ARVar  (x,e) )		   = let 
+  											val _ = case SymTable.checkkey(Atom.atom x) of true => () | false => (raise undef)
+  										 in(x^"["^(compileExpr e)^"]")end
   
   | compileExpr (Ast.Op (x, oper, y))  = ((compileExpr x) ^ (Ast.binOpToString oper) ^ (compileExpr y ))
 
@@ -58,7 +62,6 @@ fun compileCondition (Ast.CConst x)	  = (" "^(Int.toString x)^" ")
   												val _ = case SymTable.checkkey(Atom.atom x) of true => () | false => (raise undef)
   											in(" "^x^" ")end
 
-
   | compileCondition (Ast.CondOp (x,oper,y)) = ((compileCondition x) ^ (Ast.condOpToString oper) ^ (compileCondition y))
 
 
@@ -71,12 +74,7 @@ fun compileCondition (Ast.CConst x)	  = (" "^(Int.toString x)^" ")
 (**************************************************************************************************************************************)
 
 
-fun   compileStatement (Ast.Id x)		t  		=  let
-														val _ = SymTable.addkey(Atom.atom x,0) 
-												   in( (addtabs t) ^  ("int "^x^";\n")  )end
-
-
-	| compileStatement (Ast.As (x,exp))	t  		=
+fun    compileStatement (Ast.As (x,exp))	t  		=
 	let 
 		val ret = (  
 			case (SymTable.checkkey(Atom.atom x)) of
@@ -88,6 +86,7 @@ fun   compileStatement (Ast.Id x)		t  		=  let
 	end
 
 
+	| compileStatement (Ast.Ret exp)         t  = ( (addtabs t) ^ "return" ^(compileExpr exp)^ ";\n" )
 
 
 
