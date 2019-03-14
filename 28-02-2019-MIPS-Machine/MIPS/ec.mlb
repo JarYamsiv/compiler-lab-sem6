@@ -1,0 +1,14 @@
+$(SML_LIB)/basis/basis.mlb
+$(SML_LIB)/mlyacc-lib/mlyacc-lib.mlb
+$(SML_LIB)/smlnj-lib/Util/smlnj-lib.mlb
+
+ast.sml         (* the syntax                                   	*)
+utility.sml 	(* some utility functions                       	*)
+temp.sml 		(* for generating temporary labels and              *)
+compiler.sml 	(* functions used to keep track of variables etc	*)
+translate.sml   (* The translate function                       	*)
+expr.grm.sig    (* The signature file generated for the grammar 	*)
+expr.grm.sml    (* The parser                                   	*)
+expr.lex.sml    (* The lexer for the machine                    	*)
+
+ec.sml

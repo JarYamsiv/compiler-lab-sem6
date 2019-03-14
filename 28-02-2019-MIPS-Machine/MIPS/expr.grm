@@ -1,0 +1,93 @@
+(* This is the preamble where you can have arbitrary sml code. For us
+it is empty *)
+
+%%
+
+%eop EOF
+%verbose
+%pure
+%name Expr
+
+(* The terminals or tokens of the language *)
+%term CONST of int
+    | PLUS
+    | MINUS
+    | MUL
+    | EOF
+    | NEWLINE
+    | IDENTIFIER of string
+    | EQUALSIGN
+    | SEMICOLON
+    | COLON
+    | LCURL   | RCURL
+    | LPAREN  | RPAREN
+    | LSQUARE | RSQUARE
+    | IF      | ELSE
+    | EQ | GT | LT | AND | OR
+    | FUN
+
+(* The nonterminals of the language *)
+%nonterm EXP     of Ast.Expr
+       | PROGRAM of Ast.ProgramElement list
+       | PROGRAMELEM of Ast.ProgramElement
+       | STATEMENT of Ast.Statement
+       | STATEMENTS of Ast.Statement list
+       | CONDITION of Ast.Condition
+
+%noshift EOF
+
+(*
+
+Operator precedence and associativity. The %left says the operator is
+left associative and the precedence increase as you go down this list.
+
+*)
+%left EQ LT GT
+%left OR
+%left AND
+%left SEMICOLON
+%left PLUS MINUS  (* + and - are of same precedence *)
+%left MUL         (* higher than + and -            *)
+
+
+
+(* The type that captures position in the input *)
+%pos int
+
+%%
+
+PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
+        |   PROGRAMELEM           ([PROGRAMELEM])
+
+STATEMENT: IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
+          |IDENTIFIER LPAREN RPAREN  (Ast.FnCl IDENTIFIER)
+          |IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL (Ast.If (CONDITION,STATEMENTS))
+          |IF LPAREN CONDITION RPAREN LCURL STATEMENTS RCURL ELSE LCURL STATEMENTS RCURL (Ast.IfEl (CONDITION,STATEMENTS1,STATEMENTS2))
+
+
+STATEMENTS:                                ([]) 
+          |STATEMENT STATEMENTS  (STATEMENT::STATEMENTS)
+
+          
+
+
+
+
+
+PROGRAMELEM : STATEMENT SEMICOLON  (Ast.St STATEMENT)
+            | FUN IDENTIFIER LPAREN RPAREN LCURL 
+            STATEMENTS 
+            RCURL(Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS)))
+
+CONDITION : EXP EQ EXP      ( Ast.eq EXP1 EXP2)
+          | EXP LT EXP      ( Ast.lt EXP1 EXP2)
+          | EXP GT EXP      ( Ast.gt EXP1 EXP2)
+
+          
+
+EXP     : CONST                ( Ast.Const CONST     )
+        | IDENTIFIER           ( Ast.EVar IDENTIFIER )
+        | EXP PLUS EXP         ( Ast.plus  EXP1 EXP2 )
+        | LPAREN EXP RPAREN    ( EXP )
+	      | EXP MINUS EXP        ( Ast.minus EXP1 EXP2 )
+	      | EXP MUL   EXP        ( Ast.mul   EXP1 EXP2 )
