@@ -2,6 +2,8 @@ signature Expr_TOKENS =
 sig
 type ('a,'b) token
 type svalue
+val END:  'a * 'a -> (svalue,'a) token
+val BEG:  'a * 'a -> (svalue,'a) token
 val RET:  'a * 'a -> (svalue,'a) token
 val FUN:  'a * 'a -> (svalue,'a) token
 val OR:  'a * 'a -> (svalue,'a) token

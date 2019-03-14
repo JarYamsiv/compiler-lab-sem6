@@ -1,8 +1,10 @@
 fun main()
-{
+beg
 	a = 0
 	b= 3+a
 	b = b+1
 	b()
 	return 12+b[0]	
-}
+
+	if a==b beg c = 56 end else beg  end
+end

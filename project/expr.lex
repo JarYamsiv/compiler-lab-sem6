@@ -77,6 +77,9 @@ digit = [0-9]+;
 ":"                     => ( Tokens.COLON (!lineRef,!lineRef) );
 
 "fun"                   => ( Tokens.FUN (!lineRef,!lineRef));
+"beg"                   => ( Tokens.BEG (!lineRef,!lineRef));  
+"end"                   => ( Tokens.END (!lineRef,!lineRef));
+
 
 "return"                => ( Tokens.RET (!lineRef,!lineRef));
 

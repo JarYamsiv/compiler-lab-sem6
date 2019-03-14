@@ -20,138 +20,133 @@ local open LrTable in
 val table=let val actionRows =
 "\
 \\001\000\001\000\014\000\007\000\013\000\013\000\012\000\000\000\
-\\001\000\001\000\028\000\007\000\027\000\013\000\026\000\000\000\
-\\001\000\002\000\021\000\003\000\020\000\004\000\019\000\014\000\034\000\000\000\
-\\001\000\002\000\021\000\003\000\020\000\004\000\019\000\016\000\044\000\000\000\
+\\001\000\001\000\019\000\007\000\018\000\013\000\017\000\000\000\
+\\001\000\002\000\024\000\003\000\023\000\004\000\022\000\014\000\040\000\000\000\
+\\001\000\002\000\024\000\003\000\023\000\004\000\022\000\016\000\051\000\000\000\
 \\001\000\005\000\000\000\000\000\
 \\001\000\007\000\008\000\017\000\007\000\024\000\006\000\025\000\005\000\000\000\
 \\001\000\007\000\015\000\000\000\
-\\001\000\008\000\018\000\013\000\017\000\000\000\
+\\001\000\008\000\021\000\013\000\020\000\000\000\
 \\001\000\009\000\009\000\000\000\
-\\001\000\011\000\045\000\000\000\
-\\001\000\011\000\051\000\000\000\
-\\001\000\011\000\060\000\000\000\
-\\001\000\012\000\056\000\000\000\
-\\001\000\012\000\058\000\000\000\
-\\001\000\012\000\062\000\000\000\
-\\001\000\013\000\016\000\000\000\
-\\001\000\013\000\024\000\000\000\
-\\001\000\014\000\029\000\000\000\
-\\001\000\014\000\036\000\000\000\
-\\001\000\014\000\042\000\019\000\041\000\020\000\040\000\021\000\039\000\
-\\022\000\038\000\023\000\037\000\000\000\
-\\001\000\014\000\052\000\019\000\041\000\020\000\040\000\021\000\039\000\
-\\022\000\038\000\023\000\037\000\000\000\
-\\064\000\000\000\
-\\065\000\007\000\008\000\017\000\007\000\024\000\006\000\025\000\005\000\000\000\
-\\066\000\002\000\021\000\003\000\020\000\004\000\019\000\000\000\
-\\067\000\000\000\
-\\068\000\002\000\021\000\003\000\020\000\004\000\019\000\000\000\
-\\069\000\018\000\059\000\000\000\
+\\001\000\013\000\027\000\000\000\
+\\001\000\014\000\035\000\000\000\
+\\001\000\014\000\042\000\000\000\
+\\001\000\014\000\050\000\019\000\033\000\020\000\032\000\021\000\031\000\
+\\022\000\030\000\023\000\029\000\000\000\
+\\001\000\019\000\033\000\020\000\032\000\021\000\031\000\022\000\030\000\
+\\023\000\029\000\026\000\028\000\000\000\
+\\001\000\026\000\052\000\000\000\
+\\001\000\026\000\058\000\000\000\
+\\001\000\027\000\053\000\000\000\
+\\001\000\027\000\057\000\000\000\
+\\001\000\027\000\060\000\000\000\
+\\062\000\000\000\
+\\063\000\007\000\008\000\017\000\007\000\024\000\006\000\025\000\005\000\000\000\
+\\064\000\002\000\024\000\003\000\023\000\004\000\022\000\000\000\
+\\065\000\000\000\
+\\066\000\002\000\024\000\003\000\023\000\004\000\022\000\000\000\
+\\067\000\018\000\056\000\000\000\
+\\068\000\000\000\
+\\069\000\007\000\008\000\017\000\007\000\025\000\005\000\000\000\
 \\070\000\000\000\
-\\071\000\007\000\008\000\017\000\007\000\025\000\005\000\000\000\
+\\071\000\000\000\
 \\072\000\000\000\
 \\073\000\000\000\
 \\074\000\000\000\
-\\075\000\000\000\
-\\076\000\000\000\
-\\077\000\022\000\038\000\023\000\037\000\000\000\
-\\078\000\022\000\038\000\023\000\037\000\000\000\
-\\079\000\022\000\038\000\023\000\037\000\000\000\
+\\075\000\022\000\030\000\023\000\029\000\000\000\
+\\076\000\022\000\030\000\023\000\029\000\000\000\
+\\077\000\022\000\030\000\023\000\029\000\000\000\
+\\078\000\000\000\
+\\079\000\022\000\030\000\000\000\
 \\080\000\000\000\
-\\081\000\022\000\038\000\000\000\
-\\082\000\000\000\
+\\081\000\000\000\
+\\082\000\015\000\026\000\000\000\
 \\083\000\000\000\
-\\084\000\015\000\023\000\000\000\
+\\084\000\004\000\022\000\000\000\
 \\085\000\000\000\
-\\086\000\004\000\019\000\000\000\
+\\086\000\004\000\022\000\000\000\
 \\087\000\000\000\
-\\088\000\004\000\019\000\000\000\
-\\089\000\000\000\
 \"
 val actionRowNumbers =
-"\005\000\008\000\022\000\000\000\
-\\006\000\015\000\007\000\030\000\
-\\021\000\025\000\000\000\041\000\
-\\040\000\016\000\001\000\017\000\
-\\000\000\000\000\000\000\000\000\
-\\002\000\000\000\018\000\019\000\
-\\001\000\033\000\032\000\024\000\
-\\023\000\046\000\045\000\043\000\
-\\044\000\003\000\009\000\001\000\
+"\005\000\008\000\020\000\000\000\
+\\006\000\001\000\007\000\028\000\
+\\019\000\023\000\000\000\039\000\
+\\038\000\009\000\013\000\001\000\
+\\031\000\030\000\010\000\000\000\
+\\000\000\000\000\000\000\002\000\
+\\000\000\011\000\026\000\001\000\
 \\001\000\001\000\001\000\001\000\
-\\010\000\020\000\042\000\028\000\
-\\038\000\037\000\035\000\036\000\
-\\034\000\028\000\039\000\012\000\
-\\028\000\013\000\031\000\029\000\
-\\026\000\011\000\028\000\014\000\
-\\027\000\004\000"
+\\012\000\022\000\021\000\044\000\
+\\043\000\041\000\042\000\003\000\
+\\014\000\016\000\026\000\036\000\
+\\035\000\033\000\034\000\032\000\
+\\037\000\040\000\026\000\024\000\
+\\027\000\017\000\015\000\029\000\
+\\026\000\018\000\025\000\004\000"
 val gotoT =
 "\
-\\002\000\061\000\003\000\002\000\004\000\001\000\000\000\
+\\002\000\059\000\003\000\002\000\004\000\001\000\000\000\
 \\000\000\
 \\002\000\008\000\003\000\002\000\004\000\001\000\000\000\
 \\001\000\009\000\000\000\
 \\000\000\
+\\006\000\014\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
-\\000\000\
-\\001\000\020\000\000\000\
-\\000\000\
-\\000\000\
-\\000\000\
-\\006\000\023\000\000\000\
-\\000\000\
-\\001\000\028\000\000\000\
-\\001\000\029\000\000\000\
-\\001\000\030\000\000\000\
-\\001\000\031\000\000\000\
-\\000\000\
-\\001\000\033\000\000\000\
-\\000\000\
-\\000\000\
-\\006\000\041\000\000\000\
+\\001\000\023\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
+\\006\000\032\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
+\\001\000\034\000\000\000\
+\\001\000\035\000\000\000\
+\\001\000\036\000\000\000\
+\\001\000\037\000\000\000\
 \\000\000\
+\\001\000\039\000\000\000\
 \\000\000\
-\\000\000\
+\\004\000\042\000\005\000\041\000\000\000\
+\\006\000\043\000\000\000\
 \\006\000\044\000\000\000\
 \\006\000\045\000\000\000\
 \\006\000\046\000\000\000\
 \\006\000\047\000\000\000\
-\\006\000\048\000\000\000\
-\\000\000\
-\\000\000\
-\\000\000\
-\\004\000\052\000\005\000\051\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
-\\004\000\052\000\005\000\053\000\000\000\
-\\000\000\
-\\000\000\
-\\004\000\052\000\005\000\055\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
-\\004\000\052\000\005\000\059\000\000\000\
+\\004\000\042\000\005\000\052\000\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\004\000\042\000\005\000\053\000\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\004\000\042\000\005\000\057\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \"
-val numstates = 62
+val numstates = 60
 val numrules = 26
 val s = ref "" and index = ref 0
 val string_to_int = fn () => 
@@ -256,13 +251,15 @@ fn (T 0) => "CONST"
   | (T 22) => "OR"
   | (T 23) => "FUN"
   | (T 24) => "RET"
+  | (T 25) => "BEG"
+  | (T 26) => "END"
   | _ => "bogus-term"
 local open Header in
 val errtermvalue=
 fn _ => MlyValue.VOID
 end
 val terms : term list = nil
- $$ (T 24) $$ (T 23) $$ (T 22) $$ (T 21) $$ (T 20) $$ (T 19) $$ (T 18) $$ (T 17) $$ (T 16) $$ (T 15) $$ (T 14) $$ (T 13) $$ (T 12) $$ (T 11) $$ (T 10) $$ (T 9) $$ (T 8) $$ (T 7) $$ (T 5) $$ (T 4) $$ (T 3) $$ (T 2) $$ (T 1)end
+ $$ (T 26) $$ (T 25) $$ (T 24) $$ (T 23) $$ (T 22) $$ (T 21) $$ (T 20) $$ (T 19) $$ (T 18) $$ (T 17) $$ (T 16) $$ (T 15) $$ (T 14) $$ (T 13) $$ (T 12) $$ (T 11) $$ (T 10) $$ (T 9) $$ (T 8) $$ (T 7) $$ (T 5) $$ (T 4) $$ (T 3) $$ (T 2) $$ (T 1)end
 structure Actions =
 struct 
 exception mlyAction of int
@@ -271,107 +268,107 @@ val actions =
 fn (i392,defaultPos,stack,
     (()):arg) =>
 case (i392,stack)
-of  ( 0, ( ( _, ( MlyValue.PROGRAM PROGRAM, _, PROGRAM1right)) :: ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 60.35 "expr.grm"*)PROGRAMELEM::PROGRAM(*#line 274.1 "expr.grm.sml"*)
+of  ( 0, ( ( _, ( MlyValue.PROGRAM PROGRAM, _, PROGRAM1right)) :: ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 61.35 "expr.grm"*)PROGRAMELEM::PROGRAM(*#line 271.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 1, ( result, PROGRAMELEM1left, PROGRAM1right), rest671)
 end
-|  ( 1, ( ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, PROGRAMELEM1right)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 61.36 "expr.grm"*)[PROGRAMELEM](*#line 278.1 "expr.grm.sml"*)
+|  ( 1, ( ( _, ( MlyValue.PROGRAMELEM PROGRAMELEM, PROGRAMELEM1left, PROGRAMELEM1right)) :: rest671)) => let val  result = MlyValue.PROGRAM ((*#line 62.36 "expr.grm"*)[PROGRAMELEM](*#line 275.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 1, ( result, PROGRAMELEM1left, PROGRAMELEM1right), rest671)
 end
-|  ( 2, ( ( _, ( MlyValue.EXP EXP, _, EXP1right)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 63.38 "expr.grm"*)Ast.As (IDENTIFIER,EXP)(*#line 282.1 "expr.grm.sml"*)
+|  ( 2, ( ( _, ( MlyValue.EXP EXP, _, EXP1right)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 64.38 "expr.grm"*)Ast.As (IDENTIFIER,EXP)(*#line 279.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 3, ( result, IDENTIFIER1left, EXP1right), rest671)
 end
-|  ( 3, ( ( _, ( _, _, RPAREN1right)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 64.39 "expr.grm"*)Ast.FnCl IDENTIFIER(*#line 286.1 "expr.grm.sml"*)
+|  ( 3, ( ( _, ( _, _, RPAREN1right)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 65.39 "expr.grm"*)Ast.FnCl IDENTIFIER(*#line 283.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 3, ( result, IDENTIFIER1left, RPAREN1right), rest671)
 end
-|  ( 4, ( ( _, ( MlyValue.EXP EXP, _, EXP1right)) :: ( _, ( _, RET1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 65.40 "expr.grm"*)Ast.Ret EXP(*#line 290.1 "expr.grm.sml"*)
+|  ( 4, ( ( _, ( MlyValue.EXP EXP, _, EXP1right)) :: ( _, ( _, RET1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 66.40 "expr.grm"*)Ast.Ret EXP(*#line 287.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 3, ( result, RET1left, EXP1right), rest671)
 end
-|  ( 5, ( ( _, ( _, _, RCURL1right)) :: ( _, ( MlyValue.STATEMENTS STATEMENTS, _, _)) :: _ :: _ :: ( _, ( MlyValue.CONDITION CONDITION, _, _)) :: _ :: ( _, ( _, IF1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 66.63 "expr.grm"*)Ast.If (CONDITION,STATEMENTS)(*#line 294.1 "expr.grm.sml"*)
+|  ( 5, ( ( _, ( _, _, END1right)) :: ( _, ( MlyValue.STATEMENTS STATEMENTS, _, _)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION, _, _)) :: ( _, ( _, IF1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 67.47 "expr.grm"*)Ast.If (CONDITION,STATEMENTS)(*#line 291.1 "expr.grm.sml"*)
 )
- in ( LrTable.NT 3, ( result, IF1left, RCURL1right), rest671)
+ in ( LrTable.NT 3, ( result, IF1left, END1right), rest671)
 end
-|  ( 6, ( ( _, ( _, _, RCURL2right)) :: ( _, ( MlyValue.STATEMENTS STATEMENTS2, _, _)) :: _ :: _ :: _ :: ( _, ( MlyValue.STATEMENTS STATEMENTS1, _, _)) :: _ :: _ :: ( _, ( MlyValue.CONDITION CONDITION, _, _)) :: _ :: ( _, ( _, IF1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 67.91 "expr.grm"*)Ast.IfEl (CONDITION,STATEMENTS1,STATEMENTS2)(*#line 298.1 "expr.grm.sml"*)
+|  ( 6, ( ( _, ( _, _, END2right)) :: ( _, ( MlyValue.STATEMENTS STATEMENTS2, _, _)) :: _ :: _ :: _ :: ( _, ( MlyValue.STATEMENTS STATEMENTS1, _, _)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION, _, _)) :: ( _, ( _, IF1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 68.71 "expr.grm"*)Ast.IfEl (CONDITION,STATEMENTS1,STATEMENTS2)(*#line 295.1 "expr.grm.sml"*)
 )
- in ( LrTable.NT 3, ( result, IF1left, RCURL2right), rest671)
+ in ( LrTable.NT 3, ( result, IF1left, END2right), rest671)
 end
-|  ( 7, ( rest671)) => let val  result = MlyValue.STATEMENTS ((*#line 70.45 "expr.grm"*)[](*#line 302.1 "expr.grm.sml"*)
+|  ( 7, ( rest671)) => let val  result = MlyValue.STATEMENTS ((*#line 71.45 "expr.grm"*)[](*#line 299.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 4, ( result, defaultPos, defaultPos), rest671)
 end
-|  ( 8, ( ( _, ( MlyValue.STATEMENTS STATEMENTS, _, STATEMENTS1right)) :: ( _, ( MlyValue.STATEMENT STATEMENT, STATEMENT1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENTS ((*#line 71.35 "expr.grm"*)STATEMENT::STATEMENTS(*#line 306.1 "expr.grm.sml"*)
+|  ( 8, ( ( _, ( MlyValue.STATEMENTS STATEMENTS, _, STATEMENTS1right)) :: ( _, ( MlyValue.STATEMENT STATEMENT, STATEMENT1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENTS ((*#line 72.35 "expr.grm"*)STATEMENT::STATEMENTS(*#line 303.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 4, ( result, STATEMENT1left, STATEMENTS1right), rest671)
 end
-|  ( 9, ( ( _, ( _, _, SEMICOLON1right)) :: ( _, ( MlyValue.STATEMENT STATEMENT, STATEMENT1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 79.37 "expr.grm"*)Ast.St STATEMENT(*#line 310.1 "expr.grm.sml"*)
+|  ( 9, ( ( _, ( _, _, SEMICOLON1right)) :: ( _, ( MlyValue.STATEMENT STATEMENT, STATEMENT1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 80.37 "expr.grm"*)Ast.St STATEMENT(*#line 307.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 2, ( result, STATEMENT1left, SEMICOLON1right), rest671)
 end
-|  ( 10, ( ( _, ( _, _, RCURL1right)) :: ( _, ( MlyValue.STATEMENTS STATEMENTS, _, _)) :: _ :: _ :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, _, _)) :: ( _, ( _, FUN1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 82.19 "expr.grm"*)Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS))(*#line 314.1 "expr.grm.sml"*)
+|  ( 10, ( ( _, ( _, _, END1right)) :: ( _, ( MlyValue.STATEMENTS STATEMENTS, _, _)) :: _ :: _ :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, _, _)) :: ( _, ( _, FUN1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 83.17 "expr.grm"*)Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS))(*#line 311.1 "expr.grm.sml"*)
 )
- in ( LrTable.NT 2, ( result, FUN1left, RCURL1right), rest671)
+ in ( LrTable.NT 2, ( result, FUN1left, END1right), rest671)
 end
-|  ( 11, ( ( _, ( MlyValue.CONST CONST, CONST1left, CONST1right)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 84.42 "expr.grm"*) Ast.CConst CONST(*#line 318.1 "expr.grm.sml"*)
+|  ( 11, ( ( _, ( MlyValue.CONST CONST, CONST1left, CONST1right)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 85.42 "expr.grm"*) Ast.CConst CONST(*#line 315.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 5, ( result, CONST1left, CONST1right), rest671)
 end
-|  ( 12, ( ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, IDENTIFIER1right)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 85.42 "expr.grm"*) Ast.CVar IDENTIFIER(*#line 322.1 "expr.grm.sml"*)
+|  ( 12, ( ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, IDENTIFIER1right)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 86.42 "expr.grm"*) Ast.CVar IDENTIFIER(*#line 319.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 5, ( result, IDENTIFIER1left, IDENTIFIER1right), rest671)
 end
-|  ( 13, ( ( _, ( MlyValue.CONDITION CONDITION2, _, CONDITION2right)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION1, CONDITION1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 86.42 "expr.grm"*) Ast.eq CONDITION1 CONDITION2(*#line 326.1 "expr.grm.sml"*)
+|  ( 13, ( ( _, ( MlyValue.CONDITION CONDITION2, _, CONDITION2right)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION1, CONDITION1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 87.42 "expr.grm"*) Ast.eq CONDITION1 CONDITION2(*#line 323.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 5, ( result, CONDITION1left, CONDITION2right), rest671)
 end
-|  ( 14, ( ( _, ( MlyValue.CONDITION CONDITION2, _, CONDITION2right)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION1, CONDITION1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 87.42 "expr.grm"*) Ast.lt CONDITION1 CONDITION2(*#line 330.1 "expr.grm.sml"*)
+|  ( 14, ( ( _, ( MlyValue.CONDITION CONDITION2, _, CONDITION2right)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION1, CONDITION1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 88.42 "expr.grm"*) Ast.lt CONDITION1 CONDITION2(*#line 327.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 5, ( result, CONDITION1left, CONDITION2right), rest671)
 end
-|  ( 15, ( ( _, ( MlyValue.CONDITION CONDITION2, _, CONDITION2right)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION1, CONDITION1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 88.42 "expr.grm"*) Ast.gt CONDITION1 CONDITION2(*#line 334.1 "expr.grm.sml"*)
+|  ( 15, ( ( _, ( MlyValue.CONDITION CONDITION2, _, CONDITION2right)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION1, CONDITION1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 89.42 "expr.grm"*) Ast.gt CONDITION1 CONDITION2(*#line 331.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 5, ( result, CONDITION1left, CONDITION2right), rest671)
 end
-|  ( 16, ( ( _, ( MlyValue.CONDITION CONDITION2, _, CONDITION2right)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION1, CONDITION1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 89.42 "expr.grm"*) Ast.nd CONDITION1 CONDITION2(*#line 338.1 "expr.grm.sml"*)
+|  ( 16, ( ( _, ( MlyValue.CONDITION CONDITION2, _, CONDITION2right)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION1, CONDITION1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 90.42 "expr.grm"*) Ast.nd CONDITION1 CONDITION2(*#line 335.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 5, ( result, CONDITION1left, CONDITION2right), rest671)
 end
-|  ( 17, ( ( _, ( MlyValue.CONDITION CONDITION2, _, CONDITION2right)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION1, CONDITION1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 90.42 "expr.grm"*) Ast.or CONDITION1 CONDITION2(*#line 342.1 "expr.grm.sml"*)
+|  ( 17, ( ( _, ( MlyValue.CONDITION CONDITION2, _, CONDITION2right)) :: _ :: ( _, ( MlyValue.CONDITION CONDITION1, CONDITION1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 91.42 "expr.grm"*) Ast.or CONDITION1 CONDITION2(*#line 339.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 5, ( result, CONDITION1left, CONDITION2right), rest671)
 end
-|  ( 18, ( ( _, ( _, _, RPAREN1right)) :: ( _, ( MlyValue.CONDITION CONDITION, _, _)) :: ( _, ( _, LPAREN1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 91.42 "expr.grm"*) CONDITION (*#line 346.1 "expr.grm.sml"*)
+|  ( 18, ( ( _, ( _, _, RPAREN1right)) :: ( _, ( MlyValue.CONDITION CONDITION, _, _)) :: ( _, ( _, LPAREN1left, _)) :: rest671)) => let val  result = MlyValue.CONDITION ((*#line 92.42 "expr.grm"*) CONDITION (*#line 343.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 5, ( result, LPAREN1left, RPAREN1right), rest671)
 end
-|  ( 19, ( ( _, ( MlyValue.CONST CONST, CONST1left, CONST1right)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 94.33 "expr.grm"*) Ast.Const CONST     (*#line 350.1 "expr.grm.sml"*)
+|  ( 19, ( ( _, ( MlyValue.CONST CONST, CONST1left, CONST1right)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 95.33 "expr.grm"*) Ast.Const CONST     (*#line 347.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, CONST1left, CONST1right), rest671)
 end
-|  ( 20, ( ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, IDENTIFIER1right)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 95.33 "expr.grm"*) Ast.EVar IDENTIFIER (*#line 354.1 "expr.grm.sml"*)
+|  ( 20, ( ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, IDENTIFIER1right)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 96.33 "expr.grm"*) Ast.EVar IDENTIFIER (*#line 351.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, IDENTIFIER1left, IDENTIFIER1right), rest671)
 end
-|  ( 21, ( ( _, ( _, _, RSQUARE1right)) :: ( _, ( MlyValue.EXP EXP, _, _)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 96.43 "expr.grm"*)Ast.ARVar (IDENTIFIER,EXP)(*#line 358.1 "expr.grm.sml"*)
+|  ( 21, ( ( _, ( _, _, RSQUARE1right)) :: ( _, ( MlyValue.EXP EXP, _, _)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 97.43 "expr.grm"*)Ast.ARVar (IDENTIFIER,EXP)(*#line 355.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, IDENTIFIER1left, RSQUARE1right), rest671)
 end
-|  ( 22, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 97.33 "expr.grm"*) Ast.plus  EXP1 EXP2 (*#line 362.1 "expr.grm.sml"*)
+|  ( 22, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 98.33 "expr.grm"*) Ast.plus  EXP1 EXP2 (*#line 359.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, EXP1left, EXP2right), rest671)
 end
-|  ( 23, ( ( _, ( _, _, RPAREN1right)) :: ( _, ( MlyValue.EXP EXP, _, _)) :: ( _, ( _, LPAREN1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 98.33 "expr.grm"*) EXP (*#line 366.1 "expr.grm.sml"*)
+|  ( 23, ( ( _, ( _, _, RPAREN1right)) :: ( _, ( MlyValue.EXP EXP, _, _)) :: ( _, ( _, LPAREN1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 99.33 "expr.grm"*) EXP (*#line 363.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, LPAREN1left, RPAREN1right), rest671)
 end
-|  ( 24, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 99.32 "expr.grm"*) Ast.minus EXP1 EXP2 (*#line 370.1 "expr.grm.sml"*)
+|  ( 24, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 100.32 "expr.grm"*) Ast.minus EXP1 EXP2 (*#line 367.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, EXP1left, EXP2right), rest671)
 end
-|  ( 25, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 100.32 "expr.grm"*) Ast.mul   EXP1 EXP2 (*#line 374.1 "expr.grm.sml"*)
+|  ( 25, ( ( _, ( MlyValue.EXP EXP2, _, EXP2right)) :: _ :: ( _, ( MlyValue.EXP EXP1, EXP1left, _)) :: rest671)) => let val  result = MlyValue.EXP ((*#line 101.32 "expr.grm"*) Ast.mul   EXP1 EXP2 (*#line 371.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 0, ( result, EXP1left, EXP2right), rest671)
 end
@@ -412,5 +409,7 @@ fun AND (p1,p2) = Token.TOKEN (ParserData.LrTable.T 21,(ParserData.MlyValue.VOID
 fun OR (p1,p2) = Token.TOKEN (ParserData.LrTable.T 22,(ParserData.MlyValue.VOID,p1,p2))
 fun FUN (p1,p2) = Token.TOKEN (ParserData.LrTable.T 23,(ParserData.MlyValue.VOID,p1,p2))
 fun RET (p1,p2) = Token.TOKEN (ParserData.LrTable.T 24,(ParserData.MlyValue.VOID,p1,p2))
+fun BEG (p1,p2) = Token.TOKEN (ParserData.LrTable.T 25,(ParserData.MlyValue.VOID,p1,p2))
+fun END (p1,p2) = Token.TOKEN (ParserData.LrTable.T 26,(ParserData.MlyValue.VOID,p1,p2))
 end
 end

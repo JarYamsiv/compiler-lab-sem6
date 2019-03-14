@@ -5,4 +5,9 @@ fun main(){
    b = b+ 1 ;
    b();
    return 12 +b[ 0 ];
+   if( a == b ){
+      int c =  56 ;
+   }
+   else{
+   }
 }
