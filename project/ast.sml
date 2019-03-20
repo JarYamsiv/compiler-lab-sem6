@@ -24,9 +24,11 @@ datatype Condition = CConst of int
 	 		| AND
 	 		| OR
 
+datatype Type = VOID | INT | BOOL | LIST of Type
 
 
-datatype Statement = As    of string * Expr
+
+datatype Statement = As    of string * Expr * bool
           | FnCl  of string
           | Ret of Expr
           | If of Condition*Statement list

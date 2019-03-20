@@ -27,22 +27,22 @@ fun addtabs n = if n <= 0 then
 
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
-(**************************************************COMPILE  EXPRESSION*****************************************************************)
+(**************************************************translate  EXPRESSION*****************************************************************)
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
 
-fun compileExpr (Ast.Const x )         = (" "^(Int.toString x)^" ")
+fun translateExpr (Ast.Const x )         = (" "^(Int.toString x)^" ")
 
-  | compileExpr (Ast.EVar  x )		   = let 
+  | translateExpr (Ast.EVar  x )		   = let 
   											val _ = case SymTable.checkkey(Atom.atom x) of true => () | false => (raise undef)
   										 in(x)end	
 
-  | compileExpr (Ast.ARVar  (x,e) )		   = let 
+  | translateExpr (Ast.ARVar  (x,e) )		   = let 
   											val _ = case SymTable.checkkey(Atom.atom x) of true => () | false => (raise undef)
-  										 in(x^"["^(compileExpr e)^"]")end
+  										 in(x^"["^(translateExpr e)^"]")end
   
-  | compileExpr (Ast.Op (x, oper, y))  = ((compileExpr x) ^ (Ast.binOpToString oper) ^ (compileExpr y ))
+  | translateExpr (Ast.Op (x, oper, y))  = ((translateExpr x) ^ (Ast.binOpToString oper) ^ (translateExpr y ))
 
 
 
@@ -50,85 +50,90 @@ fun compileExpr (Ast.Const x )         = (" "^(Int.toString x)^" ")
 
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
-(***************************************************COMPILE  CONDITION*****************************************************************)
+(***************************************************translate  CONDITION*****************************************************************)
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
 
 
-fun compileCondition (Ast.CConst x)	  = (" "^(Int.toString x)^" ")
+fun translateCondition (Ast.CConst x)	  = (" "^(Int.toString x)^" ")
 
-  | compileCondition (Ast.CVar  x)		  = let
+  | translateCondition (Ast.CVar  x)		  = let
   												val _ = case SymTable.checkkey(Atom.atom x) of true => () | false => (raise undef)
   											in(" "^x^" ")end
 
-  | compileCondition (Ast.CondOp (x,oper,y)) = ((compileCondition x) ^ (Ast.condOpToString oper) ^ (compileCondition y))
+  | translateCondition (Ast.CondOp (x,oper,y)) = ((translateCondition x) ^ (Ast.condOpToString oper) ^ (translateCondition y))
 
 
 
 
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
-(*****************************************COMPILE STATEMENT AND STATEMENTS*************************************************************)
+(*****************************************translate STATEMENT AND STATEMENTS*************************************************************)
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
 
-fun    compileStatement (Ast.As (x,exp))	t  		=
+fun    translateStatement (Ast.As (x,exp,_))	t  		=
 	let 
 		val ret = (  
 			case (SymTable.checkkey(Atom.atom x)) of
-			true => ( (addtabs t) ^  (x^" = ") ^ (compileExpr exp) ^ (";\n") )
-			|false => ( (addtabs t) ^  ("int "^x^" = ") ^ (compileExpr exp) ^ (";\n") ) 
+			true => ( (addtabs t) ^  (x^" = ") ^ (translateExpr exp) ^ (";\n") )
+			|false => ( (addtabs t) ^  ("int "^x^" = ") ^ (translateExpr exp) ^ (";\n") ) 
 			)
 	in
 		SymTable.addkey(Atom.atom x,0);ret
 	end
 
 
-	| compileStatement (Ast.Ret exp)         t  = ( (addtabs t) ^ "return" ^(compileExpr exp)^ ";\n" )
+	| translateStatement (Ast.Ret exp)         t  = ( (addtabs t) ^ "return" ^(translateExpr exp)^ ";\n" )
 
 
 
-	| compileStatement (Ast.FnCl x)		t  		=  ( (addtabs t) ^  (x^"();\n")  )
-	| compileStatement (Ast.If (c,sl))		  t =	(
-														(addtabs t) ^ ("if(") ^ (compileCondition c) ^  ("){\n") ^
-														(compileStatements (t+1,sl) ) ^
+	| translateStatement (Ast.FnCl x)		t  		=  ( (addtabs t) ^  (x^"();\n")  )
+	| translateStatement (Ast.If (c,sl))		  t =	(
+														(addtabs t) ^ ("if(") ^ (translateCondition c) ^  ("){\n") ^
+														(translateStatements (t+1,sl) ) ^
 														(addtabs t) ^ ("}\n")
 													)	
-	| compileStatement (Ast.IfEl (c,sl1,sl2)) t =	(
-														(addtabs t) ^  ("if(") ^ (compileCondition c) ^  ("){\n") ^
+	| translateStatement (Ast.IfEl (c,sl1,sl2)) t =	(
+														(addtabs t) ^  ("if(") ^ (translateCondition c) ^  ("){\n") ^
 
-														(compileStatements (t+1,sl1)) ^
+														(translateStatements (t+1,sl1)) ^
 
 														(addtabs t) ^ ("}\n") ^
 
 														(addtabs t) ^  ("else{\n") ^
 
-														(compileStatements (t+1,sl2) )^
+														(translateStatements (t+1,sl2) )^
 
 														(addtabs t )^ ("}\n")
 													)
 
 
 
-and  compileStatements  (t,(x :: xs))	  = ((compileStatement x t)^(compileStatements (t,xs)))
-	|compileStatements  (t,[])	   		  = ("")
+and  translateStatements  (t,(x :: xs))	  = ((translateStatement x t)^(translateStatements (t,xs)))
+	|translateStatements  (t,[])	   		  = ("")
 
 
 
 
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
-(************************************************COMPILE FUNCTION**********************************************************************)
+(************************************************translate FUNCTION**********************************************************************)
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
-fun compileFun(Ast.Fun (x,g))		t  =  (
+fun translateFun(Ast.Fun (x,g))		t  =  let
+											val final = Compiler.compileFunction (Ast.Fun(x,g))
+											in
+												(
 											("fun "^x^"(){\n")^
-											(compileStatements  (t+1,g) )^
+											(translateStatements  (t+1,g) )^
 											 ("}\n")
+											 
 											 )
+											end
 
 
 
@@ -136,12 +141,12 @@ fun compileFun(Ast.Fun (x,g))		t  =  (
 
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
-(***************************************************COMPILE PROGRAM ELEMENT************************************************************)
+(***************************************************translate PROGRAM ELEMENT************************************************************)
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
-fun   compileElem (Ast.St statement)	  = compileStatement statement 0	
-	| compileElem (Ast.Fn function)       = (compileFun  function 0) 
+fun   translateElem (Ast.St statement)	  = translateStatement statement 0	
+	| translateElem (Ast.Fn function)       = (translateFun  function 0) 
 
 
 
@@ -149,11 +154,11 @@ fun   compileElem (Ast.St statement)	  = compileStatement statement 0
 
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
-(**************************************************COMPILE*****************************************************************************)
+(**************************************************translate*****************************************************************************)
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
-fun compile []        = ("")
-  | compile (x :: xs) = ((compileElem x)^(compile xs))
+fun translate []        = ("")
+  | translate (x :: xs) = ((translateElem x)^(translate xs))
 
 end

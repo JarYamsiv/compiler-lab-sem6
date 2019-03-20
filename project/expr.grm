@@ -30,6 +30,7 @@ it is empty *)
 
 (* The nonterminals of the language *)
 %nonterm EXP     of Ast.Expr
+       | START of Ast.ProgramElement list
        | PROGRAM of Ast.ProgramElement list
        | PROGRAMELEM of Ast.ProgramElement
        | STATEMENT of Ast.Statement
@@ -58,10 +59,12 @@ left associative and the precedence increase as you go down this list.
 
 %%
 
+START   : PROGRAM                (PROGRAM)
+
 PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
         |   PROGRAMELEM           ([PROGRAMELEM])
 
-STATEMENT:IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
+STATEMENT:IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP,true))
           |IDENTIFIER LPAREN RPAREN  (Ast.FnCl IDENTIFIER)
           |RET EXP                    (Ast.Ret EXP)
           |IF  CONDITION  BEG STATEMENTS END (Ast.If (CONDITION,STATEMENTS))
