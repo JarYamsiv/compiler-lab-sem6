@@ -283,7 +283,7 @@ end
 )
  in ( LrTable.NT 2, ( result, PROGRAMELEM1left, PROGRAMELEM1right), rest671)
 end
-|  ( 3, ( ( _, ( MlyValue.EXP EXP, _, EXP1right)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 67.38 "expr.grm"*)Ast.As (IDENTIFIER,EXP,Ast.VOID,true)(*#line 286.1 "expr.grm.sml"*)
+|  ( 3, ( ( _, ( MlyValue.EXP EXP, _, EXP1right)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 67.38 "expr.grm"*)Ast.As (IDENTIFIER,EXP,Ast.VOID,false)(*#line 286.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 4, ( result, IDENTIFIER1left, EXP1right), rest671)
 end

@@ -69,3 +69,45 @@ fun or    a b = CondOp(a,OR,b)
 
 
 end
+
+structure CAst = 
+struct
+	datatype Expr  =  Const of int
+		   		| EVar of string 
+		   		| ARVar of string*Expr
+	       		| Op    of Expr * BinOp * Expr
+         
+
+     and BinOp = Plus
+	       | Minus
+	       | Mul
+
+	datatype Condition = CConst of int
+				| CVar of string
+				| CondOp of Condition*ConditionOp*Condition
+
+		 and ConditionOp = EQ
+		 		| GT
+		 		| LT
+		 		| GTEQ
+		 		| LTEQ
+		 		| AND
+		 		| OR
+
+	datatype Type = VOID | INT 
+
+
+
+	datatype Statement = As    of string * Expr * Type * bool
+	          | FnCl  of string
+	          | Ret of Expr
+	          | If of Condition*Statement list
+	          | IfEl of Condition*Statement list*Statement list
+
+
+	datatype Function = Fun of string* Statement list * Type
+
+
+	datatype ProgramElement = St of Statement
+							| Fn of Function 
+end

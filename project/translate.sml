@@ -52,11 +52,20 @@ fun translateCondition (Ast.CConst x)   = (" "^(Int.toString x)^" ")
 (**************************************************************************************************************************************)
 
 
-fun    translateStatement (Ast.As (x,exp,_,_)) t    = (addtabs t) ^ ("int "^x^" = ") ^ (translateExpr exp) ^ (";\n")  
+fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
+        let
+          val tp_string = case tp of Ast.VOID => "void" | Ast.INT => "int"
+        in
+          if isdef then
+          (addtabs t) ^ (x^" = ") ^ (translateExpr exp) ^ (";\n") 
+          else
+          (addtabs t) ^ (tp_string^" "^x^" = ") ^ (translateExpr exp) ^ (";\n")  
+        end
+ 
 
 
 
- | translateStatement (Ast.Ret exp)         t  = ( (addtabs t) ^ "return" ^(translateExpr exp)^ ";\n" )
+ | translateStatement (Ast.Ret exp)         t  = ( (addtabs t) ^ "return " ^(translateExpr exp)^ ";\n" )
 
 
 

@@ -81,7 +81,7 @@ digit = [0-9]+;
 "end"                   => ( Tokens.END (!lineRef,!lineRef));
 
 
-"return"                => ( Tokens.RET (!lineRef,!lineRef));
+"ret"                   => ( Tokens.RET (!lineRef,!lineRef));
 
 "if"                    => ( Tokens.IF (!lineRef,!lineRef));
 "else"                  => ( Tokens.ELSE (!lineRef,!lineRef));
