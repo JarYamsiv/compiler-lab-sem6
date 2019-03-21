@@ -24,18 +24,18 @@ datatype Condition = CConst of int
 	 		| AND
 	 		| OR
 
-datatype Type = VOID | INT | BOOL | LIST of Type
+datatype Type = VOID | INT 
 
 
 
-datatype Statement = As    of string * Expr * bool
+datatype Statement = As    of string * Expr * Type * bool
           | FnCl  of string
           | Ret of Expr
           | If of Condition*Statement list
           | IfEl of Condition*Statement list*Statement list
 
 
-datatype Function = Fun of string* Statement list
+datatype Function = Fun of string* Statement list * Type
 
 
 datatype ProgramElement = St of Statement

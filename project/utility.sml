@@ -10,9 +10,10 @@ sig
 	type proxy
 
 	val addkey			: key*tab_content -> unit
-	val addKeyReplace	: key*tab_content -> unit
-	val checkkey 		: key -> bool
+	val addKeyReplace	        : key*tab_content -> unit
+	val checkkey 		        : key -> bool
 	val getkey			: key -> tab_content option
+        val reset                       : unit -> unit
 end
 
 signature TAB_KEY_SIG = 
@@ -22,7 +23,7 @@ sig
 	val compare : ord_key*ord_key -> order 
 end
 
-functor MakeSymTable (A:TAB_KEY_SIG):TAB_SIG = 
+functor MakeTable (A:TAB_KEY_SIG):TAB_SIG = 
 struct
 	type key = A.ord_key
 	type tab_content = A.tab_content
@@ -39,4 +40,6 @@ struct
 	fun checkkey x = case Map.find(!m,x) of SOME x=> true | NONE => false
 	
 	fun getkey x = Map.find(!m,x)
+
+        fun reset () = m:=Map.empty
 end

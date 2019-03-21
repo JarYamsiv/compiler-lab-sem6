@@ -1,28 +1,12 @@
 structure Translate =
 struct
 
-val red = "\u001b[31;1m"
-val green = "\u001b[32;1m"
-val white = "\u001b[37;1m"
-val yellow = "\u001b[33;1m"
-val grey = "\u001b[30;1m"
-val reset = "\u001b[0m"
 
-exception undef
-
-structure SymTabKey = 
-struct
-	type ord_key = Atom.atom
-	type tab_content = int
-	val compare = Atom.compare
-end
-
-structure SymTable = MakeSymTable(SymTabKey)
 
 fun addtabs n = if n <= 0 then
-					("")
-				else
-					("   "^( addtabs (n-1)) )
+     ("")
+    else
+     ("   "^( addtabs (n-1)) )
 
 
 (**************************************************************************************************************************************)
@@ -34,13 +18,9 @@ fun addtabs n = if n <= 0 then
 
 fun translateExpr (Ast.Const x )         = (" "^(Int.toString x)^" ")
 
-  | translateExpr (Ast.EVar  x )		   = let 
-  											val _ = case SymTable.checkkey(Atom.atom x) of true => () | false => (raise undef)
-  										 in(x)end	
+  | translateExpr (Ast.EVar  x )     = x 
 
-  | translateExpr (Ast.ARVar  (x,e) )		   = let 
-  											val _ = case SymTable.checkkey(Atom.atom x) of true => () | false => (raise undef)
-  										 in(x^"["^(translateExpr e)^"]")end
+  | translateExpr (Ast.ARVar  (x,e) )     = (x^"["^(translateExpr e)^"]")
   
   | translateExpr (Ast.Op (x, oper, y))  = ((translateExpr x) ^ (Ast.binOpToString oper) ^ (translateExpr y ))
 
@@ -56,11 +36,9 @@ fun translateExpr (Ast.Const x )         = (" "^(Int.toString x)^" ")
 
 
 
-fun translateCondition (Ast.CConst x)	  = (" "^(Int.toString x)^" ")
+fun translateCondition (Ast.CConst x)   = (" "^(Int.toString x)^" ")
 
-  | translateCondition (Ast.CVar  x)		  = let
-  												val _ = case SymTable.checkkey(Atom.atom x) of true => () | false => (raise undef)
-  											in(" "^x^" ")end
+  | translateCondition (Ast.CVar  x)    = (" "^x^" ")
 
   | translateCondition (Ast.CondOp (x,oper,y)) = ((translateCondition x) ^ (Ast.condOpToString oper) ^ (translateCondition y))
 
@@ -74,46 +52,38 @@ fun translateCondition (Ast.CConst x)	  = (" "^(Int.toString x)^" ")
 (**************************************************************************************************************************************)
 
 
-fun    translateStatement (Ast.As (x,exp,_))	t  		=
-	let 
-		val ret = (  
-			case (SymTable.checkkey(Atom.atom x)) of
-			true => ( (addtabs t) ^  (x^" = ") ^ (translateExpr exp) ^ (";\n") )
-			|false => ( (addtabs t) ^  ("int "^x^" = ") ^ (translateExpr exp) ^ (";\n") ) 
-			)
-	in
-		SymTable.addkey(Atom.atom x,0);ret
-	end
-
-
-	| translateStatement (Ast.Ret exp)         t  = ( (addtabs t) ^ "return" ^(translateExpr exp)^ ";\n" )
+fun    translateStatement (Ast.As (x,exp,_,_)) t    = (addtabs t) ^ ("int "^x^" = ") ^ (translateExpr exp) ^ (";\n")  
 
 
 
-	| translateStatement (Ast.FnCl x)		t  		=  ( (addtabs t) ^  (x^"();\n")  )
-	| translateStatement (Ast.If (c,sl))		  t =	(
-														(addtabs t) ^ ("if(") ^ (translateCondition c) ^  ("){\n") ^
-														(translateStatements (t+1,sl) ) ^
-														(addtabs t) ^ ("}\n")
-													)	
-	| translateStatement (Ast.IfEl (c,sl1,sl2)) t =	(
-														(addtabs t) ^  ("if(") ^ (translateCondition c) ^  ("){\n") ^
-
-														(translateStatements (t+1,sl1)) ^
-
-														(addtabs t) ^ ("}\n") ^
-
-														(addtabs t) ^  ("else{\n") ^
-
-														(translateStatements (t+1,sl2) )^
-
-														(addtabs t )^ ("}\n")
-													)
+ | translateStatement (Ast.Ret exp)         t  = ( (addtabs t) ^ "return" ^(translateExpr exp)^ ";\n" )
 
 
 
-and  translateStatements  (t,(x :: xs))	  = ((translateStatement x t)^(translateStatements (t,xs)))
-	|translateStatements  (t,[])	   		  = ("")
+ | translateStatement (Ast.FnCl x)  t    =  ( (addtabs t) ^  (x^"();\n")  )
+ | translateStatement (Ast.If (c,sl))    t = (
+              (addtabs t) ^ ("if(") ^ (translateCondition c) ^  ("){\n") ^
+              (translateStatements (t+1,sl) ) ^
+              (addtabs t) ^ ("}\n")
+             ) 
+ | translateStatement (Ast.IfEl (c,sl1,sl2)) t = (
+              (addtabs t) ^  ("if(") ^ (translateCondition c) ^  ("){\n") ^
+
+              (translateStatements (t+1,sl1)) ^
+
+              (addtabs t) ^ ("}\n") ^
+
+              (addtabs t) ^  ("else{\n") ^
+
+              (translateStatements (t+1,sl2) )^
+
+              (addtabs t )^ ("}\n")
+             )
+
+
+
+and  translateStatements  (t,(x :: xs))   = ((translateStatement x t)^(translateStatements (t,xs)))
+ |translateStatements  (t,[])        = ("")
 
 
 
@@ -124,16 +94,17 @@ and  translateStatements  (t,(x :: xs))	  = ((translateStatement x t)^(translate
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
-fun translateFun(Ast.Fun (x,g))		t  =  let
-											val final = Compiler.compileFunction (Ast.Fun(x,g))
-											in
-												(
-											("fun "^x^"(){\n")^
-											(translateStatements  (t+1,g) )^
-											 ("}\n")
-											 
-											 )
-											end
+fun translateFun(Ast.Fun (x,g,tp))  t  =  let
+           val Ast.Fun(x,g,tp) = Compiler.compileFunction (Ast.Fun(x,g,tp))
+           val ret_type = case tp of Ast.VOID => "void" | Ast.INT => "int"
+           in
+            (
+           (ret_type^" "^x^"(){\n")^
+           (translateStatements  (t+1,g) )^
+            ("}\n")
+            
+            )
+           end
 
 
 
@@ -145,8 +116,8 @@ fun translateFun(Ast.Fun (x,g))		t  =  let
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
-fun   translateElem (Ast.St statement)	  = translateStatement statement 0	
-	| translateElem (Ast.Fn function)       = (translateFun  function 0) 
+fun   translateElem (Ast.St statement)   = translateStatement statement 0 
+ | translateElem (Ast.Fn function)       = (translateFun  function 0) 
 
 
 

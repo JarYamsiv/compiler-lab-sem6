@@ -8,3 +8,4 @@ beg
 
 	if a==b beg c = 56 end else beg  end
 end
+

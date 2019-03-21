@@ -283,7 +283,7 @@ end
 )
  in ( LrTable.NT 2, ( result, PROGRAMELEM1left, PROGRAMELEM1right), rest671)
 end
-|  ( 3, ( ( _, ( MlyValue.EXP EXP, _, EXP1right)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 67.38 "expr.grm"*)Ast.As (IDENTIFIER,EXP,true)(*#line 286.1 "expr.grm.sml"*)
+|  ( 3, ( ( _, ( MlyValue.EXP EXP, _, EXP1right)) :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, IDENTIFIER1left, _)) :: rest671)) => let val  result = MlyValue.STATEMENT ((*#line 67.38 "expr.grm"*)Ast.As (IDENTIFIER,EXP,Ast.VOID,true)(*#line 286.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 4, ( result, IDENTIFIER1left, EXP1right), rest671)
 end
@@ -315,7 +315,7 @@ end
 )
  in ( LrTable.NT 3, ( result, STATEMENT1left, SEMICOLON1right), rest671)
 end
-|  ( 11, ( ( _, ( _, _, END1right)) :: ( _, ( MlyValue.STATEMENTS STATEMENTS, _, _)) :: _ :: _ :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, _, _)) :: ( _, ( _, FUN1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 86.17 "expr.grm"*)Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS))(*#line 318.1 "expr.grm.sml"*)
+|  ( 11, ( ( _, ( _, _, END1right)) :: ( _, ( MlyValue.STATEMENTS STATEMENTS, _, _)) :: _ :: _ :: _ :: ( _, ( MlyValue.IDENTIFIER IDENTIFIER, _, _)) :: ( _, ( _, FUN1left, _)) :: rest671)) => let val  result = MlyValue.PROGRAMELEM ((*#line 86.17 "expr.grm"*)Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS,Ast.VOID))(*#line 318.1 "expr.grm.sml"*)
 )
  in ( LrTable.NT 3, ( result, FUN1left, END1right), rest671)
 end

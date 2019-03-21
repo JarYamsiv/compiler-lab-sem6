@@ -1,8 +1,8 @@
 #include <stdio.h>
-fun main(){
+void main(){
    int a =  0 ;
    int b =  3 +a;
-   b = b+ 1 ;
+   int b = b+ 1 ;
    b();
    return 12 +b[ 0 ];
    if( a == b ){
