@@ -58,6 +58,10 @@ fun   condOpToString EQ    = "=="
  	| condOpToString AND   = "&&"
  	| condOpToString OR    = "||"
 
+fun processExpr (x,oper,y) = case oper of
+								Plus => (x+y)
+								|Minus => (x-y)
+								|Mul => (x*y)
 
 fun plus  a b = Op (a, Plus, b)
 fun minus a b = Op (a, Minus, b)

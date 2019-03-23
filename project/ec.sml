@@ -73,8 +73,10 @@ fun writeFile filename content =
         val _ = TextIO.closeOut fd
     in () end
 
+
+
 val executable = "#include <stdio.h>\n"^executable
 
-val _ = writeFile (!outFile) (executable)
+val _ =if !compileStatus then writeFile (!outFile) (executable)  else print "\n COMPILATION ABORTED ERRORS FOUND \n"
 
 end

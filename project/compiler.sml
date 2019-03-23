@@ -32,6 +32,30 @@ struct
           val _ = print ("Processing Function "^ green ^ name ^ reset ^ "\n")
           val _ = LocalSymTable.reset ()
           val final_ret = ref Ast.VOID
+
+
+          fun  compileExpr (Ast.Const x) = (Ast.Const x)
+              |compileExpr (Ast.EVar identifier) = 
+                let 
+                  val _ = case LocalSymTable.checkkey(Atom.atom identifier) of
+                          true => ()
+                          |false => (compileStatus := false ; print (red ^ "undefined identifier "^identifier^"\n" ^ reset ) )
+                in 
+                  (Ast.EVar identifier)
+                end
+
+              |compileExpr (Ast.ARVar (ident,expr)) = (Ast.ARVar (ident,(compileExpr expr)))
+
+              |compileExpr (Ast.Op (e1,oper,e2)) =
+                let
+                   val c1 = compileExpr e1
+                   val c2 = compileExpr e2
+                 in
+                    case (e1,e2) of
+                      (Ast.Const x,Ast.Const y) =>  Ast.Const (Ast.processExpr(x,oper,y))
+                      |(_,_)                    =>  Ast.Op(c1,oper,c2) 
+                  
+                 end 
           
 
           (*
@@ -46,7 +70,7 @@ struct
                   val _ = LocalSymTable.addkey(Atom.atom varname,())
                   val tp = Ast.INT    
                 in
-                  (2,(Ast.As (varname,expr,tp,isdef)))
+                  (2,(Ast.As (varname,compileExpr expr,tp,isdef)))
                 end
             | compileStatement (Ast.If(c,stls)) = 
                 let

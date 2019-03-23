@@ -2,7 +2,7 @@
 void temp(){
    int b =  0 ;
    if( b > 0 ){
-      int c =  45 ;
+      int c =  77 ;
    }
 }
 int swap(){

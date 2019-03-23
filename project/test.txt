@@ -3,7 +3,7 @@ beg
 	b = 0
 	if(b >0) 
 	beg
-		c = 45
+		c = 45 + 32
 	end
 end
 
