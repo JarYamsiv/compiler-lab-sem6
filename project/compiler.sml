@@ -31,6 +31,7 @@ struct
         let
           val _ = print ("Processing Function "^ green ^ name ^ reset ^ "\n")
           val _ = LocalSymTable.reset ()
+          val final_ret = ref Ast.VOID
           
 
           (*
@@ -47,7 +48,16 @@ struct
                 in
                   (2,(Ast.As (varname,expr,tp,isdef)))
                 end
-            | compileStatement (Ast.Ret expr) = (1,Ast.Ret expr)
+            | compileStatement (Ast.If(c,stls)) = 
+                let
+                  val compiled_statement = compileStatements stls
+                in
+                    case compiled_statement of
+                      [] => (0,Ast.EmptyStatement)
+                      |_ => (2,Ast.If(c,compiled_statement))
+                end
+            | compileStatement (Ast.IfEl(c,stl1,stl2)) = (2,(Ast.IfEl(c,compileStatements stl1,compileStatements stl2)))
+            | compileStatement (Ast.Ret expr) = (final_ret:=Ast.INT;(1,Ast.Ret expr))
             | compileStatement x = (2,x)
 
 
@@ -63,7 +73,7 @@ struct
             | compileStatements []         = []
 
           val sl = compileStatements s_list
-          val ret_type = tp
+          val ret_type = !final_ret
           val _ = print "\rfunction done......\n"
 
         in

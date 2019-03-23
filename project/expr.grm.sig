@@ -22,6 +22,7 @@ val LCURL:  'a * 'a -> (svalue,'a) token
 val COLON:  'a * 'a -> (svalue,'a) token
 val SEMICOLON:  'a * 'a -> (svalue,'a) token
 val EQUALSIGN:  'a * 'a -> (svalue,'a) token
+val DIRECTC: (string) *  'a * 'a -> (svalue,'a) token
 val IDENTIFIER: (string) *  'a * 'a -> (svalue,'a) token
 val NEWLINE:  'a * 'a -> (svalue,'a) token
 val EOF:  'a * 'a -> (svalue,'a) token

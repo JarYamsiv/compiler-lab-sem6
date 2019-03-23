@@ -88,6 +88,14 @@ fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
 
               (addtabs t )^ ("}\n")
              )
+ | translateStatement (Ast.DirectC x)      t= 
+     let
+      fun not_dollar x = if Char.compare(x,#"$") = EQUAL then false else true 
+       val remove_dollar = implode(List.filter not_dollar (explode x))
+     in
+       (remove_dollar^"\n")
+     end
+ | translateStatement (Ast.EmptyStatement) t= ("")
 
 
 

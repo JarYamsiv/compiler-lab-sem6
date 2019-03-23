@@ -78,9 +78,9 @@ val s = [
 \\000"
 ),
  (1, 
-"\000\000\000\000\000\000\000\000\000\048\049\000\000\000\000\000\
+"\000\000\000\000\000\000\000\000\000\050\051\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\\048\000\000\046\000\000\044\000\043\042\041\040\000\039\000\035\
+\\050\000\000\048\046\000\044\000\043\042\041\040\000\039\000\035\
 \\033\033\033\033\033\033\033\033\033\033\032\031\030\028\027\000\
 \\000\007\007\007\007\007\007\007\007\007\007\007\007\007\007\007\
 \\007\007\007\007\007\007\007\007\007\007\007\026\000\025\000\007\
@@ -265,7 +265,7 @@ val s = [
 \\000"
 ),
  (36, 
-"\036\036\036\036\036\036\036\036\036\036\000\036\036\036\036\036\
+"\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\
 \\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\
 \\036\036\036\036\036\036\036\036\036\036\037\036\036\036\036\036\
 \\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\
@@ -276,7 +276,7 @@ val s = [
 \\036"
 ),
  (37, 
-"\036\036\036\036\036\036\036\036\036\036\000\036\036\036\036\036\
+"\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\
 \\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\
 \\036\036\036\036\036\036\036\036\036\036\037\036\036\036\036\038\
 \\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\036\
@@ -298,9 +298,9 @@ val s = [
 \\000"
 ),
  (46, 
-"\046\046\046\046\046\046\046\046\046\046\047\046\046\046\046\046\
+"\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\
 \\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\
-\\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\
+\\046\046\046\046\047\046\046\046\046\046\046\046\046\046\046\046\
 \\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\
 \\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\
 \\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\046\
@@ -309,9 +309,20 @@ val s = [
 \\046"
 ),
  (48, 
-"\000\000\000\000\000\000\000\000\000\048\000\000\000\000\000\000\
+"\048\048\048\048\048\048\048\048\048\048\049\048\048\048\048\048\
+\\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\
+\\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\
+\\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\
+\\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\
+\\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\
+\\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\
+\\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\048\
+\\048"
+),
+ (50, 
+"\000\000\000\000\000\000\000\000\000\050\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\\048\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\050\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
@@ -319,10 +330,10 @@ val s = [
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000"
 ),
- (49, 
-"\000\000\000\000\000\000\000\000\000\050\049\000\000\000\000\000\
+ (51, 
+"\000\000\000\000\000\000\000\000\000\052\051\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\\050\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\052\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
@@ -341,54 +352,56 @@ in Vector.fromList(map g
 [{fin = [], trans = 0},
 {fin = [], trans = 1},
 {fin = [], trans = 1},
-{fin = [(N 37)], trans = 0},
-{fin = [], trans = 4},
-{fin = [(N 82)], trans = 0},
-{fin = [(N 35)], trans = 0},
-{fin = [(N 85)], trans = 7},
-{fin = [(N 85)], trans = 8},
-{fin = [(N 85)], trans = 9},
-{fin = [(N 61),(N 85)], trans = 7},
-{fin = [(N 85)], trans = 11},
-{fin = [(N 64),(N 85)], trans = 7},
-{fin = [(N 85)], trans = 13},
-{fin = [(N 85)], trans = 14},
-{fin = [(N 49),(N 85)], trans = 7},
-{fin = [(N 85)], trans = 16},
-{fin = [(N 85)], trans = 17},
-{fin = [(N 57),(N 85)], trans = 7},
-{fin = [(N 85)], trans = 19},
-{fin = [(N 85)], trans = 20},
-{fin = [(N 69),(N 85)], trans = 7},
-{fin = [(N 85)], trans = 22},
-{fin = [(N 85)], trans = 23},
-{fin = [(N 53),(N 85)], trans = 7},
-{fin = [(N 41)], trans = 0},
-{fin = [(N 39)], trans = 0},
-{fin = [(N 74)], trans = 0},
-{fin = [(N 29)], trans = 28},
-{fin = [(N 72)], trans = 0},
-{fin = [(N 76)], trans = 0},
 {fin = [(N 43)], trans = 0},
+{fin = [], trans = 4},
+{fin = [(N 88)], trans = 0},
+{fin = [(N 41)], trans = 0},
+{fin = [(N 91)], trans = 7},
+{fin = [(N 91)], trans = 8},
+{fin = [(N 91)], trans = 9},
+{fin = [(N 67),(N 91)], trans = 7},
+{fin = [(N 91)], trans = 11},
+{fin = [(N 70),(N 91)], trans = 7},
+{fin = [(N 91)], trans = 13},
+{fin = [(N 91)], trans = 14},
+{fin = [(N 55),(N 91)], trans = 7},
+{fin = [(N 91)], trans = 16},
+{fin = [(N 91)], trans = 17},
+{fin = [(N 63),(N 91)], trans = 7},
+{fin = [(N 91)], trans = 19},
+{fin = [(N 91)], trans = 20},
+{fin = [(N 75),(N 91)], trans = 7},
+{fin = [(N 91)], trans = 22},
+{fin = [(N 91)], trans = 23},
+{fin = [(N 59),(N 91)], trans = 7},
+{fin = [(N 47)], trans = 0},
 {fin = [(N 45)], trans = 0},
-{fin = [(N 21)], trans = 33},
-{fin = [(N 21)], trans = 33},
+{fin = [(N 80)], trans = 0},
+{fin = [(N 35)], trans = 28},
+{fin = [(N 78)], trans = 0},
+{fin = [(N 82)], trans = 0},
+{fin = [(N 49)], trans = 0},
+{fin = [(N 51)], trans = 0},
+{fin = [(N 27)], trans = 33},
+{fin = [(N 27)], trans = 33},
 {fin = [], trans = 35},
 {fin = [], trans = 36},
 {fin = [], trans = 37},
-{fin = [(N 16)], trans = 36},
-{fin = [(N 25)], trans = 0},
-{fin = [(N 23)], trans = 0},
-{fin = [(N 27)], trans = 0},
-{fin = [(N 33)], trans = 0},
+{fin = [(N 6)], trans = 36},
 {fin = [(N 31)], trans = 0},
+{fin = [(N 29)], trans = 0},
+{fin = [(N 33)], trans = 0},
+{fin = [(N 39)], trans = 0},
+{fin = [(N 37)], trans = 0},
 {fin = [], trans = 44},
-{fin = [(N 79)], trans = 0},
+{fin = [(N 85)], trans = 0},
 {fin = [], trans = 46},
-{fin = [(N 3)], trans = 0},
-{fin = [(N 6)], trans = 48},
-{fin = [(N 10)], trans = 49},
-{fin = [], trans = 49}])
+{fin = [(N 11)], trans = 46},
+{fin = [], trans = 48},
+{fin = [(N 15)], trans = 0},
+{fin = [(N 18)], trans = 50},
+{fin = [(N 22)], trans = 51},
+{fin = [], trans = 51}])
 end
 structure StartStates =
 	struct
@@ -431,66 +444,68 @@ let fun continue() = lex() in
 
 			(* Application actions *)
 
-  10 => let val yytext=yymktext() in (*#line 60.19 "expr.lex"*) let val old = !lineRef
+  11 => let val yytext=yymktext() in (*#line 60.40 "expr.lex"*) Tokens.DIRECTC (yytext , !lineRef , !lineRef)(*#line 447.1 "expr.lex.sml"*)
+ end
+| 15 => ((*#line 62.19 "expr.lex"*) updateLine 1; lex ()(*#line 449.1 "expr.lex.sml"*)
+)
+| 18 => ((*#line 64.19 "expr.lex"*) lex() (*#line 451.1 "expr.lex.sml"*)
+)
+| 22 => let val yytext=yymktext() in (*#line 66.19 "expr.lex"*) let val old = !lineRef
 		   in updateLine (newlineCount yytext); lex()
 		   end
-		 (*#line 437.1 "expr.lex.sml"*)
+		 (*#line 456.1 "expr.lex.sml"*)
  end
-| 16 => ((*#line 64.29 "expr.lex"*)lex()(*#line 439.1 "expr.lex.sml"*)
-)
-| 21 => let val yytext=yymktext() in (*#line 65.29 "expr.lex"*) Tokens.CONST (toInt yytext, !lineRef, !lineRef) (*#line 441.1 "expr.lex.sml"*)
+| 27 => let val yytext=yymktext() in (*#line 71.29 "expr.lex"*) Tokens.CONST (toInt yytext, !lineRef, !lineRef) (*#line 458.1 "expr.lex.sml"*)
  end
-| 23 => ((*#line 66.29 "expr.lex"*) Tokens.PLUS  (!lineRef,!lineRef) (*#line 443.1 "expr.lex.sml"*)
+| 29 => ((*#line 72.29 "expr.lex"*) Tokens.PLUS  (!lineRef,!lineRef) (*#line 460.1 "expr.lex.sml"*)
 )
-| 25 => ((*#line 67.29 "expr.lex"*) Tokens.MINUS  (!lineRef,!lineRef) (*#line 445.1 "expr.lex.sml"*)
+| 31 => ((*#line 73.29 "expr.lex"*) Tokens.MINUS  (!lineRef,!lineRef) (*#line 462.1 "expr.lex.sml"*)
 )
-| 27 => ((*#line 68.29 "expr.lex"*) Tokens.MUL (!lineRef,!lineRef) (*#line 447.1 "expr.lex.sml"*)
+| 33 => ((*#line 74.29 "expr.lex"*) Tokens.MUL (!lineRef,!lineRef) (*#line 464.1 "expr.lex.sml"*)
 )
-| 29 => ((*#line 69.29 "expr.lex"*) Tokens.EQUALSIGN (!lineRef,!lineRef) (*#line 449.1 "expr.lex.sml"*)
+| 35 => ((*#line 75.29 "expr.lex"*) Tokens.EQUALSIGN (!lineRef,!lineRef) (*#line 466.1 "expr.lex.sml"*)
 )
-| 3 => ((*#line 58.19 "expr.lex"*) updateLine 1; lex ()(*#line 451.1 "expr.lex.sml"*)
+| 37 => ((*#line 76.29 "expr.lex"*) Tokens.LPAREN (!lineRef,!lineRef) (*#line 468.1 "expr.lex.sml"*)
 )
-| 31 => ((*#line 70.29 "expr.lex"*) Tokens.LPAREN (!lineRef,!lineRef) (*#line 453.1 "expr.lex.sml"*)
+| 39 => ((*#line 77.29 "expr.lex"*) Tokens.RPAREN (!lineRef,!lineRef) (*#line 470.1 "expr.lex.sml"*)
 )
-| 33 => ((*#line 71.29 "expr.lex"*) Tokens.RPAREN (!lineRef,!lineRef) (*#line 455.1 "expr.lex.sml"*)
+| 41 => ((*#line 79.29 "expr.lex"*) Tokens.LCURL (!lineRef,!lineRef) (*#line 472.1 "expr.lex.sml"*)
 )
-| 35 => ((*#line 72.29 "expr.lex"*) Tokens.LCURL (!lineRef,!lineRef) (*#line 457.1 "expr.lex.sml"*)
+| 43 => ((*#line 80.29 "expr.lex"*) Tokens.RCURL (!lineRef,!lineRef) (*#line 474.1 "expr.lex.sml"*)
 )
-| 37 => ((*#line 73.29 "expr.lex"*) Tokens.RCURL (!lineRef,!lineRef) (*#line 459.1 "expr.lex.sml"*)
+| 45 => ((*#line 81.29 "expr.lex"*) Tokens.LSQUARE (!lineRef,!lineRef) (*#line 476.1 "expr.lex.sml"*)
 )
-| 39 => ((*#line 74.29 "expr.lex"*) Tokens.LSQUARE (!lineRef,!lineRef) (*#line 461.1 "expr.lex.sml"*)
+| 47 => ((*#line 82.29 "expr.lex"*) Tokens.RSQUARE (!lineRef,!lineRef) (*#line 478.1 "expr.lex.sml"*)
 )
-| 41 => ((*#line 75.29 "expr.lex"*) Tokens.RSQUARE (!lineRef,!lineRef) (*#line 463.1 "expr.lex.sml"*)
+| 49 => ((*#line 83.29 "expr.lex"*) Tokens.SEMICOLON (!lineRef,!lineRef) (*#line 480.1 "expr.lex.sml"*)
 )
-| 43 => ((*#line 76.29 "expr.lex"*) Tokens.SEMICOLON (!lineRef,!lineRef) (*#line 465.1 "expr.lex.sml"*)
+| 51 => ((*#line 84.29 "expr.lex"*) Tokens.COLON (!lineRef,!lineRef) (*#line 482.1 "expr.lex.sml"*)
 )
-| 45 => ((*#line 77.29 "expr.lex"*) Tokens.COLON (!lineRef,!lineRef) (*#line 467.1 "expr.lex.sml"*)
+| 55 => ((*#line 86.29 "expr.lex"*) Tokens.FUN (!lineRef,!lineRef)(*#line 484.1 "expr.lex.sml"*)
 )
-| 49 => ((*#line 79.29 "expr.lex"*) Tokens.FUN (!lineRef,!lineRef)(*#line 469.1 "expr.lex.sml"*)
+| 59 => ((*#line 87.29 "expr.lex"*) Tokens.BEG (!lineRef,!lineRef)(*#line 486.1 "expr.lex.sml"*)
 )
-| 53 => ((*#line 80.29 "expr.lex"*) Tokens.BEG (!lineRef,!lineRef)(*#line 471.1 "expr.lex.sml"*)
+| 6 => ((*#line 59.40 "expr.lex"*)lex()(*#line 488.1 "expr.lex.sml"*)
 )
-| 57 => ((*#line 81.29 "expr.lex"*) Tokens.END (!lineRef,!lineRef)(*#line 473.1 "expr.lex.sml"*)
+| 63 => ((*#line 88.29 "expr.lex"*) Tokens.END (!lineRef,!lineRef)(*#line 490.1 "expr.lex.sml"*)
 )
-| 6 => ((*#line 59.19 "expr.lex"*) lex() (*#line 475.1 "expr.lex.sml"*)
+| 67 => ((*#line 91.29 "expr.lex"*) Tokens.RET (!lineRef,!lineRef)(*#line 492.1 "expr.lex.sml"*)
 )
-| 61 => ((*#line 84.29 "expr.lex"*) Tokens.RET (!lineRef,!lineRef)(*#line 477.1 "expr.lex.sml"*)
+| 70 => ((*#line 93.29 "expr.lex"*) Tokens.IF (!lineRef,!lineRef)(*#line 494.1 "expr.lex.sml"*)
 )
-| 64 => ((*#line 86.29 "expr.lex"*) Tokens.IF (!lineRef,!lineRef)(*#line 479.1 "expr.lex.sml"*)
+| 75 => ((*#line 94.29 "expr.lex"*) Tokens.ELSE (!lineRef,!lineRef)(*#line 496.1 "expr.lex.sml"*)
 )
-| 69 => ((*#line 87.29 "expr.lex"*) Tokens.ELSE (!lineRef,!lineRef)(*#line 481.1 "expr.lex.sml"*)
+| 78 => ((*#line 95.29 "expr.lex"*) Tokens.EQ (!lineRef,!lineRef) (*#line 498.1 "expr.lex.sml"*)
 )
-| 72 => ((*#line 88.29 "expr.lex"*) Tokens.EQ (!lineRef,!lineRef) (*#line 483.1 "expr.lex.sml"*)
+| 80 => ((*#line 96.29 "expr.lex"*) Tokens.GT (!lineRef,!lineRef) (*#line 500.1 "expr.lex.sml"*)
 )
-| 74 => ((*#line 89.29 "expr.lex"*) Tokens.GT (!lineRef,!lineRef) (*#line 485.1 "expr.lex.sml"*)
+| 82 => ((*#line 97.29 "expr.lex"*) Tokens.LT (!lineRef,!lineRef) (*#line 502.1 "expr.lex.sml"*)
 )
-| 76 => ((*#line 90.29 "expr.lex"*) Tokens.LT (!lineRef,!lineRef) (*#line 487.1 "expr.lex.sml"*)
+| 85 => ((*#line 98.29 "expr.lex"*) Tokens.AND (!lineRef,!lineRef) (*#line 504.1 "expr.lex.sml"*)
 )
-| 79 => ((*#line 91.29 "expr.lex"*) Tokens.AND (!lineRef,!lineRef) (*#line 489.1 "expr.lex.sml"*)
+| 88 => ((*#line 99.29 "expr.lex"*) Tokens.OR (!lineRef,!lineRef) (*#line 506.1 "expr.lex.sml"*)
 )
-| 82 => ((*#line 92.29 "expr.lex"*) Tokens.OR (!lineRef,!lineRef) (*#line 491.1 "expr.lex.sml"*)
-)
-| 85 => let val yytext=yymktext() in (*#line 94.29 "expr.lex"*) Tokens.IDENTIFIER(yytext ,!lineRef, !lineRef)(*#line 493.1 "expr.lex.sml"*)
+| 91 => let val yytext=yymktext() in (*#line 101.29 "expr.lex"*) Tokens.IDENTIFIER(yytext ,!lineRef, !lineRef)(*#line 508.1 "expr.lex.sml"*)
  end
 | _ => raise Internal.LexerError
 

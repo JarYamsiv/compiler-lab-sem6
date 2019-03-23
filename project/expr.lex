@@ -55,13 +55,19 @@ val newlineCount = List.length o List.filter (fn x => x = #"\n") o String.explod
 ws    = [\ \t];
 digit = [0-9]+;
 %%
+
+"/*"(.|[\ \t\n])*"*/"              => (lex());
+"$"(.|[\ \t\n])*"$"                => ( Tokens.DIRECTC (yytext , !lineRef , !lineRef));
+
 "#".*\n       => ( updateLine 1; lex ());
+
 {ws}+         => ( lex() );
+
 \n({ws}*\n)*  => ( let val old = !lineRef
 		   in updateLine (newlineCount yytext); lex()
 		   end
 		 );
-"/*".*"*/"              => (lex());
+
 {digit}+                => ( Tokens.CONST (toInt yytext, !lineRef, !lineRef) );
 "+"                     => ( Tokens.PLUS  (!lineRef,!lineRef) );
 "-"                     => ( Tokens.MINUS  (!lineRef,!lineRef) );
@@ -69,6 +75,7 @@ digit = [0-9]+;
 "="                     => ( Tokens.EQUALSIGN (!lineRef,!lineRef) );
 "("                     => ( Tokens.LPAREN (!lineRef,!lineRef) );
 ")"                     => ( Tokens.RPAREN (!lineRef,!lineRef) );
+
 "{"                     => ( Tokens.LCURL (!lineRef,!lineRef) );
 "}"                     => ( Tokens.RCURL (!lineRef,!lineRef) );
 "["                     => ( Tokens.LSQUARE (!lineRef,!lineRef) );

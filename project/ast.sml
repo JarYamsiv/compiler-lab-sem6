@@ -28,11 +28,13 @@ datatype Type = VOID | INT
 
 
 
-datatype Statement = As    of string * Expr * Type * bool
+datatype Statement = EmptyStatement
+		  | As    of string * Expr * Type * bool
           | FnCl  of string
           | Ret of Expr
           | If of Condition*Statement list
           | IfEl of Condition*Statement list*Statement list
+          | DirectC of string
 
 
 datatype Function = Fun of string* Statement list * Type
