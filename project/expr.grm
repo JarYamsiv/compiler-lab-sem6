@@ -25,6 +25,7 @@ it is empty *)
     | LSQUARE | RSQUARE
     | IF      | ELSE
     | WHILE
+    | TRUE | FALSE
     | EQ | GT | LT | AND | OR
     | FUN
     | RET

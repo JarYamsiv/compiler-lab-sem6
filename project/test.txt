@@ -1,10 +1,11 @@
 fun temp()
 beg
-	b = 0
+	b = 1
 	if(1||b) 
 	beg
 		c = 45 + 32
 	end
+
 	if(0&&b)
 	beg
 		c=56

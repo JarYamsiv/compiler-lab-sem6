@@ -24,7 +24,7 @@ datatype Condition = CConst of int
 	 		| AND
 	 		| OR
 
-datatype Type = VOID | INT 
+datatype Type = VOID | INT | BOOL | UNDEF
 
 
 

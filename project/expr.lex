@@ -68,7 +68,7 @@ digit = [0-9]+;
 		   end
 		 );
 
-{digit}+                => ( Tokens.CONST (toInt yytext, !lineRef, !lineRef) );
+[~]?{digit}+                => ( Tokens.CONST (toInt yytext, !lineRef, !lineRef) );
 "+"                     => ( Tokens.PLUS  (!lineRef,!lineRef) );
 "-"                     => ( Tokens.MINUS  (!lineRef,!lineRef) );
 "*"                     => ( Tokens.MUL (!lineRef,!lineRef) );
@@ -94,6 +94,9 @@ digit = [0-9]+;
 "else"                  => ( Tokens.ELSE (!lineRef,!lineRef));
 
 "while"                 => ( Tokens.WHILE (!lineRef,!lineRef));
+
+"true"                  => ( Tokens.TRUE (!lineRef,!lineRef));
+"false"                 => ( Tokens.TRUE (!lineRef,!lineRef));
 
 "=="                    => ( Tokens.EQ (!lineRef,!lineRef) );
 ">"                     => ( Tokens.GT (!lineRef,!lineRef) );
