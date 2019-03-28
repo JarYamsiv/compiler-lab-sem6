@@ -12,8 +12,9 @@ datatype Expr  =  Const of int
 	       | Minus
 	       | Mul
 
-datatype Condition = BConst of Bool
+	 and Condition = BConst of Bool
 			| CondOp of Condition*ConditionOp*Condition
+			| Rel of Expr* RelOp * Expr
 
 	 and ConditionOp =  AND | OR
 
@@ -27,6 +28,7 @@ datatype Type = VOID | INT | BOOL | UNDEF
 
 datatype Statement = EmptyStatement
 		  | As    of string * Expr * Type * bool
+		  | BAs   of string * Condition * bool
           | FnCl  of string
           | Ret of Expr
           | If of Condition*Statement list
@@ -52,6 +54,14 @@ fun binOpToString Plus  = "+"
 fun  condOpToString AND   = "&&"
  	| condOpToString OR    = "||"
 
+fun  relOpToString EQ     = "=="
+	|relOpToString NEQ    = "!="
+	|relOpToString LT     = "<"
+	|relOpToString GT     = ">"
+	|relOpToString LTEQ   = "<="
+	|relOpToString GTEQ   = ">="
+
+
 fun processExpr (x,oper,y) = case oper of
 								Plus => (x+y)
 								|Minus => (x-y)
@@ -61,16 +71,16 @@ fun plus  a b = Op (a, Plus, b)
 fun minus a b = Op (a, Minus, b)
 fun mul   a b = Op (a, Mul, b)
 
-(*fun eq    a b = CondOp(a,EQ,b)
-fun lt    a b = CondOp(a,LT,b)
-fun gt    a b = CondOp(a,GT,b)*)
+fun eq    a b = Rel(a,EQ,b)
+fun lt    a b = Rel(a,LT,b)
+fun gt    a b = Rel(a,GT,b)
 fun nd    a b = CondOp(a,AND,b)
 fun or    a b = CondOp(a,OR,b)
 
 
 end
 
-structure CAst = 
+(*structure CAst = 
 struct
 	datatype Expr  =  Const of int
 		   		| EVar of string 
@@ -111,7 +121,7 @@ struct
 
 	datatype ProgramElement = St of Statement
 							| Fn of Function 
-end
+end*)
 
 (*fun  oper_conv (Ast.Plus) = (CAst.Plus)
 	|oper_conv (Ast.Minus) = (CAst.Minus)

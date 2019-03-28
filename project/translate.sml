@@ -42,6 +42,8 @@ fun translateCondition (Ast.BConst Ast.TRUE)   = (" true ")
 
   | translateCondition (Ast.CondOp (x,oper,y)) = ((translateCondition x) ^ (Ast.condOpToString oper) ^ (translateCondition y))
 
+  | translateCondition (Ast.Rel (x,oper,y))    = ((translateExpr x)^ (Ast.relOpToString oper) ^ (translateExpr y))
+
 
 
 
@@ -62,7 +64,7 @@ fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
           (addtabs t) ^ (tp_string^" "^x^" = ") ^ (translateExpr exp) ^ (";\n")  
         end
  
-
+ | translateStatement (Ast.BAs (x,c,isdef)) t = ("")
 
 
  | translateStatement (Ast.Ret exp)         t  = ( (addtabs t) ^ "return " ^(translateExpr exp)^ ";\n" )

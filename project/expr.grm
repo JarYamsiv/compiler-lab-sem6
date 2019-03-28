@@ -95,6 +95,9 @@ CONDITION : TRUE                        ( Ast.BConst Ast.TRUE)
           | CONDITION AND CONDITION     ( Ast.nd CONDITION1 CONDITION2)
           | CONDITION OR CONDITION      ( Ast.or CONDITION1 CONDITION2)
           | LPAREN CONDITION RPAREN     ( CONDITION )
+          | EXP LT EXP                  ( Ast.lt EXP1 EXP2)
+          | EXP GT EXP                  ( Ast.gt EXP1 EXP2)
+          | EXP EQ EXP                  ( Ast.eq EXP1 EXP2)
           
 
 EXP     : CONST                ( Ast.Const CONST     )

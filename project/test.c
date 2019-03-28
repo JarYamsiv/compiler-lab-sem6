@@ -2,8 +2,6 @@
 #include <stdint.h>
 void temp(){
    int b =  1 ;
-   int c =  77 ;
-   c =  56 ;
 }
 void swap(){
    int a =  10 ;

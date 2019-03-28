@@ -642,7 +642,7 @@ let fun continue() = lex() in
 )
 | 87 => ((*#line 98.29 "expr.lex"*) Tokens.TRUE (!lineRef,!lineRef)(*#line 643.1 "expr.lex.sml"*)
 )
-| 93 => ((*#line 99.29 "expr.lex"*) Tokens.TRUE (!lineRef,!lineRef)(*#line 645.1 "expr.lex.sml"*)
+| 93 => ((*#line 99.29 "expr.lex"*) Tokens.FALSE (!lineRef,!lineRef)(*#line 645.1 "expr.lex.sml"*)
 )
 | 96 => ((*#line 101.29 "expr.lex"*) Tokens.EQ (!lineRef,!lineRef) (*#line 647.1 "expr.lex.sml"*)
 )

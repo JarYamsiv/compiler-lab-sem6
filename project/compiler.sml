@@ -69,18 +69,21 @@ struct
                   case oper of
                     Ast.OR => (
                               case (c1,c2) of 
-                                (Ast.BConst x,_) => if x=Ast.TRUE then (Ast.BConst Ast.TRUE) else (Ast.CondOp (c1,oper,c2))
-                                |(_,Ast.BConst x) => if x=Ast.TRUE then (Ast.BConst Ast.TRUE) else (Ast.CondOp (c1,oper,c2))
+                                (Ast.BConst Ast.TRUE,_) => (Ast.BConst Ast.TRUE) 
+                                |(_,Ast.BConst Ast.TRUE) => (Ast.BConst Ast.TRUE)
                                 |(_,_) => (Ast.CondOp (c1,oper,c2))
                               )
                     |Ast.AND => (
                                   case (c1,c2) of 
-                                  (Ast.BConst x,_) => if x=Ast.FALSE then (Ast.BConst Ast.FALSE) else (Ast.CondOp (c1,oper,c2))
-                                  |(_,Ast.BConst x) => if x=Ast.FALSE then (Ast.BConst Ast.FALSE) else (Ast.CondOp (c1,oper,c2))
+                                  (Ast.BConst Ast.FALSE,_) => (Ast.BConst Ast.FALSE) 
+                                  |(_,Ast.BConst Ast.FALSE) => (Ast.BConst Ast.FALSE) 
                                   |(_,_) => (Ast.CondOp (c1,oper,c2))
                                 )
-                  
                 end
+
+               | compileCondition (Ast.Rel(x,oper,y)) = (Ast.Rel(compileExpr x,oper,compileExpr y))
+                  
+                
           
 
           (*
