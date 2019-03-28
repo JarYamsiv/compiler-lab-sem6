@@ -24,6 +24,7 @@ it is empty *)
     | LPAREN  | RPAREN
     | LSQUARE | RSQUARE
     | IF      | ELSE
+    | WHILE
     | EQ | GT | LT | AND | OR
     | FUN
     | RET
@@ -71,6 +72,7 @@ STATEMENT:IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP,Ast.VOID,false))
           | DIRECTC                   (Ast.DirectC DIRECTC)
           |IF  CONDITION  BEG STATEMENTS END (Ast.If (CONDITION,STATEMENTS))
           |IF  CONDITION  BEG STATEMENTS END ELSE BEG STATEMENTS END (Ast.IfEl (CONDITION,STATEMENTS1,STATEMENTS2))
+          |WHILE CONDITION BEG STATEMENTS END (Ast.While (CONDITION,STATEMENTS))
 
 
 STATEMENTS:                                ([]) 

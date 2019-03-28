@@ -75,7 +75,9 @@ fun writeFile filename content =
 
 
 
-val executable = "#include <stdio.h>\n"^executable
+val executable = "#include <stdio.h>\n"^
+				 "#include <stdint.h>\n"^
+					executable
 
 val _ =if !compileStatus then writeFile (!outFile) (executable)  else print "\n COMPILATION ABORTED ERRORS FOUND \n"
 

@@ -95,6 +95,14 @@ fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
      in
        (remove_dollar^"\n")
      end
+
+ | translateStatement (Ast.StList ls) t     = (translateStatements (t,ls))
+
+ | translateStatement (Ast.While (c,sl)) t  = (
+              (addtabs t) ^ ("while(") ^ (translateCondition c) ^  ("){\n") ^
+              (translateStatements (t+1,sl) ) ^
+              (addtabs t) ^ ("}\n")
+                                              )
  | translateStatement (Ast.EmptyStatement) t= ("")
 
 

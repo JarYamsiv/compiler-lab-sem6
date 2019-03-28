@@ -92,6 +92,9 @@ digit = [0-9]+;
 
 "if"                    => ( Tokens.IF (!lineRef,!lineRef));
 "else"                  => ( Tokens.ELSE (!lineRef,!lineRef));
+
+"while"                 => ( Tokens.WHILE (!lineRef,!lineRef));
+
 "=="                    => ( Tokens.EQ (!lineRef,!lineRef) );
 ">"                     => ( Tokens.GT (!lineRef,!lineRef) );
 "<"                     => ( Tokens.LT (!lineRef,!lineRef) );

@@ -34,6 +34,8 @@ datatype Statement = EmptyStatement
           | Ret of Expr
           | If of Condition*Statement list
           | IfEl of Condition*Statement list*Statement list
+          | StList of Statement list
+          | While of Condition*Statement list
           | DirectC of string
 
 
@@ -111,9 +113,22 @@ struct
 	          | IfEl of Condition*Statement list*Statement list
 
 
+
 	datatype Function = Fun of string* Statement list * Type
 
 
 	datatype ProgramElement = St of Statement
 							| Fn of Function 
 end
+
+fun  oper_conv (Ast.Plus) = (CAst.Plus)
+	|oper_conv (Ast.Minus) = (CAst.Minus)
+	|oper_conv (Ast.Mul) = (CAst.Mul)
+
+fun   condOp_conv (Ast.EQ) = (CAst.EQ)
+	| condOp_conv (Ast.GT) = (CAst.GT)
+	| condOp_conv (Ast.LT) = (CAst.LT)
+	| condOp_conv (Ast.GTEQ) = (CAst.GTEQ)
+	| condOp_conv (Ast.LTEQ) = (CAst.LTEQ)
+	| condOp_conv (Ast.AND) = (CAst.AND)
+	| condOp_conv (Ast.OR) = (CAst.OR)

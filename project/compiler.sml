@@ -32,6 +32,7 @@ struct
           val _ = print ("Processing Function "^ green ^ name ^ reset ^ "\n")
           val _ = LocalSymTable.reset ()
           val final_ret = ref Ast.VOID
+          val _ = GlobalFunctionTable.addkey(Atom.atom name,())
 
 
           fun  compileExpr (Ast.Const x) = (Ast.Const x)
@@ -56,6 +57,32 @@ struct
                       |(_,_)                    =>  Ast.Op(c1,oper,c2) 
                   
                  end 
+
+          fun compileCondition (Ast.CConst x)   = (Ast.CConst x)
+
+              | compileCondition (Ast.CVar  x)    = (Ast.CVar x)
+
+              | compileCondition (Ast.CondOp (x,oper,y)) = 
+                let
+                  val c1 = compileCondition x
+                  val c2 = compileCondition y
+                in
+                  case oper of
+                    Ast.OR => (
+                              case (c1,c2) of 
+                                (Ast.CConst x,_) => if x<>0 then (Ast.CConst 1) else (Ast.CondOp (c1,oper,c2))
+                                |(_,Ast.CConst x) => if x<>0 then (Ast.CConst 1) else (Ast.CondOp (c1,oper,c2))
+                                |(_,_) => (Ast.CondOp (c1,oper,c2))
+                              )
+                    |Ast.AND => (
+                                  case (c1,c2) of 
+                                  (Ast.CConst x,_) => if x=0 then (Ast.CConst 0) else (Ast.CondOp (c1,oper,c2))
+                                  |(_,Ast.CConst x) => if x=0 then (Ast.CConst 0) else (Ast.CondOp (c1,oper,c2))
+                                  |(_,_) => (Ast.CondOp (c1,oper,c2))
+                                )
+                    |_       => (Ast.CondOp (c1,oper,c2))
+                  
+                end
           
 
           (*
@@ -74,14 +101,55 @@ struct
                 end
             | compileStatement (Ast.If(c,stls)) = 
                 let
+                  val compiled_codition = compileCondition c
                   val compiled_statement = compileStatements stls
                 in
-                    case compiled_statement of
-                      [] => (0,Ast.EmptyStatement)
-                      |_ => (2,Ast.If(c,compiled_statement))
+                    case compiled_codition of
+                      Ast.CConst x => if x=0 then 
+                        let 
+                          val _ = print (grey^"found dead if statement removing\n"^reset)
+                        in
+                          (0,Ast.EmptyStatement) 
+                        end
+                      else
+                      (
+                        (2,Ast.StList compiled_statement)
+                      )
+                      |_ =>
+                      (
+                        case compiled_statement of
+                        [] => (0,Ast.EmptyStatement)
+                        |_ => (2,Ast.If(compiled_codition,compiled_statement))
+                      )
                 end
-            | compileStatement (Ast.IfEl(c,stl1,stl2)) = (2,(Ast.IfEl(c,compileStatements stl1,compileStatements stl2)))
+            | compileStatement (Ast.IfEl(c,stl1,stl2)) = 
+                let
+                  val compiled_codition = compileCondition c
+                  val if_statements = compileStatements stl1
+                  val else_statements = compileStatements stl2
+                in
+                  case compiled_codition of
+                      Ast.CConst x => if x=0 then 
+                        let 
+                          val _ = print (grey^"found dead if statement removing\n"^reset)
+                        in
+                          (2,Ast.StList else_statements)
+                        end 
+                      else
+                      (
+                        let 
+                          val _ = print (grey^"found dead else statement removing\n"^reset)
+                        in
+                          (2,Ast.StList if_statements)
+                        end
+                      )
+                      |_ =>
+                      (
+                        (2,Ast.IfEl(compiled_codition,if_statements,else_statements))
+                      )
+                end
             | compileStatement (Ast.Ret expr) = (final_ret:=Ast.INT;(1,Ast.Ret expr))
+            | compileStatement (Ast.While (c,sl)) = (2,(Ast.While(compileCondition c,compileStatements sl)))
             | compileStatement x = (2,x)
 
 

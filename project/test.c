@@ -1,9 +1,9 @@
 #include <stdio.h>
+#include <stdint.h>
 void temp(){
    int b =  0 ;
-   if( b > 0 ){
-      int c =  77 ;
-   }
+   int c =  77 ;
+   int a =  23 ;
 }
 int swap(){
    int a =  10 ;
@@ -22,8 +22,14 @@ int main(){
    int a =  0 ;
    int b =  3 +a;
    b = b+ 1 ;
+   while( b < 20 ){
  
-		printf("%d",b);
-	
+			printf("%d\n",b);
+		
+      if( b == 17 ){
+         return  5 ;
+      }
+      b = b+ 1 ;
+   }
    return  12 ;
 }

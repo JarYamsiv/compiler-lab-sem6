@@ -1,10 +1,19 @@
 fun temp()
 beg
 	b = 0
-	if(b >0) 
+	if(1||b) 
 	beg
 		c = 45 + 32
 	end
+	if(0&&b)
+	beg
+		c=56
+	end
+	else
+	beg
+		a=23
+	end
+
 end
 
 fun swap ()
@@ -23,10 +32,15 @@ beg
 	a = 0
 	b= 3+a
 	b = b+1
+	while (b<20)
+		beg
+		$ 
+			printf("%d\n",b);
+		$
+		if b == 17 beg ret 5 g=4 end
+		b=b+1
 
-	$ 
-		printf("%d",b);
-	$
+	end
 	ret 12
 
 	if a==b beg c = 56 end else beg  end
