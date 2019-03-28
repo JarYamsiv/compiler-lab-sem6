@@ -36,9 +36,9 @@ fun translateExpr (Ast.Const x )         = (" "^(Int.toString x)^" ")
 
 
 
-fun translateCondition (Ast.CConst x)   = (" "^(Int.toString x)^" ")
+fun translateCondition (Ast.BConst Ast.TRUE)   = (" true ")
 
-  | translateCondition (Ast.CVar  x)    = (" "^x^" ")
+  | translateCondition (Ast.BConst Ast.FALSE)  = (" false ")
 
   | translateCondition (Ast.CondOp (x,oper,y)) = ((translateCondition x) ^ (Ast.condOpToString oper) ^ (translateCondition y))
 

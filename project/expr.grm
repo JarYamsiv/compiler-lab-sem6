@@ -90,11 +90,8 @@ PROGRAMELEM : STATEMENT SEMICOLON  (Ast.St STATEMENT)
             STATEMENTS 
             END(Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS,Ast.VOID)))
 
-CONDITION : CONST                       ( Ast.CConst CONST)
-          | IDENTIFIER                  ( Ast.CVar IDENTIFIER)
-          | CONDITION EQ CONDITION      ( Ast.eq CONDITION1 CONDITION2)
-          | CONDITION LT CONDITION      ( Ast.lt CONDITION1 CONDITION2)
-          | CONDITION GT CONDITION      ( Ast.gt CONDITION1 CONDITION2)
+CONDITION : TRUE                        ( Ast.BConst Ast.TRUE)
+          | FALSE                       ( Ast.BConst Ast.FALSE)
           | CONDITION AND CONDITION     ( Ast.nd CONDITION1 CONDITION2)
           | CONDITION OR CONDITION      ( Ast.or CONDITION1 CONDITION2)
           | LPAREN CONDITION RPAREN     ( CONDITION )

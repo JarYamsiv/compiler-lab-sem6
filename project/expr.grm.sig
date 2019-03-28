@@ -11,6 +11,8 @@ val AND:  'a * 'a -> (svalue,'a) token
 val LT:  'a * 'a -> (svalue,'a) token
 val GT:  'a * 'a -> (svalue,'a) token
 val EQ:  'a * 'a -> (svalue,'a) token
+val FALSE:  'a * 'a -> (svalue,'a) token
+val TRUE:  'a * 'a -> (svalue,'a) token
 val WHILE:  'a * 'a -> (svalue,'a) token
 val ELSE:  'a * 'a -> (svalue,'a) token
 val IF:  'a * 'a -> (svalue,'a) token

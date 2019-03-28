@@ -12,17 +12,14 @@ datatype Expr  =  Const of int
 	       | Minus
 	       | Mul
 
-datatype Condition = CConst of int
-			| CVar of string
+datatype Condition = BConst of Bool
 			| CondOp of Condition*ConditionOp*Condition
 
-	 and ConditionOp = EQ
-	 		| GT
-	 		| LT
-	 		| GTEQ
-	 		| LTEQ
-	 		| AND
-	 		| OR
+	 and ConditionOp =  AND | OR
+
+	 and RelOp = EQ | NEQ | LT | GT | GTEQ | LTEQ
+
+	 and Bool = TRUE | FALSE
 
 datatype Type = VOID | INT | BOOL | UNDEF
 
@@ -52,12 +49,7 @@ fun binOpToString Plus  = "+"
   | binOpToString Minus = "-"
   | binOpToString Mul   = "*"
 
-fun   condOpToString EQ    = "=="
- 	| condOpToString LT    = "<"
- 	| condOpToString GT    = ">"
- 	| condOpToString GTEQ  = ">="
-  	| condOpToString LTEQ  = "<="
- 	| condOpToString AND   = "&&"
+fun  condOpToString AND   = "&&"
  	| condOpToString OR    = "||"
 
 fun processExpr (x,oper,y) = case oper of
@@ -69,9 +61,9 @@ fun plus  a b = Op (a, Plus, b)
 fun minus a b = Op (a, Minus, b)
 fun mul   a b = Op (a, Mul, b)
 
-fun eq    a b = CondOp(a,EQ,b)
+(*fun eq    a b = CondOp(a,EQ,b)
 fun lt    a b = CondOp(a,LT,b)
-fun gt    a b = CondOp(a,GT,b)
+fun gt    a b = CondOp(a,GT,b)*)
 fun nd    a b = CondOp(a,AND,b)
 fun or    a b = CondOp(a,OR,b)
 
@@ -121,7 +113,7 @@ struct
 							| Fn of Function 
 end
 
-fun  oper_conv (Ast.Plus) = (CAst.Plus)
+(*fun  oper_conv (Ast.Plus) = (CAst.Plus)
 	|oper_conv (Ast.Minus) = (CAst.Minus)
 	|oper_conv (Ast.Mul) = (CAst.Mul)
 
@@ -131,4 +123,4 @@ fun   condOp_conv (Ast.EQ) = (CAst.EQ)
 	| condOp_conv (Ast.GTEQ) = (CAst.GTEQ)
 	| condOp_conv (Ast.LTEQ) = (CAst.LTEQ)
 	| condOp_conv (Ast.AND) = (CAst.AND)
-	| condOp_conv (Ast.OR) = (CAst.OR)
+	| condOp_conv (Ast.OR) = (CAst.OR)*)

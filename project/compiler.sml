@@ -58,9 +58,8 @@ struct
                   
                  end 
 
-          fun compileCondition (Ast.CConst x)   = (Ast.CConst x)
+          fun compileCondition (Ast.BConst x)   = (Ast.BConst x)
 
-              | compileCondition (Ast.CVar  x)    = (Ast.CVar x)
 
               | compileCondition (Ast.CondOp (x,oper,y)) = 
                 let
@@ -70,17 +69,16 @@ struct
                   case oper of
                     Ast.OR => (
                               case (c1,c2) of 
-                                (Ast.CConst x,_) => if x<>0 then (Ast.CConst 1) else (Ast.CondOp (c1,oper,c2))
-                                |(_,Ast.CConst x) => if x<>0 then (Ast.CConst 1) else (Ast.CondOp (c1,oper,c2))
+                                (Ast.BConst x,_) => if x=Ast.TRUE then (Ast.BConst Ast.TRUE) else (Ast.CondOp (c1,oper,c2))
+                                |(_,Ast.BConst x) => if x=Ast.TRUE then (Ast.BConst Ast.TRUE) else (Ast.CondOp (c1,oper,c2))
                                 |(_,_) => (Ast.CondOp (c1,oper,c2))
                               )
                     |Ast.AND => (
                                   case (c1,c2) of 
-                                  (Ast.CConst x,_) => if x=0 then (Ast.CConst 0) else (Ast.CondOp (c1,oper,c2))
-                                  |(_,Ast.CConst x) => if x=0 then (Ast.CConst 0) else (Ast.CondOp (c1,oper,c2))
+                                  (Ast.BConst x,_) => if x=Ast.FALSE then (Ast.BConst Ast.FALSE) else (Ast.CondOp (c1,oper,c2))
+                                  |(_,Ast.BConst x) => if x=Ast.FALSE then (Ast.BConst Ast.FALSE) else (Ast.CondOp (c1,oper,c2))
                                   |(_,_) => (Ast.CondOp (c1,oper,c2))
                                 )
-                    |_       => (Ast.CondOp (c1,oper,c2))
                   
                 end
           
@@ -105,7 +103,7 @@ struct
                   val compiled_statement = compileStatements stls
                 in
                     case compiled_codition of
-                      Ast.CConst x => if x=0 then 
+                      Ast.BConst x => if x=Ast.FALSE then 
                         let 
                           val _ = print (grey^"found dead if statement removing\n"^reset)
                         in
@@ -129,7 +127,7 @@ struct
                   val else_statements = compileStatements stl2
                 in
                   case compiled_codition of
-                      Ast.CConst x => if x=0 then 
+                      Ast.BConst x => if x=Ast.FALSE then 
                         let 
                           val _ = print (grey^"found dead if statement removing\n"^reset)
                         in

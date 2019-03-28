@@ -1,12 +1,12 @@
 fun temp()
 beg
 	b = 1
-	if(1||b) 
+	if(true) 
 	beg
 		c = 45 + 32
 	end
 
-	if(0&&b)
+	if(false)
 	beg
 		c=56
 	end
@@ -24,8 +24,7 @@ beg
 	t = a
 	a = b
 	b = t
-	if a>b beg ret 3 d = 3+4 end
-	else beg ret a+b f=6+t end
+
 end
 
 fun main()
@@ -33,18 +32,8 @@ beg
 	a = 0
 	b= 3+a
 	b = b+1
-	while (b<20)
-		beg
-		$ 
-			printf("%d\n",b);
-		$
-		if b == 17 beg ret 5 g=4 end
-		b=b+1
-
-	end
 	ret 12
 
-	if a==b beg c = 56 end else beg  end
 end
 
 
