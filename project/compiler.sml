@@ -26,7 +26,6 @@ structure Compiler =
 struct
 
   
-
 	fun compileFunction (Ast.Fun(name,s_list,tp)) = 
         let
           val _ = print ("Processing Function "^ green ^ name ^ reset ^ "\n")
@@ -172,4 +171,13 @@ struct
         in
           Ast.Fun(name,sl,ret_type)
         end
+
+
+  fun compile (x::xs) = compileElem x::compile xs
+      |compile []     = []
+
+  and 
+      compileElem  (Ast.Fn function) =    Ast.Fn (compileFunction function)
+      |compileElem (Ast.St statement)       = (Ast.St statement)
+
 end

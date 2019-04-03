@@ -80,7 +80,7 @@ fun or    a b = CondOp(a,OR,b)
 
 end
 
-(*structure CAst = 
+structure CAst = 
 struct
 	datatype Expr  =  Const of int
 		   		| EVar of string 
@@ -92,28 +92,30 @@ struct
 	       | Minus
 	       | Mul
 
-	datatype Condition = CConst of int
-				| CVar of string
-				| CondOp of Condition*ConditionOp*Condition
+	 and Condition = BConst of Bool
+			| CondOp of Condition*ConditionOp*Condition
+			| Rel of Expr* RelOp * Expr
 
-		 and ConditionOp = EQ
-		 		| GT
-		 		| LT
-		 		| GTEQ
-		 		| LTEQ
-		 		| AND
-		 		| OR
+	 and ConditionOp =  AND | OR
 
-	datatype Type = VOID | INT 
+	 and RelOp = EQ | NEQ | LT | GT | GTEQ | LTEQ
+
+	 and Bool = TRUE | FALSE
+
+	datatype Type = VOID | INT | BOOL | UNDEF
 
 
 
-	datatype Statement = As    of string * Expr * Type * bool
+	datatype Statement = EmptyStatement
+			  | As    of string * Expr * Type * bool
+			  | BAs   of string * Condition * bool
 	          | FnCl  of string
 	          | Ret of Expr
 	          | If of Condition*Statement list
 	          | IfEl of Condition*Statement list*Statement list
-
+	          | StList of Statement list
+	          | While of Condition*Statement list
+	          | DirectC of string
 
 
 	datatype Function = Fun of string* Statement list * Type
@@ -121,16 +123,19 @@ struct
 
 	datatype ProgramElement = St of Statement
 							| Fn of Function 
-end*)
 
-(*fun  oper_conv (Ast.Plus) = (CAst.Plus)
+end
+
+fun  oper_conv (Ast.Plus) = (CAst.Plus)
 	|oper_conv (Ast.Minus) = (CAst.Minus)
 	|oper_conv (Ast.Mul) = (CAst.Mul)
 
-fun   condOp_conv (Ast.EQ) = (CAst.EQ)
-	| condOp_conv (Ast.GT) = (CAst.GT)
-	| condOp_conv (Ast.LT) = (CAst.LT)
-	| condOp_conv (Ast.GTEQ) = (CAst.GTEQ)
-	| condOp_conv (Ast.LTEQ) = (CAst.LTEQ)
-	| condOp_conv (Ast.AND) = (CAst.AND)
-	| condOp_conv (Ast.OR) = (CAst.OR)*)
+fun   relOp_conv (Ast.EQ) = (CAst.EQ)
+	| relOp_conv (Ast.GT) = (CAst.GT)
+	| relOp_conv (Ast.LT) = (CAst.LT)
+	| relOp_conv (Ast.GTEQ) = (CAst.GTEQ)
+	| relOp_conv (Ast.LTEQ) = (CAst.LTEQ)
+	| relOp_conv (Ast.NEQ) = (CAst.NEQ)
+
+fun   condOp_conv (Ast.AND) = (CAst.AND)
+	| condOp_conv (Ast.OR) = (CAst.OR)

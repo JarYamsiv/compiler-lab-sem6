@@ -122,7 +122,6 @@ and  translateStatements  (t,(x :: xs))   = ((translateStatement x t)^(translate
 (**************************************************************************************************************************************)
 
 fun translateFun(Ast.Fun (x,g,tp))  t  =  let
-           val Ast.Fun(x,g,tp) = Compiler.compileFunction (Ast.Fun(x,g,tp))
            val ret_type = case tp of Ast.VOID => "void" | Ast.INT => "int" | Ast.BOOL => "uint8" | Ast.UNDEF=> "void"
            in
             (
