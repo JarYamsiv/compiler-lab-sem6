@@ -7,7 +7,7 @@ void temp(){
    int c =  77 ;
    int a =  23 ;
 }
-void swap(){
+uint8_t swap(){
    int a =  10 ;
    int b =  15 ;
    int t = a;
@@ -16,12 +16,14 @@ void swap(){
    uint8_t c =  false ;
    uint8_t g = c;
    uint8_t h =  true &&g;
+   return h;
 }
 int main(){
    int a =  0 ;
    int b =  3 +a;
    b = b+ 1 ;
-   while( true ){
+   uint8_t c =  true ;
+   while(c){
       a =  0 ;
       if(a== 0 ){
 break;

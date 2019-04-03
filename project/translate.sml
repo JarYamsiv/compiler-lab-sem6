@@ -80,6 +80,7 @@ fun translateStatement (CAst.As (x,exp,tp,isdef)) t    =
 
 
  | translateStatement (CAst.Ret exp)         t  = ( (addtabs t) ^ "return " ^(translateExpr exp)^ ";\n" )
+ | translateStatement (CAst.BRet c)          t  = ( (addtabs t) ^ "return " ^(translateCondition c)^ ";\n" )
 
 
 
@@ -134,7 +135,7 @@ and  translateStatements  (t,(x :: xs))   = ((translateStatement x t)^(translate
 (**************************************************************************************************************************************)
 
 fun translateFun(CAst.Fun (x,g,tp))  t  =  let
-           val ret_type = case tp of CAst.VOID => "void" | CAst.INT => "int" | CAst.BOOL => "uint8" | CAst.UNDEF=> "void"
+           val ret_type = case tp of CAst.VOID => "void" | CAst.INT => "int" | CAst.BOOL => "uint8_t" | CAst.UNDEF=> "void"
            in
             (
            (ret_type^" "^x^"(){\n")^

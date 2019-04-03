@@ -28,15 +28,19 @@ beg
 	g = `c`
 	h = true && `g`
 	k is l
+	ret `h`
 
 end
+
+
 
 fun main()
 beg
 	a = 0
 	b= 3+a
 	b = b+1
-	while true
+	c = true
+	while `c`
 	beg 
 		a = 0
 		if a==0 beg $break;$ end

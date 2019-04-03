@@ -33,6 +33,7 @@ datatype Statement = EmptyStatement
 		  | GAs   of string * string
           | FnCl  of string
           | Ret of Expr
+          | BRet of Condition
           | If of Condition*Statement list
           | IfEl of Condition*Statement list*Statement list
           | StList of Statement list
@@ -102,6 +103,7 @@ struct
 			  | GAs   of string * string
 	          | FnCl  of string
 	          | Ret of Expr
+	          | BRet of Condition
 	          | If of Condition*Statement list
 	          | IfEl of Condition*Statement list*Statement list
 	          | StList of Statement list

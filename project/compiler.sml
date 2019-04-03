@@ -178,7 +178,40 @@ struct
                         (2,CAst.IfEl(compiled_codition,if_statements,else_statements))
                       )
                 end
-            | compileStatement (Ast.Ret expr) = (final_ret:=CAst.INT;(1,CAst.Ret (compileExpr expr)))
+
+            | compileStatement (Ast.Ret expr) = (
+                if !final_ret = CAst.UNDEF orelse !final_ret = CAst.INT then
+                  let
+                    val _ = final_ret:=CAst.INT
+                  in
+                    (1,CAst.Ret (compileExpr expr))
+                  end
+                
+                else
+                  let
+                    val _ = compileStatus := false
+                    val _ = print (red^"Multiple return types for the same function\n"^reset)
+                  in
+                    (0,CAst.EmptyStatement)
+                  end
+              )
+            | compileStatement (Ast.BRet c) = (
+                if !final_ret = CAst.UNDEF orelse !final_ret = CAst.BOOL then
+                  let
+                    val _ = final_ret:=CAst.BOOL
+                  in
+                    (1,CAst.BRet (compileCondition c))
+                  end
+                
+                else
+                  let
+                    val _ = compileStatus := false
+                    val _ = print (red^"Multiple return types for the same function\n"^reset)
+                  in
+                    (0,CAst.EmptyStatement)
+                  end
+              )
+
             | compileStatement (Ast.While (c,sl)) = (2,(CAst.While(compileCondition c,compileStatements sl)))
             | compileStatement (Ast.DirectC code) = (2,CAst.DirectC code)
             
@@ -200,6 +233,7 @@ struct
   
 	fun compileFunction (Ast.Fun(name,s_list)) = 
         let
+          val _ = final_ret:=CAst.UNDEF
           val _ = print ("Processing Function "^ green ^ name ^ reset ^ "\n")
           val _ = LocalSymTable.reset ()
           val _ = GlobalFunctionTable.addkey(Atom.atom name,())
