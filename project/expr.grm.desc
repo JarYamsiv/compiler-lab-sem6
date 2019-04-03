@@ -3,51 +3,29 @@ state 0:
 
 	START : . PROGRAM 
 
-	IDENTIFIER	shift 9
-	DIRECTC	shift 8
-	IF	shift 7
-	WHILE	shift 6
-	FUN	shift 5
-	RET	shift 4
+	FUN	shift 3
 
-	START	goto 68
-	PROGRAM	goto 3
-	PROGRAMELEM	goto 2
-	STATEMENT	goto 1
+	START	goto 72
+	PROGRAM	goto 2
+	PROGRAMELEM	goto 1
 
 	.	error
 
 
 state 1:
 
-	PROGRAMELEM : STATEMENT . SEMICOLON 
-
-	SEMICOLON	shift 10
-
-
-	.	error
-
-
-state 2:
-
 	PROGRAM : PROGRAMELEM . PROGRAM 
 	PROGRAM : PROGRAMELEM .  (reduce by rule 2)
 
-	IDENTIFIER	shift 9
-	DIRECTC	shift 8
-	IF	shift 7
-	WHILE	shift 6
-	FUN	shift 5
-	RET	shift 4
+	FUN	shift 3
 
-	PROGRAM	goto 11
-	PROGRAMELEM	goto 2
-	STATEMENT	goto 1
+	PROGRAM	goto 4
+	PROGRAMELEM	goto 1
 
 	.	reduce by rule 2
 
 
-state 3:
+state 2:
 
 	START : PROGRAM .  (reduce by rule 0)
 
@@ -56,93 +34,17 @@ state 3:
 	.	reduce by rule 0
 
 
-state 4:
-
-	STATEMENT : RET . EXP 
-
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 13
-
-	EXP	goto 12
-
-	.	error
-
-
-state 5:
+state 3:
 
 	PROGRAMELEM : FUN . IDENTIFIER LPAREN RPAREN BEG STATEMENTS END 
 
-	IDENTIFIER	shift 16
+	IDENTIFIER	shift 5
 
 
 	.	error
 
 
-state 6:
-
-	STATEMENT : WHILE . CONDITION BEG STATEMENTS END 
-
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 21
-	TRUE	shift 20
-	FALSE	shift 19
-
-	EXP	goto 18
-	CONDITION	goto 17
-
-	.	error
-
-
-state 7:
-
-	STATEMENT : IF . CONDITION BEG STATEMENTS END 
-	STATEMENT : IF . CONDITION BEG STATEMENTS END ELSE BEG STATEMENTS END 
-
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 21
-	TRUE	shift 20
-	FALSE	shift 19
-
-	EXP	goto 18
-	CONDITION	goto 22
-
-	.	error
-
-
-state 8:
-
-	STATEMENT : DIRECTC .  (reduce by rule 6)
-
-
-
-	.	reduce by rule 6
-
-
-state 9:
-
-	STATEMENT : IDENTIFIER . EQUALSIGN EXP 
-	STATEMENT : IDENTIFIER . LPAREN RPAREN 
-
-	EQUALSIGN	shift 24
-	LPAREN	shift 23
-
-
-	.	error
-
-
-state 10:
-
-	PROGRAMELEM : STATEMENT SEMICOLON .  (reduce by rule 12)
-
-
-
-	.	reduce by rule 12
-
-
-state 11:
+state 4:
 
 	PROGRAM : PROGRAMELEM PROGRAM .  (reduce by rule 1)
 
@@ -151,76 +53,166 @@ state 11:
 	.	reduce by rule 1
 
 
+state 5:
+
+	PROGRAMELEM : FUN IDENTIFIER . LPAREN RPAREN BEG STATEMENTS END 
+
+	LPAREN	shift 6
+
+
+	.	error
+
+
+state 6:
+
+	PROGRAMELEM : FUN IDENTIFIER LPAREN . RPAREN BEG STATEMENTS END 
+
+	RPAREN	shift 7
+
+
+	.	error
+
+
+state 7:
+
+	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN . BEG STATEMENTS END 
+
+	BEG	shift 8
+
+
+	.	error
+
+
+state 8:
+
+	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN BEG . STATEMENTS END 
+
+	IDENTIFIER	shift 15
+	DIRECTC	shift 14
+	IF	shift 13
+	WHILE	shift 12
+	RET	shift 11
+
+	STATEMENT	goto 10
+	STATEMENTS	goto 9
+
+	.	reduce by rule 12
+
+
+state 9:
+
+	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN BEG STATEMENTS . END 
+
+	END	shift 16
+
+
+	.	error
+
+
+state 10:
+
+	STATEMENTS : STATEMENT . STATEMENTS 
+
+	IDENTIFIER	shift 15
+	DIRECTC	shift 14
+	IF	shift 13
+	WHILE	shift 12
+	RET	shift 11
+
+	STATEMENT	goto 10
+	STATEMENTS	goto 17
+
+	.	reduce by rule 12
+
+
+state 11:
+
+	STATEMENT : RET . EXP 
+
+	CONST	shift 21
+	IDENTIFIER	shift 20
+	LPAREN	shift 19
+
+	EXP	goto 18
+
+	.	error
+
+
 state 12:
 
-	EXP : EXP . PLUS EXP 
-	EXP : EXP . MINUS EXP 
-	EXP : EXP . MUL EXP 
-	STATEMENT : RET EXP .  (reduce by rule 5)
+	STATEMENT : WHILE . CONDITION BEG STATEMENTS END 
 
-	PLUS	shift 27
-	MINUS	shift 26
-	MUL	shift 25
+	CONST	shift 21
+	BACKTICK	shift 27
+	IDENTIFIER	shift 20
+	LPAREN	shift 26
+	TRUE	shift 25
+	FALSE	shift 24
 
+	EXP	goto 23
+	CONDITION	goto 22
 
-	.	reduce by rule 5
+	.	error
 
 
 state 13:
 
-	EXP : LPAREN . EXP RPAREN 
+	STATEMENT : IF . CONDITION BEG STATEMENTS END 
+	STATEMENT : IF . CONDITION BEG STATEMENTS END ELSE BEG STATEMENTS END 
 
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 13
+	CONST	shift 21
+	BACKTICK	shift 27
+	IDENTIFIER	shift 20
+	LPAREN	shift 26
+	TRUE	shift 25
+	FALSE	shift 24
 
-	EXP	goto 28
+	EXP	goto 23
+	CONDITION	goto 28
 
 	.	error
 
 
 state 14:
 
-	EXP : IDENTIFIER .  (reduce by rule 23)
-	EXP : IDENTIFIER . LSQUARE EXP RSQUARE 
-
-	LSQUARE	shift 29
+	STATEMENT : DIRECTC .  (reduce by rule 8)
 
 
-	.	reduce by rule 23
+
+	.	reduce by rule 8
 
 
 state 15:
 
-	EXP : CONST .  (reduce by rule 22)
+	STATEMENT : IDENTIFIER . EQUALSIGN EXP 
+	STATEMENT : IDENTIFIER . EQUALSIGN CONDITION 
+	STATEMENT : IDENTIFIER . IS IDENTIFIER 
+	STATEMENT : IDENTIFIER . LPAREN RPAREN 
+
+	IS	shift 31
+	EQUALSIGN	shift 30
+	LPAREN	shift 29
 
 
-
-	.	reduce by rule 22
+	.	error
 
 
 state 16:
 
-	PROGRAMELEM : FUN IDENTIFIER . LPAREN RPAREN BEG STATEMENTS END 
-
-	LPAREN	shift 30
+	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN BEG STATEMENTS END .  (reduce by rule 14)
 
 
-	.	error
+
+	.	reduce by rule 14
 
 
 state 17:
 
-	STATEMENT : WHILE CONDITION . BEG STATEMENTS END 
-	CONDITION : CONDITION . AND CONDITION 
-	CONDITION : CONDITION . OR CONDITION 
-
-	AND	shift 33
-	OR	shift 32
-	BEG	shift 31
+	STATEMENTS : STATEMENT STATEMENTS .  (reduce by rule 13)
 
 
-	.	error
+
+	.	reduce by rule 13
 
 
 state 18:
@@ -228,66 +220,58 @@ state 18:
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
 	EXP : EXP . MUL EXP 
-	CONDITION : EXP . LT EXP 
-	CONDITION : EXP . GT EXP 
-	CONDITION : EXP . EQ EXP 
+	STATEMENT : RET EXP .  (reduce by rule 7)
 
-	PLUS	shift 27
-	MINUS	shift 26
-	MUL	shift 25
-	EQ	shift 36
-	GT	shift 35
-	LT	shift 34
+	PLUS	shift 34
+	MINUS	shift 33
+	MUL	shift 32
 
 
-	.	error
+	.	reduce by rule 7
 
 
 state 19:
 
-	CONDITION : FALSE .  (reduce by rule 15)
-
-
-
-	.	reduce by rule 15
-
-
-state 20:
-
-	CONDITION : TRUE .  (reduce by rule 14)
-
-
-
-	.	reduce by rule 14
-
-
-state 21:
-
 	EXP : LPAREN . EXP RPAREN 
-	CONDITION : LPAREN . CONDITION RPAREN 
 
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 21
-	TRUE	shift 20
-	FALSE	shift 19
+	CONST	shift 21
+	IDENTIFIER	shift 20
+	LPAREN	shift 19
 
-	EXP	goto 38
-	CONDITION	goto 37
+	EXP	goto 35
 
 	.	error
 
 
+state 20:
+
+	EXP : IDENTIFIER .  (reduce by rule 25)
+	EXP : IDENTIFIER . LSQUARE EXP RSQUARE 
+
+	LSQUARE	shift 36
+
+
+	.	reduce by rule 25
+
+
+state 21:
+
+	EXP : CONST .  (reduce by rule 24)
+
+
+
+	.	reduce by rule 24
+
+
 state 22:
 
-	STATEMENT : IF CONDITION . BEG STATEMENTS END 
-	STATEMENT : IF CONDITION . BEG STATEMENTS END ELSE BEG STATEMENTS END 
+	STATEMENT : WHILE CONDITION . BEG STATEMENTS END 
 	CONDITION : CONDITION . AND CONDITION 
 	CONDITION : CONDITION . OR CONDITION 
 
-	AND	shift 33
-	OR	shift 32
-	BEG	shift 39
+	AND	shift 39
+	OR	shift 38
+	BEG	shift 37
 
 
 	.	error
@@ -295,9 +279,19 @@ state 22:
 
 state 23:
 
-	STATEMENT : IDENTIFIER LPAREN . RPAREN 
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+	CONDITION : EXP . LT EXP 
+	CONDITION : EXP . GT EXP 
+	CONDITION : EXP . EQ EXP 
 
-	RPAREN	shift 40
+	PLUS	shift 34
+	MINUS	shift 33
+	MUL	shift 32
+	EQ	shift 42
+	GT	shift 41
+	LT	shift 40
 
 
 	.	error
@@ -305,67 +299,60 @@ state 23:
 
 state 24:
 
-	STATEMENT : IDENTIFIER EQUALSIGN . EXP 
+	CONDITION : FALSE .  (reduce by rule 16)
 
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 13
 
-	EXP	goto 41
 
-	.	error
+	.	reduce by rule 16
 
 
 state 25:
 
-	EXP : EXP MUL . EXP 
+	CONDITION : TRUE .  (reduce by rule 15)
 
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 13
 
-	EXP	goto 42
 
-	.	error
+	.	reduce by rule 15
 
 
 state 26:
 
-	EXP : EXP MINUS . EXP 
+	EXP : LPAREN . EXP RPAREN 
+	CONDITION : LPAREN . CONDITION RPAREN 
 
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 13
+	CONST	shift 21
+	BACKTICK	shift 27
+	IDENTIFIER	shift 20
+	LPAREN	shift 26
+	TRUE	shift 25
+	FALSE	shift 24
 
-	EXP	goto 43
+	EXP	goto 44
+	CONDITION	goto 43
 
 	.	error
 
 
 state 27:
 
-	EXP : EXP PLUS . EXP 
+	CONDITION : BACKTICK . IDENTIFIER BACKTICK 
 
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 13
+	IDENTIFIER	shift 45
 
-	EXP	goto 44
 
 	.	error
 
 
 state 28:
 
-	EXP : EXP . PLUS EXP 
-	EXP : LPAREN EXP . RPAREN 
-	EXP : EXP . MINUS EXP 
-	EXP : EXP . MUL EXP 
+	STATEMENT : IF CONDITION . BEG STATEMENTS END 
+	STATEMENT : IF CONDITION . BEG STATEMENTS END ELSE BEG STATEMENTS END 
+	CONDITION : CONDITION . AND CONDITION 
+	CONDITION : CONDITION . OR CONDITION 
 
-	PLUS	shift 27
-	MINUS	shift 26
-	MUL	shift 25
-	RPAREN	shift 45
+	AND	shift 39
+	OR	shift 38
+	BEG	shift 46
 
 
 	.	error
@@ -373,20 +360,7 @@ state 28:
 
 state 29:
 
-	EXP : IDENTIFIER LSQUARE . EXP RSQUARE 
-
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 13
-
-	EXP	goto 46
-
-	.	error
-
-
-state 30:
-
-	PROGRAMELEM : FUN IDENTIFIER LPAREN . RPAREN BEG STATEMENTS END 
+	STATEMENT : IDENTIFIER LPAREN . RPAREN 
 
 	RPAREN	shift 47
 
@@ -394,108 +368,206 @@ state 30:
 	.	error
 
 
+state 30:
+
+	STATEMENT : IDENTIFIER EQUALSIGN . EXP 
+	STATEMENT : IDENTIFIER EQUALSIGN . CONDITION 
+
+	CONST	shift 21
+	BACKTICK	shift 27
+	IDENTIFIER	shift 20
+	LPAREN	shift 26
+	TRUE	shift 25
+	FALSE	shift 24
+
+	EXP	goto 49
+	CONDITION	goto 48
+
+	.	error
+
+
 state 31:
 
-	STATEMENT : WHILE CONDITION BEG . STATEMENTS END 
+	STATEMENT : IDENTIFIER IS . IDENTIFIER 
 
-	IDENTIFIER	shift 9
-	DIRECTC	shift 8
-	IF	shift 7
-	WHILE	shift 6
-	RET	shift 4
+	IDENTIFIER	shift 50
 
-	STATEMENT	goto 49
-	STATEMENTS	goto 48
 
-	.	reduce by rule 10
+	.	error
 
 
 state 32:
 
-	CONDITION : CONDITION OR . CONDITION 
+	EXP : EXP MUL . EXP 
 
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 21
-	TRUE	shift 20
-	FALSE	shift 19
+	CONST	shift 21
+	IDENTIFIER	shift 20
+	LPAREN	shift 19
 
-	EXP	goto 18
-	CONDITION	goto 50
+	EXP	goto 51
 
 	.	error
 
 
 state 33:
 
-	CONDITION : CONDITION AND . CONDITION 
+	EXP : EXP MINUS . EXP 
 
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 21
-	TRUE	shift 20
-	FALSE	shift 19
-
-	EXP	goto 18
-	CONDITION	goto 51
-
-	.	error
-
-
-state 34:
-
-	CONDITION : EXP LT . EXP 
-
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 13
+	CONST	shift 21
+	IDENTIFIER	shift 20
+	LPAREN	shift 19
 
 	EXP	goto 52
 
 	.	error
 
 
-state 35:
+state 34:
 
-	CONDITION : EXP GT . EXP 
+	EXP : EXP PLUS . EXP 
 
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 13
+	CONST	shift 21
+	IDENTIFIER	shift 20
+	LPAREN	shift 19
 
 	EXP	goto 53
 
 	.	error
 
 
+state 35:
+
+	EXP : EXP . PLUS EXP 
+	EXP : LPAREN EXP . RPAREN 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+
+	PLUS	shift 34
+	MINUS	shift 33
+	MUL	shift 32
+	RPAREN	shift 54
+
+
+	.	error
+
+
 state 36:
 
-	CONDITION : EXP EQ . EXP 
+	EXP : IDENTIFIER LSQUARE . EXP RSQUARE 
 
-	CONST	shift 15
-	IDENTIFIER	shift 14
-	LPAREN	shift 13
+	CONST	shift 21
+	IDENTIFIER	shift 20
+	LPAREN	shift 19
 
-	EXP	goto 54
+	EXP	goto 55
 
 	.	error
 
 
 state 37:
 
+	STATEMENT : WHILE CONDITION BEG . STATEMENTS END 
+
+	IDENTIFIER	shift 15
+	DIRECTC	shift 14
+	IF	shift 13
+	WHILE	shift 12
+	RET	shift 11
+
+	STATEMENT	goto 10
+	STATEMENTS	goto 56
+
+	.	reduce by rule 12
+
+
+state 38:
+
+	CONDITION : CONDITION OR . CONDITION 
+
+	CONST	shift 21
+	BACKTICK	shift 27
+	IDENTIFIER	shift 20
+	LPAREN	shift 26
+	TRUE	shift 25
+	FALSE	shift 24
+
+	EXP	goto 23
+	CONDITION	goto 57
+
+	.	error
+
+
+state 39:
+
+	CONDITION : CONDITION AND . CONDITION 
+
+	CONST	shift 21
+	BACKTICK	shift 27
+	IDENTIFIER	shift 20
+	LPAREN	shift 26
+	TRUE	shift 25
+	FALSE	shift 24
+
+	EXP	goto 23
+	CONDITION	goto 58
+
+	.	error
+
+
+state 40:
+
+	CONDITION : EXP LT . EXP 
+
+	CONST	shift 21
+	IDENTIFIER	shift 20
+	LPAREN	shift 19
+
+	EXP	goto 59
+
+	.	error
+
+
+state 41:
+
+	CONDITION : EXP GT . EXP 
+
+	CONST	shift 21
+	IDENTIFIER	shift 20
+	LPAREN	shift 19
+
+	EXP	goto 60
+
+	.	error
+
+
+state 42:
+
+	CONDITION : EXP EQ . EXP 
+
+	CONST	shift 21
+	IDENTIFIER	shift 20
+	LPAREN	shift 19
+
+	EXP	goto 61
+
+	.	error
+
+
+state 43:
+
 	CONDITION : CONDITION . AND CONDITION 
 	CONDITION : CONDITION . OR CONDITION 
 	CONDITION : LPAREN CONDITION . RPAREN 
 
-	RPAREN	shift 55
-	AND	shift 33
-	OR	shift 32
+	RPAREN	shift 62
+	AND	shift 39
+	OR	shift 38
 
 
 	.	error
 
 
-state 38:
+state 44:
 
 	EXP : EXP . PLUS EXP 
 	EXP : LPAREN EXP . RPAREN 
@@ -505,241 +577,165 @@ state 38:
 	CONDITION : EXP . GT EXP 
 	CONDITION : EXP . EQ EXP 
 
-	PLUS	shift 27
-	MINUS	shift 26
-	MUL	shift 25
-	RPAREN	shift 45
-	EQ	shift 36
-	GT	shift 35
-	LT	shift 34
+	PLUS	shift 34
+	MINUS	shift 33
+	MUL	shift 32
+	RPAREN	shift 54
+	EQ	shift 42
+	GT	shift 41
+	LT	shift 40
 
 
 	.	error
 
 
-state 39:
+state 45:
+
+	CONDITION : BACKTICK IDENTIFIER . BACKTICK 
+
+	BACKTICK	shift 63
+
+
+	.	error
+
+
+state 46:
 
 	STATEMENT : IF CONDITION BEG . STATEMENTS END 
 	STATEMENT : IF CONDITION BEG . STATEMENTS END ELSE BEG STATEMENTS END 
 
-	IDENTIFIER	shift 9
-	DIRECTC	shift 8
-	IF	shift 7
-	WHILE	shift 6
-	RET	shift 4
+	IDENTIFIER	shift 15
+	DIRECTC	shift 14
+	IF	shift 13
+	WHILE	shift 12
+	RET	shift 11
 
-	STATEMENT	goto 49
-	STATEMENTS	goto 56
+	STATEMENT	goto 10
+	STATEMENTS	goto 64
 
-	.	reduce by rule 10
+	.	reduce by rule 12
 
 
-state 40:
+state 47:
 
-	STATEMENT : IDENTIFIER LPAREN RPAREN .  (reduce by rule 4)
+	STATEMENT : IDENTIFIER LPAREN RPAREN .  (reduce by rule 6)
 
+
+
+	.	reduce by rule 6
+
+
+state 48:
+
+	STATEMENT : IDENTIFIER EQUALSIGN CONDITION .  (reduce by rule 4)
+	CONDITION : CONDITION . AND CONDITION 
+	CONDITION : CONDITION . OR CONDITION 
+
+	AND	shift 39
+	OR	shift 38
 
 
 	.	reduce by rule 4
 
 
-state 41:
+state 49:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
 	EXP : EXP . MUL EXP 
 	STATEMENT : IDENTIFIER EQUALSIGN EXP .  (reduce by rule 3)
+	CONDITION : EXP . LT EXP 
+	CONDITION : EXP . GT EXP 
+	CONDITION : EXP . EQ EXP 
 
-	PLUS	shift 27
-	MINUS	shift 26
-	MUL	shift 25
+	PLUS	shift 34
+	MINUS	shift 33
+	MUL	shift 32
+	EQ	shift 42
+	GT	shift 41
+	LT	shift 40
 
 
 	.	reduce by rule 3
 
 
-state 42:
-
-	EXP : EXP . PLUS EXP 
-	EXP : EXP . MINUS EXP 
-	EXP : EXP . MUL EXP 
-	EXP : EXP MUL EXP .  (reduce by rule 28)
-
-
-
-	.	reduce by rule 28
-
-
-state 43:
-
-	EXP : EXP . PLUS EXP 
-	EXP : EXP . MINUS EXP 
-	EXP : EXP MINUS EXP .  (reduce by rule 27)
-	EXP : EXP . MUL EXP 
-
-	MUL	shift 25
-
-
-	.	reduce by rule 27
-
-
-state 44:
-
-	EXP : EXP . PLUS EXP 
-	EXP : EXP PLUS EXP .  (reduce by rule 25)
-	EXP : EXP . MINUS EXP 
-	EXP : EXP . MUL EXP 
-
-	MUL	shift 25
-
-
-	.	reduce by rule 25
-
-
-state 45:
-
-	EXP : LPAREN EXP RPAREN .  (reduce by rule 26)
-
-
-
-	.	reduce by rule 26
-
-
-state 46:
-
-	EXP : IDENTIFIER LSQUARE EXP . RSQUARE 
-	EXP : EXP . PLUS EXP 
-	EXP : EXP . MINUS EXP 
-	EXP : EXP . MUL EXP 
-
-	PLUS	shift 27
-	MINUS	shift 26
-	MUL	shift 25
-	RSQUARE	shift 57
-
-
-	.	error
-
-
-state 47:
-
-	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN . BEG STATEMENTS END 
-
-	BEG	shift 58
-
-
-	.	error
-
-
-state 48:
-
-	STATEMENT : WHILE CONDITION BEG STATEMENTS . END 
-
-	END	shift 59
-
-
-	.	error
-
-
-state 49:
-
-	STATEMENTS : STATEMENT . STATEMENTS 
-
-	IDENTIFIER	shift 9
-	DIRECTC	shift 8
-	IF	shift 7
-	WHILE	shift 6
-	RET	shift 4
-
-	STATEMENT	goto 49
-	STATEMENTS	goto 60
-
-	.	reduce by rule 10
-
-
 state 50:
 
-	CONDITION : CONDITION . AND CONDITION 
-	CONDITION : CONDITION . OR CONDITION 
-	CONDITION : CONDITION OR CONDITION .  (reduce by rule 17)
-
-	AND	shift 33
+	STATEMENT : IDENTIFIER IS IDENTIFIER .  (reduce by rule 5)
 
 
-	.	reduce by rule 17
+
+	.	reduce by rule 5
 
 
 state 51:
 
-	CONDITION : CONDITION . AND CONDITION 
-	CONDITION : CONDITION AND CONDITION .  (reduce by rule 16)
-	CONDITION : CONDITION . OR CONDITION 
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+	EXP : EXP MUL EXP .  (reduce by rule 30)
 
 
 
-	.	reduce by rule 16
+	.	reduce by rule 30
 
 
 state 52:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
+	EXP : EXP MINUS EXP .  (reduce by rule 29)
 	EXP : EXP . MUL EXP 
-	CONDITION : EXP LT EXP .  (reduce by rule 19)
 
-	PLUS	shift 27
-	MINUS	shift 26
-	MUL	shift 25
+	MUL	shift 32
 
 
-	.	reduce by rule 19
+	.	reduce by rule 29
 
 
 state 53:
 
 	EXP : EXP . PLUS EXP 
+	EXP : EXP PLUS EXP .  (reduce by rule 27)
 	EXP : EXP . MINUS EXP 
 	EXP : EXP . MUL EXP 
-	CONDITION : EXP GT EXP .  (reduce by rule 20)
 
-	PLUS	shift 27
-	MINUS	shift 26
-	MUL	shift 25
+	MUL	shift 32
 
 
-	.	reduce by rule 20
+	.	reduce by rule 27
 
 
 state 54:
 
-	EXP : EXP . PLUS EXP 
-	EXP : EXP . MINUS EXP 
-	EXP : EXP . MUL EXP 
-	CONDITION : EXP EQ EXP .  (reduce by rule 21)
-
-	PLUS	shift 27
-	MINUS	shift 26
-	MUL	shift 25
+	EXP : LPAREN EXP RPAREN .  (reduce by rule 28)
 
 
-	.	reduce by rule 21
+
+	.	reduce by rule 28
 
 
 state 55:
 
-	CONDITION : LPAREN CONDITION RPAREN .  (reduce by rule 18)
+	EXP : IDENTIFIER LSQUARE EXP . RSQUARE 
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+
+	PLUS	shift 34
+	MINUS	shift 33
+	MUL	shift 32
+	RSQUARE	shift 65
 
 
-
-	.	reduce by rule 18
+	.	error
 
 
 state 56:
 
-	STATEMENT : IF CONDITION BEG STATEMENTS . END 
-	STATEMENT : IF CONDITION BEG STATEMENTS . END ELSE BEG STATEMENTS END 
+	STATEMENT : WHILE CONDITION BEG STATEMENTS . END 
 
-	END	shift 61
+	END	shift 66
 
 
 	.	error
@@ -747,106 +743,94 @@ state 56:
 
 state 57:
 
-	EXP : IDENTIFIER LSQUARE EXP RSQUARE .  (reduce by rule 24)
+	CONDITION : CONDITION . AND CONDITION 
+	CONDITION : CONDITION . OR CONDITION 
+	CONDITION : CONDITION OR CONDITION .  (reduce by rule 18)
+
+	AND	shift 39
 
 
-
-	.	reduce by rule 24
+	.	reduce by rule 18
 
 
 state 58:
 
-	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN BEG . STATEMENTS END 
+	CONDITION : CONDITION . AND CONDITION 
+	CONDITION : CONDITION AND CONDITION .  (reduce by rule 17)
+	CONDITION : CONDITION . OR CONDITION 
 
-	IDENTIFIER	shift 9
-	DIRECTC	shift 8
-	IF	shift 7
-	WHILE	shift 6
-	RET	shift 4
 
-	STATEMENT	goto 49
-	STATEMENTS	goto 62
 
-	.	reduce by rule 10
+	.	reduce by rule 17
 
 
 state 59:
 
-	STATEMENT : WHILE CONDITION BEG STATEMENTS END .  (reduce by rule 9)
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+	CONDITION : EXP LT EXP .  (reduce by rule 20)
+
+	PLUS	shift 34
+	MINUS	shift 33
+	MUL	shift 32
 
 
-
-	.	reduce by rule 9
+	.	reduce by rule 20
 
 
 state 60:
 
-	STATEMENTS : STATEMENT STATEMENTS .  (reduce by rule 11)
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+	CONDITION : EXP GT EXP .  (reduce by rule 21)
+
+	PLUS	shift 34
+	MINUS	shift 33
+	MUL	shift 32
 
 
-
-	.	reduce by rule 11
+	.	reduce by rule 21
 
 
 state 61:
 
-	STATEMENT : IF CONDITION BEG STATEMENTS END .  (reduce by rule 7)
-	STATEMENT : IF CONDITION BEG STATEMENTS END . ELSE BEG STATEMENTS END 
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+	CONDITION : EXP EQ EXP .  (reduce by rule 22)
 
-	ELSE	shift 63
+	PLUS	shift 34
+	MINUS	shift 33
+	MUL	shift 32
 
 
-	.	reduce by rule 7
+	.	reduce by rule 22
 
 
 state 62:
 
-	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN BEG STATEMENTS . END 
-
-	END	shift 64
+	CONDITION : LPAREN CONDITION RPAREN .  (reduce by rule 19)
 
 
-	.	error
+
+	.	reduce by rule 19
 
 
 state 63:
 
-	STATEMENT : IF CONDITION BEG STATEMENTS END ELSE . BEG STATEMENTS END 
-
-	BEG	shift 65
+	CONDITION : BACKTICK IDENTIFIER BACKTICK .  (reduce by rule 23)
 
 
-	.	error
+
+	.	reduce by rule 23
 
 
 state 64:
 
-	PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN BEG STATEMENTS END .  (reduce by rule 13)
-
-
-
-	.	reduce by rule 13
-
-
-state 65:
-
-	STATEMENT : IF CONDITION BEG STATEMENTS END ELSE BEG . STATEMENTS END 
-
-	IDENTIFIER	shift 9
-	DIRECTC	shift 8
-	IF	shift 7
-	WHILE	shift 6
-	RET	shift 4
-
-	STATEMENT	goto 49
-	STATEMENTS	goto 66
-
-	.	reduce by rule 10
-
-
-state 66:
-
-	STATEMENT : IF CONDITION BEG STATEMENTS END ELSE BEG STATEMENTS . END 
+	STATEMENT : IF CONDITION BEG STATEMENTS . END 
+	STATEMENT : IF CONDITION BEG STATEMENTS . END ELSE BEG STATEMENTS END 
 
 	END	shift 67
 
@@ -854,16 +838,81 @@ state 66:
 	.	error
 
 
+state 65:
+
+	EXP : IDENTIFIER LSQUARE EXP RSQUARE .  (reduce by rule 26)
+
+
+
+	.	reduce by rule 26
+
+
+state 66:
+
+	STATEMENT : WHILE CONDITION BEG STATEMENTS END .  (reduce by rule 11)
+
+
+
+	.	reduce by rule 11
+
+
 state 67:
 
-	STATEMENT : IF CONDITION BEG STATEMENTS END ELSE BEG STATEMENTS END .  (reduce by rule 8)
+	STATEMENT : IF CONDITION BEG STATEMENTS END .  (reduce by rule 9)
+	STATEMENT : IF CONDITION BEG STATEMENTS END . ELSE BEG STATEMENTS END 
+
+	ELSE	shift 68
 
 
-
-	.	reduce by rule 8
+	.	reduce by rule 9
 
 
 state 68:
+
+	STATEMENT : IF CONDITION BEG STATEMENTS END ELSE . BEG STATEMENTS END 
+
+	BEG	shift 69
+
+
+	.	error
+
+
+state 69:
+
+	STATEMENT : IF CONDITION BEG STATEMENTS END ELSE BEG . STATEMENTS END 
+
+	IDENTIFIER	shift 15
+	DIRECTC	shift 14
+	IF	shift 13
+	WHILE	shift 12
+	RET	shift 11
+
+	STATEMENT	goto 10
+	STATEMENTS	goto 70
+
+	.	reduce by rule 12
+
+
+state 70:
+
+	STATEMENT : IF CONDITION BEG STATEMENTS END ELSE BEG STATEMENTS . END 
+
+	END	shift 71
+
+
+	.	error
+
+
+state 71:
+
+	STATEMENT : IF CONDITION BEG STATEMENTS END ELSE BEG STATEMENTS END .  (reduce by rule 10)
+
+
+
+	.	reduce by rule 10
+
+
+state 72:
 
 
 	EOF	accept
@@ -871,5 +920,5 @@ state 68:
 
 	.	error
 
-89 of 225 action table entries left after compaction
-37 goto table entries
+88 of 235 action table entries left after compaction
+36 goto table entries

@@ -16,13 +16,13 @@ fun addtabs n = if n <= 0 then
 (**************************************************************************************************************************************)
 
 
-fun translateExpr (Ast.Const x )         = (" "^(Int.toString x)^" ")
+fun translateExpr (CAst.Const x )         = (" "^(Int.toString x)^" ")
 
-  | translateExpr (Ast.EVar  x )     = x 
+  | translateExpr (CAst.EVar  x )     = x 
 
-  | translateExpr (Ast.ARVar  (x,e) )     = (x^"["^(translateExpr e)^"]")
+  | translateExpr (CAst.ARVar  (x,e) )     = (x^"["^(translateExpr e)^"]")
   
-  | translateExpr (Ast.Op (x, oper, y))  = ((translateExpr x) ^ (Ast.binOpToString oper) ^ (translateExpr y ))
+  | translateExpr (CAst.Op (x, oper, y))  = ((translateExpr x) ^ (CAst.binOpToString oper) ^ (translateExpr y ))
 
 
 
@@ -36,13 +36,15 @@ fun translateExpr (Ast.Const x )         = (" "^(Int.toString x)^" ")
 
 
 
-fun translateCondition (Ast.BConst Ast.TRUE)   = (" true ")
+fun translateCondition (CAst.BConst CAst.TRUE)   = (" true ")
 
-  | translateCondition (Ast.BConst Ast.FALSE)  = (" false ")
+  | translateCondition (CAst.BConst CAst.FALSE)  = (" false ")
 
-  | translateCondition (Ast.CondOp (x,oper,y)) = ((translateCondition x) ^ (Ast.condOpToString oper) ^ (translateCondition y))
+  | translateCondition (CAst.BVar x)             = (x)
 
-  | translateCondition (Ast.Rel (x,oper,y))    = ((translateExpr x)^ (Ast.relOpToString oper) ^ (translateExpr y))
+  | translateCondition (CAst.CondOp (x,oper,y)) = ((translateCondition x) ^ (CAst.condOpToString oper) ^ (translateCondition y))
+
+  | translateCondition (CAst.Rel (x,oper,y))    = ((translateExpr x)^ (CAst.relOpToString oper) ^ (translateExpr y))
 
 
 
@@ -54,9 +56,9 @@ fun translateCondition (Ast.BConst Ast.TRUE)   = (" true ")
 (**************************************************************************************************************************************)
 
 
-fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
+fun translateStatement (CAst.As (x,exp,tp,isdef)) t    =
         let
-          val tp_string = case tp of Ast.VOID => "void" | Ast.INT => "int" | Ast.BOOL => "uint8" | Ast.UNDEF => " "
+          val tp_string = case tp of CAst.VOID => "void" | CAst.INT => "int" | CAst.BOOL => "uint8_t" | CAst.UNDEF => " "
         in
           if isdef then
           (addtabs t) ^ (x^" = ") ^ (translateExpr exp) ^ (";\n") 
@@ -64,20 +66,30 @@ fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
           (addtabs t) ^ (tp_string^" "^x^" = ") ^ (translateExpr exp) ^ (";\n")  
         end
  
- | translateStatement (Ast.BAs (x,c,isdef)) t = ("")
+ | translateStatement (CAst.BAs (x,c,isdef)) t = 
+        let
+          val tp_string = "uint8_t"
+        in
+          if isdef then
+          (addtabs t) ^ (x^" = ") ^ (translateCondition c) ^ (";\n") 
+          else
+          (addtabs t) ^ (tp_string^" "^x^" = ") ^ (translateCondition c) ^ (";\n")  
+        end
+
+  | translateStatement (CAst.GAs(lhs,rhs))  t = ("")
 
 
- | translateStatement (Ast.Ret exp)         t  = ( (addtabs t) ^ "return " ^(translateExpr exp)^ ";\n" )
+ | translateStatement (CAst.Ret exp)         t  = ( (addtabs t) ^ "return " ^(translateExpr exp)^ ";\n" )
 
 
 
- | translateStatement (Ast.FnCl x)  t    =  ( (addtabs t) ^  (x^"();\n")  )
- | translateStatement (Ast.If (c,sl))    t = (
+ | translateStatement (CAst.FnCl x)  t    =  ( (addtabs t) ^  (x^"();\n")  )
+ | translateStatement (CAst.If (c,sl))    t = (
               (addtabs t) ^ ("if(") ^ (translateCondition c) ^  ("){\n") ^
               (translateStatements (t+1,sl) ) ^
               (addtabs t) ^ ("}\n")
              ) 
- | translateStatement (Ast.IfEl (c,sl1,sl2)) t = (
+ | translateStatement (CAst.IfEl (c,sl1,sl2)) t = (
               (addtabs t) ^  ("if(") ^ (translateCondition c) ^  ("){\n") ^
 
               (translateStatements (t+1,sl1)) ^
@@ -90,7 +102,7 @@ fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
 
               (addtabs t )^ ("}\n")
              )
- | translateStatement (Ast.DirectC x)      t= 
+ | translateStatement (CAst.DirectC x)      t= 
      let
       fun not_dollar x = if Char.compare(x,#"$") = EQUAL then false else true 
        val remove_dollar = implode(List.filter not_dollar (explode x))
@@ -98,14 +110,14 @@ fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
        (remove_dollar^"\n")
      end
 
- | translateStatement (Ast.StList ls) t     = (translateStatements (t,ls))
+ | translateStatement (CAst.StList ls) t     = (translateStatements (t,ls))
 
- | translateStatement (Ast.While (c,sl)) t  = (
+ | translateStatement (CAst.While (c,sl)) t  = (
               (addtabs t) ^ ("while(") ^ (translateCondition c) ^  ("){\n") ^
               (translateStatements (t+1,sl) ) ^
               (addtabs t) ^ ("}\n")
                                               )
- | translateStatement (Ast.EmptyStatement) t= ("")
+ | translateStatement (CAst.EmptyStatement) t= ("")
 
 
 
@@ -121,8 +133,8 @@ and  translateStatements  (t,(x :: xs))   = ((translateStatement x t)^(translate
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
-fun translateFun(Ast.Fun (x,g,tp))  t  =  let
-           val ret_type = case tp of Ast.VOID => "void" | Ast.INT => "int" | Ast.BOOL => "uint8" | Ast.UNDEF=> "void"
+fun translateFun(CAst.Fun (x,g,tp))  t  =  let
+           val ret_type = case tp of CAst.VOID => "void" | CAst.INT => "int" | CAst.BOOL => "uint8" | CAst.UNDEF=> "void"
            in
             (
            (ret_type^" "^x^"(){\n")^
@@ -142,8 +154,8 @@ fun translateFun(Ast.Fun (x,g,tp))  t  =  let
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
-fun   translateElem (Ast.St statement)   = translateStatement statement 0 
- | translateElem (Ast.Fn function)       = (translateFun  function 0) 
+fun   translateElem (CAst.St statement)   = translateStatement statement 0 
+ | translateElem (CAst.Fn function)       = (translateFun  function 0) 
 
 
 

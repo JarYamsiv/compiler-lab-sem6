@@ -15,6 +15,7 @@ datatype Expr  =  Const of int
 	 and Condition = BConst of Bool
 			| CondOp of Condition*ConditionOp*Condition
 			| Rel of Expr* RelOp * Expr
+			| BVar of string
 
 	 and ConditionOp =  AND | OR
 
@@ -27,8 +28,9 @@ datatype Type = VOID | INT | BOOL | UNDEF
 
 
 datatype Statement = EmptyStatement
-		  | As    of string * Expr * Type * bool
-		  | BAs   of string * Condition * bool
+		  | As    of string * Expr
+		  | BAs   of string * Condition
+		  | GAs   of string * string
           | FnCl  of string
           | Ret of Expr
           | If of Condition*Statement list
@@ -38,7 +40,7 @@ datatype Statement = EmptyStatement
           | DirectC of string
 
 
-datatype Function = Fun of string* Statement list * Type
+datatype Function = Fun of string* Statement list 
 
 
 datatype ProgramElement = St of Statement
@@ -47,19 +49,6 @@ datatype ProgramElement = St of Statement
 
 
 
-fun binOpToString Plus  = "+"
-  | binOpToString Minus = "-"
-  | binOpToString Mul   = "*"
-
-fun  condOpToString AND   = "&&"
- 	| condOpToString OR    = "||"
-
-fun  relOpToString EQ     = "=="
-	|relOpToString NEQ    = "!="
-	|relOpToString LT     = "<"
-	|relOpToString GT     = ">"
-	|relOpToString LTEQ   = "<="
-	|relOpToString GTEQ   = ">="
 
 
 fun processExpr (x,oper,y) = case oper of
@@ -95,6 +84,7 @@ struct
 	 and Condition = BConst of Bool
 			| CondOp of Condition*ConditionOp*Condition
 			| Rel of Expr* RelOp * Expr
+			| BVar of string
 
 	 and ConditionOp =  AND | OR
 
@@ -109,6 +99,7 @@ struct
 	datatype Statement = EmptyStatement
 			  | As    of string * Expr * Type * bool
 			  | BAs   of string * Condition * bool
+			  | GAs   of string * string
 	          | FnCl  of string
 	          | Ret of Expr
 	          | If of Condition*Statement list
@@ -123,6 +114,36 @@ struct
 
 	datatype ProgramElement = St of Statement
 							| Fn of Function 
+
+	fun binOpToString Plus  = "+"
+	  | binOpToString Minus = "-"
+	  | binOpToString Mul   = "*"
+
+	fun  condOpToString AND   = "&&"
+	 	| condOpToString OR    = "||"
+
+	fun  relOpToString EQ     = "=="
+		|relOpToString NEQ    = "!="
+		|relOpToString LT     = "<"
+		|relOpToString GT     = ">"
+		|relOpToString LTEQ   = "<="
+		|relOpToString GTEQ   = ">="
+
+
+	fun processExpr (x,oper,y) = case oper of
+									Plus => (x+y)
+									|Minus => (x-y)
+									|Mul => (x*y)
+
+	fun plus  a b = Op (a, Plus, b)
+	fun minus a b = Op (a, Minus, b)
+	fun mul   a b = Op (a, Mul, b)
+
+	fun eq    a b = Rel(a,EQ,b)
+	fun lt    a b = Rel(a,LT,b)
+	fun gt    a b = Rel(a,GT,b)
+	fun nd    a b = CondOp(a,AND,b)
+	fun or    a b = CondOp(a,OR,b)
 
 end
 
@@ -139,3 +160,6 @@ fun   relOp_conv (Ast.EQ) = (CAst.EQ)
 
 fun   condOp_conv (Ast.AND) = (CAst.AND)
 	| condOp_conv (Ast.OR) = (CAst.OR)
+
+fun bool_conv (Ast.TRUE) = (CAst.TRUE)
+	|bool_conv (Ast.FALSE) = (CAst.FALSE)

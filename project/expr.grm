@@ -15,6 +15,11 @@ it is empty *)
     | MUL
     | EOF
     | NEWLINE
+
+    |IS
+
+    | BACKTICK
+
     | IDENTIFIER of string
     | DIRECTC of string
     | EQUALSIGN
@@ -67,7 +72,9 @@ START   : PROGRAM                (PROGRAM)
 PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
         |   PROGRAMELEM           ([PROGRAMELEM])
 
-STATEMENT:IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP,Ast.VOID,false))
+STATEMENT:IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
+          | IDENTIFIER EQUALSIGN CONDITION (Ast.BAs (IDENTIFIER,CONDITION))
+          | IDENTIFIER IS IDENTIFIER        (Ast.GAs (IDENTIFIER1,IDENTIFIER2))
           |IDENTIFIER LPAREN RPAREN  (Ast.FnCl IDENTIFIER)
           |RET EXP                    (Ast.Ret EXP)
           | DIRECTC                   (Ast.DirectC DIRECTC)
@@ -85,10 +92,9 @@ STATEMENTS:                                ([])
 
 
 
-PROGRAMELEM : STATEMENT SEMICOLON  (Ast.St STATEMENT)
-            | FUN IDENTIFIER LPAREN RPAREN BEG 
+PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN BEG 
             STATEMENTS 
-            END(Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS,Ast.VOID)))
+            END(Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS)))
 
 CONDITION : TRUE                        ( Ast.BConst Ast.TRUE)
           | FALSE                       ( Ast.BConst Ast.FALSE)
@@ -98,6 +104,7 @@ CONDITION : TRUE                        ( Ast.BConst Ast.TRUE)
           | EXP LT EXP                  ( Ast.lt EXP1 EXP2)
           | EXP GT EXP                  ( Ast.gt EXP1 EXP2)
           | EXP EQ EXP                  ( Ast.eq EXP1 EXP2)
+          | BACKTICK IDENTIFIER BACKTICK          (Ast.BVar IDENTIFIER)
           
 
 EXP     : CONST                ( Ast.Const CONST     )

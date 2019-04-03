@@ -1,7 +1,7 @@
 fun temp()
 beg
 	b = 1
-	if(2>3 && false) 
+	if(2>3 || true) 
 	beg
 		c = 45 + 32
 	end
@@ -24,6 +24,10 @@ beg
 	t = a
 	a = b
 	b = t
+	c = false
+	g = `c`
+	h = true && `g`
+	k is l
 
 end
 
@@ -32,6 +36,12 @@ beg
 	a = 0
 	b= 3+a
 	b = b+1
+	while true
+	beg 
+		a = 0
+		if a==0 beg $break;$ end
+	end
+	l = true
 	ret 12
 
 end

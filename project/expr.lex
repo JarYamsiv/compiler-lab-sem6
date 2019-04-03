@@ -76,6 +76,8 @@ digit = [0-9]+;
 "("                     => ( Tokens.LPAREN (!lineRef,!lineRef) );
 ")"                     => ( Tokens.RPAREN (!lineRef,!lineRef) );
 
+"`"                     => ( Tokens.BACKTICK (!lineRef,!lineRef) );
+
 "{"                     => ( Tokens.LCURL (!lineRef,!lineRef) );
 "}"                     => ( Tokens.RCURL (!lineRef,!lineRef) );
 "["                     => ( Tokens.LSQUARE (!lineRef,!lineRef) );
@@ -86,6 +88,8 @@ digit = [0-9]+;
 "fun"                   => ( Tokens.FUN (!lineRef,!lineRef));
 "beg"                   => ( Tokens.BEG (!lineRef,!lineRef));  
 "end"                   => ( Tokens.END (!lineRef,!lineRef));
+
+"is"                   => ( Tokens.IS (!lineRef,!lineRef));
 
 
 "ret"                   => ( Tokens.RET (!lineRef,!lineRef));
