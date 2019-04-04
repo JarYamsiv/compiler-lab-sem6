@@ -16,7 +16,7 @@ it is empty *)
     | EOF
     | NEWLINE
 
-    |IS
+    | COMMA
 
     | BACKTICK
 
@@ -43,7 +43,7 @@ it is empty *)
        | PROGRAMELEM of Ast.ProgramElement
        | STATEMENT of Ast.Statement
        | STATEMENTS of Ast.Statement list
-       | CONDITION of Ast.Condition
+       | ARGUMENTS of Ast.Argument list
 
 %noshift EOF
 
@@ -53,9 +53,10 @@ Operator precedence and associativity. The %left says the operator is
 left associative and the precedence increase as you go down this list.
 
 *)
-%left EQ LT GT
-%left OR
 %left AND
+%left OR
+%left EQ LT GT
+
 %left SEMICOLON
 %left PLUS MINUS  (* + and - are of same precedence *)
 %left MUL         (* higher than + and -            *)
@@ -72,16 +73,13 @@ START   : PROGRAM                (PROGRAM)
 PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
         |   PROGRAMELEM           ([PROGRAMELEM])
 
-STATEMENT:IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP,Ast.INT,false))
-          | IDENTIFIER EQUALSIGN CONDITION (Ast.BAs (IDENTIFIER,CONDITION,false))
-          | IDENTIFIER IS IDENTIFIER        (Ast.GAs (IDENTIFIER1,IDENTIFIER2))
-          |IDENTIFIER LPAREN RPAREN  (Ast.FnCl IDENTIFIER)
+STATEMENT:IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP,Atom.atom "undef",false))
+          |IDENTIFIER LPAREN ARGUMENTS RPAREN  (Ast.FnCl (IDENTIFIER,ARGUMENTS))
           |RET EXP                    (Ast.Ret EXP)
-          |RET CONDITION              (Ast.BRet CONDITION)
           | DIRECTC                   (Ast.DirectC DIRECTC)
-          |IF  CONDITION  BEG STATEMENTS END (Ast.If (CONDITION,STATEMENTS))
-          |IF  CONDITION  BEG STATEMENTS END ELSE BEG STATEMENTS END (Ast.IfEl (CONDITION,STATEMENTS1,STATEMENTS2))
-          |WHILE CONDITION BEG STATEMENTS END (Ast.While (CONDITION,STATEMENTS))
+          |IF  EXP  BEG STATEMENTS END (Ast.If (EXP,STATEMENTS))
+          |IF  EXP  BEG STATEMENTS END ELSE BEG STATEMENTS END (Ast.IfEl (EXP,STATEMENTS1,STATEMENTS2))
+          |WHILE EXP BEG STATEMENTS END (Ast.While (EXP,STATEMENTS))
 
 
 STATEMENTS:                                ([]) 
@@ -93,11 +91,11 @@ STATEMENTS:                                ([])
 
 
 
-PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN BEG 
+PROGRAMELEM : FUN IDENTIFIER LPAREN ARGUMENTS RPAREN BEG 
             STATEMENTS 
-            END(Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS,Ast.VOID)))
+            END(Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS,Atom.atom "void",ARGUMENTS)))
 
-CONDITION : TRUE                        ( Ast.BConst Ast.TRUE)
+(* CONDITION : TRUE                        ( Ast.BConst Ast.TRUE)
           | FALSE                       ( Ast.BConst Ast.FALSE)
           | CONDITION AND CONDITION     ( Ast.nd CONDITION1 CONDITION2)
           | CONDITION OR CONDITION      ( Ast.or CONDITION1 CONDITION2)
@@ -105,13 +103,24 @@ CONDITION : TRUE                        ( Ast.BConst Ast.TRUE)
           | EXP LT EXP                  ( Ast.lt EXP1 EXP2)
           | EXP GT EXP                  ( Ast.gt EXP1 EXP2)
           | EXP EQ EXP                  ( Ast.eq EXP1 EXP2)
-          | BACKTICK IDENTIFIER BACKTICK          (Ast.BVar IDENTIFIER)
+          | BACKTICK IDENTIFIER BACKTICK          (Ast.BVar IDENTIFIER) *)
           
 
 EXP     : CONST                ( Ast.Const (CONST)     )
+        | TRUE                 ( Ast.BVal Ast.TRUE)
+        | FALSE                 ( Ast.BVal Ast.FALSE)
         | IDENTIFIER           ( Ast.EVar (IDENTIFIER) )
         | IDENTIFIER LSQUARE EXP RSQUARE (Ast.ARVar (IDENTIFIER,EXP))
         | EXP PLUS EXP         ( Ast.plus  EXP1 EXP2 )
         | LPAREN EXP RPAREN    ( EXP )
 	      | EXP MINUS EXP        ( Ast.minus EXP1 EXP2 )
 	      | EXP MUL   EXP        ( Ast.mul   EXP1 EXP2 )
+        | EXP LT EXP           ( Ast.lt EXP1 EXP2)
+        | EXP GT EXP           ( Ast.gt EXP1 EXP2)
+        | EXP EQ EXP           ( Ast.eq EXP1 EXP2)
+        | EXP AND EXP           ( Ast.nd EXP1 EXP2)
+        | EXP OR EXP           ( Ast.or EXP1 EXP2)
+
+ARGUMENTS : IDENTIFIER COMMA ARGUMENTS (Ast.Arg(IDENTIFIER,Atom.atom "undef")::ARGUMENTS)
+          | IDENTIFIER                 ([Ast.Arg(IDENTIFIER,Atom.atom "undef")])
+          |                       ([])

@@ -3,6 +3,8 @@ struct
 	
 end
 
+exception level_underflow
+
 signature TAB_SIG = 
 sig
 	type key
@@ -13,7 +15,9 @@ sig
 	val addKeyReplace	        : key*tab_content -> unit
 	val checkkey 		        : key -> bool
 	val getkey			: key -> tab_content option
-        val reset                       : unit -> unit
+    val reset                       : unit -> unit
+    val levelup 				    : unit -> unit
+    val leveldown					: unit -> unit
 end
 
 signature TAB_KEY_SIG = 
@@ -28,18 +32,34 @@ struct
 	type key = A.ord_key
 	type tab_content = A.tab_content
 	type proxy = int
+	type level_t = int
 
 	structure Map = RedBlackMapFn(A)
 
-	val m = ref Map.empty:tab_content Map.map ref
+	val level = ref 0:level_t ref
 
-	fun addkey (x,t) = case Map.find(!m,x) of NONE => (m := Map.insert(!m,x,t)) | SOME x => () 
+	val m = ref Map.empty:(tab_content*level_t) Map.map ref
 
-	fun addKeyReplace (x,t) = (m := Map.insert(!m,x,t))
+	fun addkey (x,t) = case Map.find(!m,x) of NONE => (m := Map.insert(!m,x,(t,!level))) | SOME x => () 
+
+	fun addKeyReplace (x,t) = (m := Map.insert(!m,x,(t,!level)))
 	
 	fun checkkey x = case Map.find(!m,x) of SOME x=> true | NONE => false
 	
-	fun getkey x = Map.find(!m,x)
+	fun getkey x = case Map.find(!m,x) of SOME (t,l) => SOME t | NONE => NONE
 
-        fun reset () = m:=Map.empty
+    fun reset () = m:=Map.empty
+
+    fun levelup () = (level:= !level +1)
+
+    fun leveldown () = 
+    	let
+    		val _ = if !level =0 then raise level_underflow else ()
+    		val _ = level := !level -1
+    		fun fltr (key,(content,l)) = if l > !level then false else true
+    		val _ = m := Map.filteri fltr (!m)
+
+    	in
+    		()
+    	end
 end

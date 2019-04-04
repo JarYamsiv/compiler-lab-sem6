@@ -15,6 +15,13 @@ fun addtabs n = if n <= 0 then
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
+fun translateArgument (Ast.Arg (arg_name,arg_type)) = arg_name
+
+fun translateArguments [x]     = translateArgument x
+    |translateArguments (x::xs) = (translateArgument x ^" , "^ translateArguments xs)
+    
+    |translateArguments []      = ""
+
 
 fun translateExpr (Ast.Const (x) )         = (" "^(Int.toString x)^" ")
 
@@ -23,7 +30,10 @@ fun translateExpr (Ast.Const (x) )         = (" "^(Int.toString x)^" ")
 
   | translateExpr (Ast.EVar  (x) )     = x 
 
+
+
   | translateExpr (Ast.ARVar  (x,e) )     = (x^"["^(translateExpr e)^"]")
+  | translateExpr (Ast.EFncl (name,arg_list)) = (name^"("^translateArguments arg_list^")")
   
   | translateExpr (Ast.Op (x, oper, y))  = ((translateExpr x) ^ (Ast.binOpToString oper) ^ (translateExpr y ))
   | translateExpr (Ast.Erel (x, oper, y))  = ((translateExpr x) ^ (Ast.relOpToString oper) ^ (translateExpr y ))
@@ -41,7 +51,7 @@ fun translateExpr (Ast.Const (x) )         = (" "^(Int.toString x)^" ")
 
 
 
-fun translateCondition (Ast.BConst Ast.TRUE)   = (" true ")
+(*fun translateCondition (Ast.BConst Ast.TRUE)   = (" true ")
 
   | translateCondition (Ast.BConst Ast.FALSE)  = (" false ")
 
@@ -49,7 +59,7 @@ fun translateCondition (Ast.BConst Ast.TRUE)   = (" true ")
 
   | translateCondition (Ast.CondOp (x,oper,y)) = ((translateCondition x) ^ (Ast.condOpToString oper) ^ (translateCondition y))
 
-  | translateCondition (Ast.Rel (x,oper,y))    = ((translateExpr x)^ (Ast.relOpToString oper) ^ (translateExpr y))
+  | translateCondition (Ast.Rel (x,oper,y))    = ((translateExpr x)^ (Ast.relOpToString oper) ^ (translateExpr y))*)
 
 
 
@@ -63,40 +73,27 @@ fun translateCondition (Ast.BConst Ast.TRUE)   = (" true ")
 
 fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
         let
-          val tp_string = case tp of Ast.VOID => "void" | Ast.INT => "int" | Ast.BOOL => "bool" | Ast.UNDEF => " "
+          val tp_string =Atom.toString tp
         in
           if isdef then
           (addtabs t) ^ (x^" = ") ^ (translateExpr exp) ^ (";\n") 
           else
-          (addtabs t) ^ (tp_string^" "^x^" = ") ^ (translateExpr exp) ^ (";\n")  
+          (addtabs t) ^ ( tp_string^" "^x^" = ") ^ (translateExpr exp) ^ (";\n")  
         end
  
- | translateStatement (Ast.BAs (x,c,isdef)) t = 
-        let
-          val tp_string = "bool"
-        in
-          if isdef then
-          (addtabs t) ^ (x^" = ") ^ (translateCondition c) ^ (";\n") 
-          else
-          (addtabs t) ^ (tp_string^" "^x^" = ") ^ (translateCondition c) ^ (";\n")  
-        end
-
-  | translateStatement (Ast.GAs(lhs,rhs))  t = ("")
-
 
  | translateStatement (Ast.Ret exp)         t  = ( (addtabs t) ^ "return " ^(translateExpr exp)^ ";\n" )
- | translateStatement (Ast.BRet c)          t  = ( (addtabs t) ^ "return " ^(translateCondition c)^ ";\n" )
 
 
 
- | translateStatement (Ast.FnCl x)  t    =  ( (addtabs t) ^  (x^"();\n")  )
+ | translateStatement (Ast.FnCl (x,arg_list))  t    =  ( (addtabs t) ^  (x^"();\n")  )
  | translateStatement (Ast.If (c,sl))    t = (
-              (addtabs t) ^ ("if(") ^ (translateCondition c) ^  ("){\n") ^
+              (addtabs t) ^ ("if(") ^ (translateExpr c) ^  ("){\n") ^
               (translateStatements (t+1,sl) ) ^
               (addtabs t) ^ ("}\n")
              ) 
  | translateStatement (Ast.IfEl (c,sl1,sl2)) t = (
-              (addtabs t) ^  ("if(") ^ (translateCondition c) ^  ("){\n") ^
+              (addtabs t) ^  ("if(") ^ (translateExpr c) ^  ("){\n") ^
 
               (translateStatements (t+1,sl1)) ^
 
@@ -119,7 +116,7 @@ fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
  | translateStatement (Ast.StList ls) t     = (translateStatements (t,ls))
 
  | translateStatement (Ast.While (c,sl)) t  = (
-              (addtabs t) ^ ("while(") ^ (translateCondition c) ^  ("){\n") ^
+              (addtabs t) ^ ("while(") ^ (translateExpr c) ^  ("){\n") ^
               (translateStatements (t+1,sl) ) ^
               (addtabs t) ^ ("}\n")
                                               )
@@ -139,8 +136,8 @@ and  translateStatements  (t,(x :: xs))   = ((translateStatement x t)^(translate
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
-fun translateFun(Ast.Fun (x,g,tp))  t  =  let
-           val ret_type = case tp of Ast.VOID => "void" | Ast.INT => "int" | Ast.BOOL => "bool" | Ast.UNDEF=> "void"
+fun translateFun(Ast.Fun (x,g,tp,arg_ls))  t  =  let
+           val ret_type = Atom.toString tp
            in
             (
            (ret_type^" "^x^"(){\n")^

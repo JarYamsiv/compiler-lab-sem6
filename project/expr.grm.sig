@@ -28,7 +28,7 @@ val EQUALSIGN:  'a * 'a -> (svalue,'a) token
 val DIRECTC: (string) *  'a * 'a -> (svalue,'a) token
 val IDENTIFIER: (string) *  'a * 'a -> (svalue,'a) token
 val BACKTICK:  'a * 'a -> (svalue,'a) token
-val IS:  'a * 'a -> (svalue,'a) token
+val COMMA:  'a * 'a -> (svalue,'a) token
 val NEWLINE:  'a * 'a -> (svalue,'a) token
 val EOF:  'a * 'a -> (svalue,'a) token
 val MUL:  'a * 'a -> (svalue,'a) token

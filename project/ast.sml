@@ -1,9 +1,11 @@
 (* The abstract syntax tree for expression *)
 structure Ast = struct
+	datatype Argument = Arg of string*Atom.atom 
 datatype Expr  =  Const of int
 				| BVal of Bool
 		   		| EVar of string 
 		   		| ARVar of string*Expr
+		   		| EFncl of string*Argument list
 	       		| Op    of Expr * BinOp * Expr 
 	       		| Erel of Expr* RelOp * Expr
 	       		| Econd of Expr* ConditionOp * Expr
@@ -13,10 +15,6 @@ datatype Expr  =  Const of int
 	       | Minus
 	       | Mul
 
-	 and Condition = BConst of Bool
-			| CondOp of Condition*ConditionOp*Condition
-			| Rel of Expr* RelOp * Expr
-			| BVar of string
 
 	 and ConditionOp =  AND | OR
 
@@ -27,22 +25,23 @@ datatype Expr  =  Const of int
 	 and Type = VOID | INT | BOOL | UNDEF 
 
 
+	
+
+
+
 
 	datatype Statement = EmptyStatement
-			  | As    of string * Expr * Type * bool
-			  | BAs   of string * Condition * bool
-			  | GAs   of string * string
-	          | FnCl  of string
+			  | As    of string * Expr * Atom.atom * bool
+	          | FnCl  of string * Argument list
 	          | Ret of Expr
-	          | BRet of Condition
-	          | If of Condition*Statement list
-	          | IfEl of Condition*Statement list*Statement list
+	          | If of Expr*Statement list
+	          | IfEl of Expr*Statement list*Statement list
 	          | StList of Statement list
-	          | While of Condition*Statement list
+	          | While of Expr*Statement list
 	          | DirectC of string
 
 
-	datatype Function = Fun of string* Statement list * Type
+	datatype Function = Fun of string* Statement list * Atom.atom * Argument list (*name , statements , type , arguments*)
 
 
 	datatype ProgramElement = St of Statement
@@ -72,11 +71,11 @@ datatype Expr  =  Const of int
 	fun minus a b = Op (a, Minus, b)
 	fun mul   a b = Op (a, Mul, b)
 
-	fun eq    a b = Rel(a,EQ,b)
-	fun lt    a b = Rel(a,LT,b)
-	fun gt    a b = Rel(a,GT,b)
-	fun nd    a b = CondOp(a,AND,b)
-	fun or    a b = CondOp(a,OR,b)
+	fun eq    a b = Erel(a,EQ,b)
+	fun lt    a b = Erel(a,LT,b)
+	fun gt    a b = Erel(a,GT,b)
+	fun nd    a b = Econd(a,AND,b)
+	fun or    a b = Econd(a,OR,b)
 
 
 end

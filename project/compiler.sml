@@ -9,10 +9,12 @@ val compileStatus = ref true
 
 fun reg_error x = (compileStatus := false ; print (red ^ x ^ reset ))
 
-structure Key:TAB_KEY_SIG = 
+fun acomp(x,y) = if Atom.compare(x,y)=EQUAL then true else false
+
+structure FunKey:TAB_KEY_SIG = 
 struct
   type ord_key = Atom.atom
-  type tab_content = unit
+  type tab_content = Atom.atom*(Ast.Argument list)
   val compare = Atom.compare 
 end
 
@@ -29,9 +31,9 @@ structure GlobalSymTable = MakeTable(SymKey)
 
 (*function related*)
 structure LocalSymTable = MakeTable(SymKey)
-val final_ret = ref Ast.VOID
+val final_ret = ref (Atom.atom "void")
 
-structure GlobalFunctionTable = MakeTable(Key) 
+structure GlobalFunctionTable = MakeTable(FunKey) 
 
 
 type t_compiled_statement = (int*Ast.Statement)
@@ -41,14 +43,12 @@ struct
 
 
   fun  compileExpr (tp,(Ast.Const x))  = (Atom.atom "int",(Ast.Const x))
-      |compileExpr (t,(Ast.BVal x)) = (Atom.atom "bool",(Ast.BVal x))
+      |compileExpr (tp,(Ast.BVal x)) = (Atom.atom "bool",(Ast.BVal x))
       |compileExpr (tp,(Ast.EVar (identifier))) = 
                 let 
                   val this_tp = LocalSymTable.getkey(Atom.atom identifier)
                   val _ = case this_tp of
-                          SOME tp => (if Atom.compare(tp,Atom.atom "int")=EQUAL then () else 
-                                (reg_error ("type error "^identifier^" not an int \n"  ))
-                            )
+                          SOME x => ()
                           |NONE => (reg_error ("undefined identifier "^identifier^"\n" ^ reset ) )
                   val tp = case this_tp of SOME x=>x | NONE => (Atom.atom "undef")
                 in 
@@ -62,6 +62,8 @@ struct
            (tp,(Ast.ARVar (ident,c)))
          end 
 
+        |compileExpr (tp,Ast.EFncl (fn_name,arg_list)) = (tp,Ast.EFncl (fn_name,arg_list))
+
         |compileExpr (tp,(Ast.Op (e1,oper,e2))) =
           let
              val cp1 =  (compileExpr (tp,e1))
@@ -72,7 +74,7 @@ struct
              val c2 = #2 cp2
              val _ = if Atom.compare(t1,Atom.atom "int") = EQUAL andalso Atom.compare(t2,Atom.atom "int") = EQUAL 
                       then () 
-                      else reg_error "Type error"
+                      else reg_error "Type error\n"
            in
               case (e1,e2) of
                 (Ast.Const x,Ast.Const y) =>  (Atom.atom "int",(Ast.Const (Ast.processExpr(x,oper,y))))
@@ -90,7 +92,7 @@ struct
              val c2 = #2 cp2
              val _ = if Atom.compare(t1,Atom.atom "int") = EQUAL andalso Atom.compare(t2,Atom.atom "int") = EQUAL 
                       then () 
-                      else reg_error "Type error"
+                      else reg_error "Type error\n"
            in
               (Atom.atom "bool",Ast.Erel(c1,oper,c2))
             
@@ -105,7 +107,7 @@ struct
              val c2 = #2 cp2
              val _ = if Atom.compare(t1,Atom.atom "bool") = EQUAL andalso Atom.compare(t2,Atom.atom "bool") = EQUAL 
                       then () 
-                      else reg_error "Type error"
+                      else reg_error "Type error\n"
            in
               (Atom.atom "bool",Ast.Econd(c1,oper,c2))
            end
@@ -113,7 +115,7 @@ struct
 
 
 
-        fun compileCondition (Ast.BConst x)   = (Ast.BConst (x))
+       (* fun compileCondition (Ast.BConst x)   = (Ast.BConst (x))
 
             |compileCondition (Ast.BVar identifier) = 
               let 
@@ -153,7 +155,7 @@ struct
                val c2 = #2 (compileExpr (Atom.atom "undef",y))
              in
                (Ast.Rel(c1 ,oper,c2))
-             end
+             end*)
                   
                 
           
@@ -167,37 +169,38 @@ struct
           fun compileStatement (Ast.As (varname,expr,tp,isdef)) =
                 let
                   val isdef = LocalSymTable.checkkey(Atom.atom varname)
+                  val prev_type = LocalSymTable.getkey(Atom.atom varname)
+
+
                    
                   val cp = (compileExpr (Atom.atom "undef",expr))  
                   val cpe = #2 cp
                   val tpe = #1 cp
 
+                  val _ = case prev_type of
+                          NONE => ()
+                          |SOME x => if acomp(x,tpe) then () else reg_error ("Multiple types for " ^ varname ^ "\n")
+
                   val _ = LocalSymTable.addkey(Atom.atom varname,tpe)
-                  val tp = Ast.INT 
+
                 in
-                  (2,(Ast.As (varname,cpe,tp,isdef)))
-                end
-            | compileStatement (Ast.BAs (varname,c,isdef)) = 
-                let
-                  val isdef = LocalSymTable.checkkey(Atom.atom varname)
-                  val _ = LocalSymTable.addkey(Atom.atom varname,(Atom.atom "bool"))
-                  val tp = Ast.BOOL    
-                in
-                  (2,Ast.BAs(varname,compileCondition c,isdef))
+                  (2,(Ast.As (varname,cpe,tpe,isdef)))
                 end
 
             | compileStatement (Ast.If(c,stls)) = 
                 let
-                  val compiled_codition = compileCondition c
+                  val compiled_codition = #2 (compileExpr (Atom.atom "undef",c))
+                  val _ = LocalSymTable.levelup()
                   val compiled_statement = compileStatements stls
+                  val _ = LocalSymTable.leveldown()
                 in
                     case compiled_codition of
-                      Ast.BConst x => 
+                      Ast.BVal x => 
                       if x=Ast.FALSE then 
                         let 
                           val _ = print (grey^"found dead if statement removing\n"^reset)
                         in
-                          (0,Ast.EmptyStatement) 
+                          (2,Ast.EmptyStatement) 
                         end
                       else
                       (
@@ -210,18 +213,20 @@ struct
                       |_ =>
                       (
                         case compiled_statement of
-                        [] => (0,Ast.EmptyStatement)
+                        [] => (2,Ast.EmptyStatement)
                         |_ => (2,Ast.If(compiled_codition,compiled_statement))
                       )
                 end
             | compileStatement (Ast.IfEl(c,stl1,stl2)) = 
                 let
-                  val compiled_codition = compileCondition c
+                  val compiled_codition = #2 (compileExpr (Atom.atom "undef",c))
                   val if_statements = compileStatements stl1
+                  val _ = LocalSymTable.levelup()
                   val else_statements = compileStatements stl2
+                  val _ = LocalSymTable.leveldown()
                 in
                   case compiled_codition of
-                      Ast.BConst x => if x=Ast.FALSE then 
+                      Ast.BVal x => if x=Ast.FALSE then 
                         let 
                           val _ = print (grey^"found dead if in if-else statement removing\n"^reset)
                         in
@@ -242,10 +247,13 @@ struct
                 end
 
             | compileStatement (Ast.Ret expr) = (
-                if !final_ret = Ast.UNDEF orelse !final_ret = Ast.INT then
+                if acomp(!final_ret,Atom.atom "undef") orelse acomp(!final_ret,Atom.atom "int") then
                   let
-                    val _ = final_ret:=Ast.INT
-                    val cpe = #2 (compileExpr (Atom.atom "undef",expr))
+                    
+                    val cp = (compileExpr (Atom.atom "undef",expr))
+                    val cpe = #2 cp
+                    val tp = #1 cp
+                    val _ = final_ret:=(tp)
                   in
                     (1,Ast.Ret (cpe))
                   end
@@ -258,24 +266,18 @@ struct
                     (0,Ast.EmptyStatement)
                   end
               )
-            | compileStatement (Ast.BRet c) = (
-                if !final_ret = Ast.UNDEF orelse !final_ret = Ast.BOOL then
-                  let
-                    val _ = final_ret:=Ast.BOOL
-                  in
-                    (1,Ast.BRet (compileCondition c))
-                  end
-                
-                else
-                  let
-                    val _ = compileStatus := false
-                    val _ = print (red^"Multiple return types for the same function\n"^reset)
-                  in
-                    (0,Ast.EmptyStatement)
-                  end
-              )
 
-            | compileStatement (Ast.While (c,sl)) = (2,(Ast.While(compileCondition c,compileStatements sl)))
+            | compileStatement (Ast.While (c,sl)) =
+            let
+              val compiled_expr = #2 (compileExpr (Atom.atom "undef",c))
+
+              val _ = LocalSymTable.levelup()
+              val compiled_statement = compileStatements sl
+              val _ = LocalSymTable.leveldown()
+               
+             in
+               (2,(Ast.While(compiled_expr ,compiled_statement)))
+             end 
             | compileStatement (Ast.DirectC code) = (2,Ast.DirectC code)
             
             (*| compileStatement x = (2,x)*)
@@ -294,19 +296,22 @@ struct
             | compileStatements []         = []
 
   
-	fun compileFunction (Ast.Fun(name,s_list,ret_type)) = 
+	fun compileFunction (Ast.Fun(name,s_list,ret_type,arg_list)) = 
         let
-          val _ = final_ret:=Ast.UNDEF
+          val _ = final_ret:=(Atom.atom "undef")
           val _ = print ("Processing Function "^ green ^ name ^ reset ^ "\n")
           val _ = LocalSymTable.reset ()
-          val _ = GlobalFunctionTable.addkey(Atom.atom name,())
+          
 
           val sl = compileStatements s_list
-          val ret_type = !final_ret
+          val ret_type = if acomp(!final_ret,Atom.atom "undef") then (Atom.atom "void") else !final_ret
+
+          val _ = GlobalFunctionTable.addkey(Atom.atom name,(ret_type,arg_list))
+
           val _ = print "\rfunction done......\n"
 
         in
-          Ast.Fun(name,sl,ret_type)
+          Ast.Fun(name,sl,ret_type,arg_list)
         end
 
 

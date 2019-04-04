@@ -89,7 +89,7 @@ digit = [0-9]+;
 "beg"                   => ( Tokens.BEG (!lineRef,!lineRef));  
 "end"                   => ( Tokens.END (!lineRef,!lineRef));
 
-"is"                   => ( Tokens.IS (!lineRef,!lineRef));
+","                     => ( Tokens.COMMA (!lineRef,!lineRef));
 
 
 "ret"                   => ( Tokens.RET (!lineRef,!lineRef));

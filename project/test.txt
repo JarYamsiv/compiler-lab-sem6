@@ -1,3 +1,20 @@
+fun yeet(a,b)
+beg
+	a = 0
+	if (a>0) beg
+	b = 0
+	c = true
+	g = c
+	end
+
+	while a <100
+	beg
+		t = 2
+		a = a+t
+	end
+
+	ret a
+end
 
 
 fun main()
@@ -5,9 +22,25 @@ beg
 	a = 0
 	b= 3+a
 	b = b+1
-	c = true
 
-	l = true
+	if false && true beg
+		f= 0
+	end
+	else
+	beg
+		g = 0
+	end
+
+	a = 0
+	while a < 100
+	beg
+		a = a+1
+		if a > 50
+		beg
+			$break;$
+		end
+	end
+
 	ret 12
 
 end
