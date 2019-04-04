@@ -1,10 +1,12 @@
 (* The abstract syntax tree for expression *)
 structure Ast = struct
 datatype Expr  =  Const of int
+				| BVal of Bool
 		   		| EVar of string 
 		   		| ARVar of string*Expr
 	       		| Op    of Expr * BinOp * Expr 
 	       		| Erel of Expr* RelOp * Expr
+	       		| Econd of Expr* ConditionOp * Expr
          
 
      and BinOp = Plus

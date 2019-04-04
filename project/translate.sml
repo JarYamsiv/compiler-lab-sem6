@@ -18,12 +18,16 @@ fun addtabs n = if n <= 0 then
 
 fun translateExpr (Ast.Const (x) )         = (" "^(Int.toString x)^" ")
 
+  | translateExpr (Ast.BVal Ast.TRUE)      = ("true ")
+  | translateExpr (Ast.BVal Ast.FALSE)      = ("false ")
+
   | translateExpr (Ast.EVar  (x) )     = x 
 
   | translateExpr (Ast.ARVar  (x,e) )     = (x^"["^(translateExpr e)^"]")
   
   | translateExpr (Ast.Op (x, oper, y))  = ((translateExpr x) ^ (Ast.binOpToString oper) ^ (translateExpr y ))
   | translateExpr (Ast.Erel (x, oper, y))  = ((translateExpr x) ^ (Ast.relOpToString oper) ^ (translateExpr y ))
+  | translateExpr (Ast.Econd (x, oper, y))  = ((translateExpr x) ^ (Ast.condOpToString oper) ^ (translateExpr y ))
 
 
 

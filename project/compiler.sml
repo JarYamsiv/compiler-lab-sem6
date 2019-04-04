@@ -41,6 +41,7 @@ struct
 
 
   fun  compileExpr (tp,(Ast.Const x))  = (Atom.atom "int",(Ast.Const x))
+      |compileExpr (t,(Ast.BVal x)) = (Atom.atom "bool",(Ast.BVal x))
       |compileExpr (tp,(Ast.EVar (identifier))) = 
                 let 
                   val this_tp = LocalSymTable.getkey(Atom.atom identifier)
@@ -92,6 +93,21 @@ struct
                       else reg_error "Type error"
            in
               (Atom.atom "bool",Ast.Erel(c1,oper,c2))
+            
+           end
+        |compileExpr (tp,(Ast.Econd (e1,oper,e2))) =
+          let
+             val cp1 =  (compileExpr (tp,e1))
+             val cp2 =  (compileExpr (tp,e2))
+             val t1 = #1 cp1
+             val t2 = #1 cp2
+             val c1 = #2 cp1
+             val c2 = #2 cp2
+             val _ = if Atom.compare(t1,Atom.atom "bool") = EQUAL andalso Atom.compare(t2,Atom.atom "bool") = EQUAL 
+                      then () 
+                      else reg_error "Type error"
+           in
+              (Atom.atom "bool",Ast.Econd(c1,oper,c2))
             
            end
 
