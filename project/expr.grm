@@ -72,8 +72,8 @@ START   : PROGRAM                (PROGRAM)
 PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
         |   PROGRAMELEM           ([PROGRAMELEM])
 
-STATEMENT:IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP))
-          | IDENTIFIER EQUALSIGN CONDITION (Ast.BAs (IDENTIFIER,CONDITION))
+STATEMENT:IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP,Ast.INT,false))
+          | IDENTIFIER EQUALSIGN CONDITION (Ast.BAs (IDENTIFIER,CONDITION,false))
           | IDENTIFIER IS IDENTIFIER        (Ast.GAs (IDENTIFIER1,IDENTIFIER2))
           |IDENTIFIER LPAREN RPAREN  (Ast.FnCl IDENTIFIER)
           |RET EXP                    (Ast.Ret EXP)
@@ -95,7 +95,7 @@ STATEMENTS:                                ([])
 
 PROGRAMELEM : FUN IDENTIFIER LPAREN RPAREN BEG 
             STATEMENTS 
-            END(Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS)))
+            END(Ast.Fn (Ast.Fun (IDENTIFIER,STATEMENTS,Ast.VOID)))
 
 CONDITION : TRUE                        ( Ast.BConst Ast.TRUE)
           | FALSE                       ( Ast.BConst Ast.FALSE)
@@ -108,8 +108,8 @@ CONDITION : TRUE                        ( Ast.BConst Ast.TRUE)
           | BACKTICK IDENTIFIER BACKTICK          (Ast.BVar IDENTIFIER)
           
 
-EXP     : CONST                ( Ast.Const CONST     )
-        | IDENTIFIER           ( Ast.EVar IDENTIFIER )
+EXP     : CONST                ( Ast.Const (CONST)     )
+        | IDENTIFIER           ( Ast.EVar (IDENTIFIER) )
         | IDENTIFIER LSQUARE EXP RSQUARE (Ast.ARVar (IDENTIFIER,EXP))
         | EXP PLUS EXP         ( Ast.plus  EXP1 EXP2 )
         | LPAREN EXP RPAREN    ( EXP )

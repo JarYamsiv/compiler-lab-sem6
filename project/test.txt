@@ -1,37 +1,3 @@
-fun temp()
-beg
-	b = 1
-	if(2>3 || true) 
-	beg
-		c = 45 + 32
-	end
-
-	if(false)
-	beg
-		c=56
-	end
-	else
-	beg
-		a=23
-	end
-
-end
-
-fun swap ()
-beg
-	a = 10
-	b = 15
-	t = a
-	a = b
-	b = t
-	c = false
-	g = `c`
-	h = true && `g`
-	k is l
-	ret `h`
-
-end
-
 
 
 fun main()
@@ -40,11 +6,7 @@ beg
 	b= 3+a
 	b = b+1
 	c = true
-	while `c`
-	beg 
-		a = 0
-		if a==0 beg $break;$ end
-	end
+
 	l = true
 	ret 12
 
