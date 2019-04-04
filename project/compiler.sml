@@ -108,7 +108,6 @@ struct
                       else reg_error "Type error"
            in
               (Atom.atom "bool",Ast.Econd(c1,oper,c2))
-            
            end
 
 
