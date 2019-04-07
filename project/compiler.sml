@@ -306,13 +306,21 @@ struct
 
                 fun compArg (el:Ast.Expr list) (al:Ast.Argument list) = 
                   case (el,al) of
-                    (x::xs,(Ast.Arg(n,t))::ys) => (Ast.Arg(n, #1 (compileExpr (Atom.atom "undef",x)) )::compArg xs ys)
+                    (x::xs,(Ast.Arg(n,t))::ys) => 
+                    (let
+                      val exp_t = #1 (compileExpr (Atom.atom "undef",x))
+                      val _ = if acomp(t,Atom.atom "undef") then () else if acomp(t,exp_t) then () else 
+                              reg_error "argument types doen't match from previous use\n"
+                    in
+                      (Ast.Arg(n,exp_t)::compArg xs ys)
+                    end)
+                    
                     |([],[]) => ([])
                     |(_,_) => (reg_error "invalid arguments supplied\n";[])
 
                 val _ = case FunctionDefinitionTable.getkey(Atom.atom name) of
                           NONE => (reg_error ("undefined function "^name^" \n"))
-                          |SOME ((Ast.Fun(name,sl,rt,arg)),def) => if def then () else 
+                          |SOME ((Ast.Fun(name,sl,rt,arg)),def) => if def then (compArg exp_list arg;()) else 
                             (compileFunction (Ast.Fun(name,sl,rt,compArg exp_list arg));())
 
                 
