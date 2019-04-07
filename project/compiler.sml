@@ -18,6 +18,20 @@ struct
   val compare = Atom.compare 
 end
 
+structure FunRegKey:TAB_KEY_SIG = 
+struct
+  type ord_key = Atom.atom
+  type tab_content = bool (*represents whether it has already compiled or not*)
+  val compare = Atom.compare 
+end
+
+structure FunDefKey = 
+struct
+  type ord_key = Atom.atom
+  type tab_content = Ast.Function*bool
+  val compare = Atom.compare 
+end
+
 structure SymKey:TAB_KEY_SIG = 
 struct
   type ord_key = Atom.atom
@@ -31,9 +45,12 @@ structure GlobalSymTable = MakeTable(SymKey)
 
 (*function related*)
 structure LocalSymTable = MakeTable(SymKey)
-val final_ret = ref (Atom.atom "void")
+val final_ret = ref ([Atom.atom "void"])
 
 structure GlobalFunctionTable = MakeTable(FunKey) 
+structure FunctionDeclTable = MakeTable(FunRegKey) 
+structure FunctionDefinitionTable = MakeTable(FunDefKey)
+
 
 
 type t_compiled_statement = (int*Ast.Statement)
@@ -166,7 +183,7 @@ struct
             0 - print none
           *)
           
-          fun compileStatement (Ast.As (varname,expr,tp,isdef)) =
+          and compileStatement (Ast.As (varname,expr,tp,isdef)) =
                 let
                   val isdef = LocalSymTable.checkkey(Atom.atom varname)
                   val prev_type = LocalSymTable.getkey(Atom.atom varname)
@@ -179,7 +196,10 @@ struct
 
                   val _ = case prev_type of
                           NONE => ()
-                          |SOME x => if acomp(x,tpe) then () else reg_error ("Multiple types for " ^ varname ^ "\n")
+                          |SOME x =>  if acomp(x,Atom.atom "undef") then (
+                            LocalSymTable.editkey(Atom.atom varname,tpe)
+                            ) else
+                           if acomp(x,tpe) then () else reg_error ("Multiple types for " ^ varname ^ "\n")
 
                   val _ = LocalSymTable.addkey(Atom.atom varname,tpe)
 
@@ -247,23 +267,25 @@ struct
                 end
 
             | compileStatement (Ast.Ret expr) = (
-                if acomp(!final_ret,Atom.atom "undef") orelse acomp(!final_ret,Atom.atom "int") then
+                if acomp(hd (!final_ret),Atom.atom "undef") then
                   let
                     
                     val cp = (compileExpr (Atom.atom "undef",expr))
                     val cpe = #2 cp
                     val tp = #1 cp
-                    val _ = final_ret:=(tp)
+                    val _ = final_ret:= tp::(tl (!final_ret))
                   in
                     (1,Ast.Ret (cpe))
                   end
                 
                 else
                   let
-                    val _ = compileStatus := false
-                    val _ = print (red^"Multiple return types for the same function\n"^reset)
+                    val cp = (compileExpr (Atom.atom "undef",expr))
+                    val cpe = #2 cp
+                    val tp = #1 cp
+                    val fails = if acomp(tp,hd (!final_ret)) then false else (reg_error "multiple return types\n";true) 
                   in
-                    (0,Ast.EmptyStatement)
+                    if fails then (0,Ast.EmptyStatement) else (1,Ast.Ret (cpe))
                   end
               )
 
@@ -279,6 +301,25 @@ struct
                (2,(Ast.While(compiled_expr ,compiled_statement)))
              end 
             | compileStatement (Ast.DirectC code) = (2,Ast.DirectC code)
+            | compileStatement (Ast.FnCl (name,exp_list)) = 
+              let
+
+                fun compArg (el:Ast.Expr list) (al:Ast.Argument list) = 
+                  case (el,al) of
+                    (x::xs,(Ast.Arg(n,t))::ys) => (Ast.Arg(n, #1 (compileExpr (Atom.atom "undef",x)) )::compArg xs ys)
+                    |([],[]) => ([])
+                    |(_,_) => (reg_error "invalid arguments supplied\n";[])
+
+                val _ = case FunctionDefinitionTable.getkey(Atom.atom name) of
+                          NONE => (reg_error ("undefined function "^name^" \n"))
+                          |SOME ((Ast.Fun(name,sl,rt,arg)),def) => if def then () else 
+                            (compileFunction (Ast.Fun(name,sl,rt,compArg exp_list arg));())
+
+                
+
+              in
+                (2,Ast.FnCl (name,exp_list))
+              end
             
             (*| compileStatement x = (2,x)*)
             | compileStatement _ = (2,Ast.EmptyStatement)
@@ -296,30 +337,82 @@ struct
             | compileStatements []         = []
 
   
-	fun compileFunction (Ast.Fun(name,s_list,ret_type,arg_list)) = 
+	and compileFunction (Ast.Fun(name,s_list,ret_type,arg_list)) = 
         let
-          val _ = final_ret:=(Atom.atom "undef")
+          val _ = final_ret:=(Atom.atom "undef")::(!final_ret)
           val _ = print ("Processing Function "^ green ^ name ^ reset ^ "\n")
-          val _ = LocalSymTable.reset ()
+          val _ = LocalSymTable.flevelup ()
           
+          fun addToLocalSymTable (Ast.Arg(arg_name,arg_type)) = LocalSymTable.addkey(Atom.atom arg_name,arg_type)
+          val _ = map addToLocalSymTable arg_list
 
           val sl = compileStatements s_list
-          val ret_type = if acomp(!final_ret,Atom.atom "undef") then (Atom.atom "void") else !final_ret
 
-          val _ = GlobalFunctionTable.addkey(Atom.atom name,(ret_type,arg_list))
+          fun isArgUndef (Ast.Arg(arg_name,arg_type)) = 
+            let
+              val a = case LocalSymTable.getkey(Atom.atom arg_name) of
+                      SOME x=>x
+                      |NONE => Atom.atom "undef"
+            in
+              acomp(a,Atom.atom "undef")
+            end
+            
+
+
+          val existUndefArg = List.exists isArgUndef arg_list
+
+          val _ = if existUndefArg then reg_error "unused arguments in function\n" else ()
+
+          val ret_type = if acomp(hd (!final_ret),Atom.atom "undef") then (Atom.atom "void") else hd (!final_ret)
+
+          
 
           val _ = print "\rfunction done......\n"
+
+          fun new_arg (Ast.Arg(arg_name,arg_type)) = 
+            let
+            val new_type = case LocalSymTable.getkey(Atom.atom arg_name) of
+              SOME x=>x
+              |NONE=>Atom.atom "undef"
+            in
+              (Ast.Arg(arg_name,new_type))
+            end
+
+           val arg_list = map new_arg arg_list
+           val _ = GlobalFunctionTable.addkey(Atom.atom name,(ret_type,arg_list))
+           val _ = FunctionDefinitionTable.editkey(Atom.atom name,(Ast.Fun(name,sl,ret_type,arg_list),true))
+
+           val _ = LocalSymTable.fleveldown()
+
+           val _ = final_ret := tl (!final_ret)
 
         in
           Ast.Fun(name,sl,ret_type,arg_list)
         end
 
 
-  fun compile (x::xs) = compileElem x::compile xs
-      |compile []     = []
+  fun compile elem_list=
+      let
+        fun addFun (Ast.Fun(name,sl,rt,arg)) = FunctionDeclTable.editkey(Atom.atom name,false)
+        val _ = map (fn k=> case k of Ast.St s=>() | Ast.Fn f=>addFun f) elem_list
+
+        fun findMainCompile (Ast.Fn (Ast.Fun(name,sl,rt,args))) = 
+          if acomp(Atom.atom "main",Atom.atom name) then (compileFunction (Ast.Fun(name,sl,rt,args)) ; ())
+          else (FunctionDefinitionTable.addkey(Atom.atom name,(Ast.Fun(name,sl,rt,args),false)))
+            |findMainCompile _ = ()
+
+        val _ = map findMainCompile elem_list
+
+        
+      in
+        List.mapPartial (fn k=>k) (map compileElem elem_list)
+      end
 
   and 
-      compileElem  (Ast.Fn function) =        Ast.Fn (compileFunction function)
-      |compileElem (Ast.St statement)       = (Ast.St (#2 (compileStatement statement)))
+      compileElem  (Ast.Fn (Ast.Fun(name,_,_,_)))        =  
+        (case FunctionDefinitionTable.getkey(Atom.atom name) of
+          SOME (x,def) => if def then SOME (Ast.Fn x) else NONE
+          |NONE => NONE)
+      |compileElem (Ast.St statement)       = SOME (Ast.St (#2 (compileStatement statement)))
 
 end

@@ -15,12 +15,16 @@ fun addtabs n = if n <= 0 then
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
-fun translateArgument (Ast.Arg (arg_name,arg_type)) = arg_name
 
-fun translateArguments [x]     = translateArgument x
-    |translateArguments (x::xs) = (translateArgument x ^" , "^ translateArguments xs)
+
+
+
+fun translateArgument_f (Ast.Arg (arg_name,arg_type)) = (Atom.toString arg_type)^" "^arg_name
+
+fun translateArguments_f [x]     = translateArgument_f x
+    |translateArguments_f (x::xs) = (translateArgument_f x ^" , "^ translateArguments_f xs)
     
-    |translateArguments []      = ""
+    |translateArguments_f []      = ""
 
 
 fun translateExpr (Ast.Const (x) )         = (" "^(Int.toString x)^" ")
@@ -38,6 +42,11 @@ fun translateExpr (Ast.Const (x) )         = (" "^(Int.toString x)^" ")
   | translateExpr (Ast.Op (x, oper, y))  = ((translateExpr x) ^ (Ast.binOpToString oper) ^ (translateExpr y ))
   | translateExpr (Ast.Erel (x, oper, y))  = ((translateExpr x) ^ (Ast.relOpToString oper) ^ (translateExpr y ))
   | translateExpr (Ast.Econd (x, oper, y))  = ((translateExpr x) ^ (Ast.condOpToString oper) ^ (translateExpr y ))
+
+and translateArguments [x]     = translateExpr x
+    |translateArguments (x::xs) = (translateExpr x ^" , "^ translateArguments xs)
+    
+    |translateArguments []      = ""
 
 
 
@@ -86,7 +95,7 @@ fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
 
 
 
- | translateStatement (Ast.FnCl (x,arg_list))  t    =  ( (addtabs t) ^  (x^"();\n")  )
+ | translateStatement (Ast.FnCl (x,arg_list))  t    =  ( (addtabs t) ^  (x^"("^translateArguments arg_list^");\n")  )
  | translateStatement (Ast.If (c,sl))    t = (
               (addtabs t) ^ ("if(") ^ (translateExpr c) ^  ("){\n") ^
               (translateStatements (t+1,sl) ) ^
@@ -136,11 +145,11 @@ and  translateStatements  (t,(x :: xs))   = ((translateStatement x t)^(translate
 (**************************************************************************************************************************************)
 (**************************************************************************************************************************************)
 
-fun translateFun(Ast.Fun (x,g,tp,arg_ls))  t  =  let
+fun translateFun(Ast.Fun (x,g,tp,arg_list))  t  =  let
            val ret_type = Atom.toString tp
            in
             (
-           (ret_type^" "^x^"(){\n")^
+           (ret_type^" "^x^"("^translateArguments_f arg_list^"){\n")^
            (translateStatements  (t+1,g) )^
             ("}\n")
             

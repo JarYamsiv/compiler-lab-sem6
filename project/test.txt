@@ -1,10 +1,14 @@
-fun yeet(a,b)
+fun meow(a,b,c)
+beg 
+
+end
+
+fun yeet(a,b,c)
 beg
 	a = 0
 	if (a>0) beg
-	b = 0
-	c = true
-	g = c
+		b = 0
+		c = true
 	end
 
 	while a <100
@@ -12,9 +16,13 @@ beg
 		t = 2
 		a = a+t
 	end
+	k = false
+	q = 1
 
-	ret a
+	ret q
 end
+
+
 
 
 fun main()
@@ -22,6 +30,9 @@ beg
 	a = 0
 	b= 3+a
 	b = b+1
+	q = false
+	yeet(0,0,true)
+	yeet(1,2,3) /*this here is an error*/
 
 	if false && true beg
 		f= 0

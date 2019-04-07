@@ -44,6 +44,7 @@ it is empty *)
        | STATEMENT of Ast.Statement
        | STATEMENTS of Ast.Statement list
        | ARGUMENTS of Ast.Argument list
+       | CALLARGUMENTS of Ast.Expr list
 
 %noshift EOF
 
@@ -74,7 +75,7 @@ PROGRAM :   PROGRAMELEM PROGRAM  (PROGRAMELEM::PROGRAM)
         |   PROGRAMELEM           ([PROGRAMELEM])
 
 STATEMENT:IDENTIFIER EQUALSIGN EXP  (Ast.As (IDENTIFIER,EXP,Atom.atom "undef",false))
-          |IDENTIFIER LPAREN ARGUMENTS RPAREN  (Ast.FnCl (IDENTIFIER,ARGUMENTS))
+          |IDENTIFIER LPAREN CALLARGUMENTS RPAREN  (Ast.FnCl (IDENTIFIER,CALLARGUMENTS))
           |RET EXP                    (Ast.Ret EXP)
           | DIRECTC                   (Ast.DirectC DIRECTC)
           |IF  EXP  BEG STATEMENTS END (Ast.If (EXP,STATEMENTS))
@@ -123,4 +124,8 @@ EXP     : CONST                ( Ast.Const (CONST)     )
 
 ARGUMENTS : IDENTIFIER COMMA ARGUMENTS (Ast.Arg(IDENTIFIER,Atom.atom "undef")::ARGUMENTS)
           | IDENTIFIER                 ([Ast.Arg(IDENTIFIER,Atom.atom "undef")])
+          |                       ([])
+
+CALLARGUMENTS : EXP COMMA CALLARGUMENTS (EXP::CALLARGUMENTS)
+          | EXP                 ([EXP])
           |                       ([])

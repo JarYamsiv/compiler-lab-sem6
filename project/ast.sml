@@ -5,7 +5,7 @@ datatype Expr  =  Const of int
 				| BVal of Bool
 		   		| EVar of string 
 		   		| ARVar of string*Expr
-		   		| EFncl of string*Argument list
+		   		| EFncl of string*Expr list
 	       		| Op    of Expr * BinOp * Expr 
 	       		| Erel of Expr* RelOp * Expr
 	       		| Econd of Expr* ConditionOp * Expr
@@ -32,7 +32,7 @@ datatype Expr  =  Const of int
 
 	datatype Statement = EmptyStatement
 			  | As    of string * Expr * Atom.atom * bool
-	          | FnCl  of string * Argument list
+	          | FnCl  of string * Expr list
 	          | Ret of Expr
 	          | If of Expr*Statement list
 	          | IfEl of Expr*Statement list*Statement list

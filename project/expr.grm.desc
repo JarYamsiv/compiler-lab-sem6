@@ -5,7 +5,7 @@ state 0:
 
 	FUN	shift 3
 
-	START	goto 66
+	START	goto 69
 	PROGRAM	goto 2
 	PROGRAMELEM	goto 1
 
@@ -225,7 +225,7 @@ state 18:
 state 19:
 
 	STATEMENT : IDENTIFIER . EQUALSIGN EXP 
-	STATEMENT : IDENTIFIER . LPAREN ARGUMENTS RPAREN 
+	STATEMENT : IDENTIFIER . LPAREN CALLARGUMENTS RPAREN 
 
 	EQUALSIGN	shift 31
 	LPAREN	shift 30
@@ -385,13 +385,18 @@ state 29:
 
 state 30:
 
-	STATEMENT : IDENTIFIER LPAREN . ARGUMENTS RPAREN 
+	STATEMENT : IDENTIFIER LPAREN . CALLARGUMENTS RPAREN 
 
-	IDENTIFIER	shift 8
+	CONST	shift 27
+	IDENTIFIER	shift 26
+	LPAREN	shift 25
+	TRUE	shift 24
+	FALSE	shift 23
 
-	ARGUMENTS	goto 44
+	EXP	goto 45
+	CALLARGUMENTS	goto 44
 
-	.	reduce by rule 29
+	.	reduce by rule 32
 
 
 state 31:
@@ -404,7 +409,7 @@ state 31:
 	TRUE	shift 24
 	FALSE	shift 23
 
-	EXP	goto 45
+	EXP	goto 46
 
 	.	error
 
@@ -419,7 +424,7 @@ state 32:
 	TRUE	shift 24
 	FALSE	shift 23
 
-	EXP	goto 46
+	EXP	goto 47
 
 	.	error
 
@@ -434,7 +439,7 @@ state 33:
 	TRUE	shift 24
 	FALSE	shift 23
 
-	EXP	goto 47
+	EXP	goto 48
 
 	.	error
 
@@ -449,7 +454,7 @@ state 34:
 	TRUE	shift 24
 	FALSE	shift 23
 
-	EXP	goto 48
+	EXP	goto 49
 
 	.	error
 
@@ -464,7 +469,7 @@ state 35:
 	TRUE	shift 24
 	FALSE	shift 23
 
-	EXP	goto 49
+	EXP	goto 50
 
 	.	error
 
@@ -479,7 +484,7 @@ state 36:
 	TRUE	shift 24
 	FALSE	shift 23
 
-	EXP	goto 50
+	EXP	goto 51
 
 	.	error
 
@@ -494,7 +499,7 @@ state 37:
 	TRUE	shift 24
 	FALSE	shift 23
 
-	EXP	goto 51
+	EXP	goto 52
 
 	.	error
 
@@ -509,7 +514,7 @@ state 38:
 	TRUE	shift 24
 	FALSE	shift 23
 
-	EXP	goto 52
+	EXP	goto 53
 
 	.	error
 
@@ -524,7 +529,7 @@ state 39:
 	TRUE	shift 24
 	FALSE	shift 23
 
-	EXP	goto 53
+	EXP	goto 54
 
 	.	error
 
@@ -544,7 +549,7 @@ state 40:
 	PLUS	shift 39
 	MINUS	shift 38
 	MUL	shift 37
-	RPAREN	shift 54
+	RPAREN	shift 55
 	EQ	shift 36
 	GT	shift 35
 	LT	shift 34
@@ -565,7 +570,7 @@ state 41:
 	TRUE	shift 24
 	FALSE	shift 23
 
-	EXP	goto 55
+	EXP	goto 56
 
 	.	error
 
@@ -581,7 +586,7 @@ state 42:
 	RET	shift 15
 
 	STATEMENT	goto 14
-	STATEMENTS	goto 56
+	STATEMENTS	goto 57
 
 	.	reduce by rule 10
 
@@ -598,22 +603,49 @@ state 43:
 	RET	shift 15
 
 	STATEMENT	goto 14
-	STATEMENTS	goto 57
+	STATEMENTS	goto 58
 
 	.	reduce by rule 10
 
 
 state 44:
 
-	STATEMENT : IDENTIFIER LPAREN ARGUMENTS . RPAREN 
+	STATEMENT : IDENTIFIER LPAREN CALLARGUMENTS . RPAREN 
 
-	RPAREN	shift 58
+	RPAREN	shift 59
 
 
 	.	error
 
 
 state 45:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . MINUS EXP 
+	EXP : EXP . MUL EXP 
+	EXP : EXP . LT EXP 
+	EXP : EXP . GT EXP 
+	EXP : EXP . EQ EXP 
+	EXP : EXP . AND EXP 
+	EXP : EXP . OR EXP 
+	CALLARGUMENTS : EXP . COMMA CALLARGUMENTS 
+	CALLARGUMENTS : EXP .  (reduce by rule 31)
+
+	PLUS	shift 39
+	MINUS	shift 38
+	MUL	shift 37
+	COMMA	shift 60
+	EQ	shift 36
+	GT	shift 35
+	LT	shift 34
+	AND	shift 33
+	OR	shift 32
+
+
+	.	reduce by rule 31
+
+
+state 46:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
@@ -638,7 +670,7 @@ state 45:
 	.	reduce by rule 3
 
 
-state 46:
+state 47:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
@@ -661,7 +693,7 @@ state 46:
 	.	reduce by rule 26
 
 
-state 47:
+state 48:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
@@ -685,7 +717,7 @@ state 47:
 	.	reduce by rule 25
 
 
-state 48:
+state 49:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
@@ -705,7 +737,7 @@ state 48:
 	.	reduce by rule 22
 
 
-state 49:
+state 50:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
@@ -725,7 +757,7 @@ state 49:
 	.	reduce by rule 23
 
 
-state 50:
+state 51:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
@@ -745,7 +777,7 @@ state 50:
 	.	reduce by rule 24
 
 
-state 51:
+state 52:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
@@ -762,7 +794,7 @@ state 51:
 	.	reduce by rule 21
 
 
-state 52:
+state 53:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP . MINUS EXP 
@@ -780,7 +812,7 @@ state 52:
 	.	reduce by rule 20
 
 
-state 53:
+state 54:
 
 	EXP : EXP . PLUS EXP 
 	EXP : EXP PLUS EXP .  (reduce by rule 18)
@@ -798,7 +830,7 @@ state 53:
 	.	reduce by rule 18
 
 
-state 54:
+state 55:
 
 	EXP : LPAREN EXP RPAREN .  (reduce by rule 19)
 
@@ -807,7 +839,7 @@ state 54:
 	.	reduce by rule 19
 
 
-state 55:
+state 56:
 
 	EXP : IDENTIFIER LSQUARE EXP . RSQUARE 
 	EXP : EXP . PLUS EXP 
@@ -822,7 +854,7 @@ state 55:
 	PLUS	shift 39
 	MINUS	shift 38
 	MUL	shift 37
-	RSQUARE	shift 59
+	RSQUARE	shift 61
 	EQ	shift 36
 	GT	shift 35
 	LT	shift 34
@@ -833,22 +865,11 @@ state 55:
 	.	error
 
 
-state 56:
+state 57:
 
 	STATEMENT : WHILE EXP BEG STATEMENTS . END 
 
-	END	shift 60
-
-
-	.	error
-
-
-state 57:
-
-	STATEMENT : IF EXP BEG STATEMENTS . END 
-	STATEMENT : IF EXP BEG STATEMENTS . END ELSE BEG STATEMENTS END 
-
-	END	shift 61
+	END	shift 62
 
 
 	.	error
@@ -856,14 +877,41 @@ state 57:
 
 state 58:
 
-	STATEMENT : IDENTIFIER LPAREN ARGUMENTS RPAREN .  (reduce by rule 4)
+	STATEMENT : IF EXP BEG STATEMENTS . END 
+	STATEMENT : IF EXP BEG STATEMENTS . END ELSE BEG STATEMENTS END 
+
+	END	shift 63
+
+
+	.	error
+
+
+state 59:
+
+	STATEMENT : IDENTIFIER LPAREN CALLARGUMENTS RPAREN .  (reduce by rule 4)
 
 
 
 	.	reduce by rule 4
 
 
-state 59:
+state 60:
+
+	CALLARGUMENTS : EXP COMMA . CALLARGUMENTS 
+
+	CONST	shift 27
+	IDENTIFIER	shift 26
+	LPAREN	shift 25
+	TRUE	shift 24
+	FALSE	shift 23
+
+	EXP	goto 45
+	CALLARGUMENTS	goto 64
+
+	.	reduce by rule 32
+
+
+state 61:
 
 	EXP : IDENTIFIER LSQUARE EXP RSQUARE .  (reduce by rule 17)
 
@@ -872,7 +920,7 @@ state 59:
 	.	reduce by rule 17
 
 
-state 60:
+state 62:
 
 	STATEMENT : WHILE EXP BEG STATEMENTS END .  (reduce by rule 9)
 
@@ -881,28 +929,37 @@ state 60:
 	.	reduce by rule 9
 
 
-state 61:
+state 63:
 
 	STATEMENT : IF EXP BEG STATEMENTS END .  (reduce by rule 7)
 	STATEMENT : IF EXP BEG STATEMENTS END . ELSE BEG STATEMENTS END 
 
-	ELSE	shift 62
+	ELSE	shift 65
 
 
 	.	reduce by rule 7
 
 
-state 62:
+state 64:
+
+	CALLARGUMENTS : EXP COMMA CALLARGUMENTS .  (reduce by rule 30)
+
+
+
+	.	reduce by rule 30
+
+
+state 65:
 
 	STATEMENT : IF EXP BEG STATEMENTS END ELSE . BEG STATEMENTS END 
 
-	BEG	shift 63
+	BEG	shift 66
 
 
 	.	error
 
 
-state 63:
+state 66:
 
 	STATEMENT : IF EXP BEG STATEMENTS END ELSE BEG . STATEMENTS END 
 
@@ -913,22 +970,22 @@ state 63:
 	RET	shift 15
 
 	STATEMENT	goto 14
-	STATEMENTS	goto 64
+	STATEMENTS	goto 67
 
 	.	reduce by rule 10
 
 
-state 64:
+state 67:
 
 	STATEMENT : IF EXP BEG STATEMENTS END ELSE BEG STATEMENTS . END 
 
-	END	shift 65
+	END	shift 68
 
 
 	.	error
 
 
-state 65:
+state 68:
 
 	STATEMENT : IF EXP BEG STATEMENTS END ELSE BEG STATEMENTS END .  (reduce by rule 8)
 
@@ -937,7 +994,7 @@ state 65:
 	.	reduce by rule 8
 
 
-state 66:
+state 69:
 
 
 	EOF	accept
@@ -945,5 +1002,5 @@ state 66:
 
 	.	error
 
-105 of 259 action table entries left after compaction
-32 goto table entries
+119 of 280 action table entries left after compaction
+35 goto table entries

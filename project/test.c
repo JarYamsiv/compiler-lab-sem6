@@ -1,21 +1,25 @@
 #include "core.h"
-int yeet(){
-   int a =  0 ;
+int yeet(int a , int b , bool c){
+   a =  0 ;
    if(a> 0 ){
-      int b =  0 ;
-      bool c = true ;
-      bool g = c;
+      b =  0 ;
+      c = true ;
    }
    while(a< 100 ){
       int t =  2 ;
       a = a+t;
    }
-   return a;
+   bool k = false ;
+   int q =  1 ;
+   return q;
 }
 int main(){
    int a =  0 ;
    int b =  3 +a;
    b = b+ 1 ;
+   bool q = false ;
+   yeet( 0  ,  0  , true );
+   yeet( 1  ,  2  ,  3 );
    if(false &&true ){
       int f =  0 ;
    }
