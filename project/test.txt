@@ -1,6 +1,6 @@
 fun meow(a,b,c)
 beg 
-
+	ret a>b && b>c
 end
 
 fun yeet(a,b,c)
@@ -19,7 +19,7 @@ beg
 	k = false
 	q = 1
 
-	ret q
+	ret meow(1,2,3) 
 end
 
 

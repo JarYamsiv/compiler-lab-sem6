@@ -1,5 +1,8 @@
 #include "core.h"
-int yeet(int a , int b , bool c){
+bool meow(int a , int b , int c){
+   return a>b&&b>c;
+}
+bool yeet(int a , int b , bool c){
    a =  0 ;
    if(a> 0 ){
       b =  0 ;
@@ -11,7 +14,7 @@ int yeet(int a , int b , bool c){
    }
    bool k = false ;
    int q =  1 ;
-   return q;
+   return meow( 1  ,  2  ,  3 );
 }
 int main(){
    int a =  0 ;

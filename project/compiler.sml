@@ -79,7 +79,36 @@ struct
            (tp,(Ast.ARVar (ident,c)))
          end 
 
-        |compileExpr (tp,Ast.EFncl (fn_name,arg_list)) = (tp,Ast.EFncl (fn_name,arg_list))
+        |compileExpr (tp,Ast.EFncl (name,exp_list)) = 
+        let
+          fun compArg (el:Ast.Expr list) (al:Ast.Argument list) = 
+                  case (el,al) of
+                    (x::xs,(Ast.Arg(n,t))::ys) => 
+                    (let
+                      val exp_t = #1 (compileExpr (Atom.atom "undef",x))
+                      val _ = if acomp(t,Atom.atom "undef") then () else if acomp(t,exp_t) then () else 
+                              reg_error "argument types doen't match from previous use\n"
+                    in
+                      (Ast.Arg(n,exp_t)::compArg xs ys)
+                    end)
+                    
+                    |([],[]) => ([])
+                    |(_,_) => (reg_error "invalid arguments supplied\n";[])
+
+                val tp = case FunctionDefinitionTable.getkey(Atom.atom name) of
+                          NONE => (reg_error ("undefined function "^name^" \n");Atom.atom "undef")
+                          |SOME ((Ast.Fun(name,sl,rt,arg)),def) => if def then (compArg exp_list arg;rt) else 
+                            (
+                              let
+                                val Ast.Fun(nm,new_sl,new_rt,new_arg) = compileFunction (Ast.Fun(name,sl,rt,compArg exp_list arg))
+                              in
+                                (new_rt)
+                              end
+                              )
+                            
+        in
+          (tp,Ast.EFncl (name,exp_list))
+        end
 
         |compileExpr (tp,(Ast.Op (e1,oper,e2))) =
           let
