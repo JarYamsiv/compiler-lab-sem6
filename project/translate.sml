@@ -118,8 +118,20 @@ fun translateStatement (Ast.As (x,exp,tp,isdef)) t    =
      let
       fun not_dollar x = if Char.compare(x,#"$") = EQUAL then false else true 
        val remove_dollar = implode(List.filter not_dollar (explode x))
+
+       val tabs = #"\n"::(explode(addtabs t))
+       
+       fun createtabs (x::xs) =
+              ( case x of
+                #"\n" => tabs@createtabs xs
+                | x => x::createtabs xs
+                )
+          |createtabs [] = []
+
+        val new_string = implode(createtabs (explode remove_dollar))
+
      in
-       (remove_dollar^"\n")
+       ((addtabs t)^new_string^"\n")
      end
 
  | translateStatement (Ast.StList ls) t     = (translateStatements (t,ls))

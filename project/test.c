@@ -22,13 +22,13 @@ int main(){
    b = b+ 1 ;
    bool q = false ;
    yeet( 0  ,  0  , true );
-   yeet( 1  ,  2  , false );
+   bool k = yeet( 1  ,  2  , false );
    int f =  0 ;
    a =  0 ;
    while(a< 100 ){
       a = a+ 1 ;
       if(a> 50 ){
-break;
+         break;
       }
    }
    return  12 ;

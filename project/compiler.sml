@@ -180,54 +180,8 @@ struct
                 end
                 )
            end
-
-
-
-
-       (* fun compileCondition (Ast.BConst x)   = (Ast.BConst (x))
-
-            |compileCondition (Ast.BVar identifier) = 
-              let 
-                val _ = case LocalSymTable.getkey(Atom.atom identifier) of
-                        SOME tp => (if Atom.compare(tp,Atom.atom "bool")=EQUAL then () else 
-                              (compileStatus := false ; print (red ^ "type error "^identifier^" not an bool \n" ^ reset ))
-                          )
-                        |NONE => (compileStatus := false ; print (red ^ "undefined identifier "^identifier^"\n" ^ reset ) )
-              in 
-                (Ast.BVar identifier)
-              end
-
-
-            | compileCondition (Ast.CondOp (x,oper,y)) = 
-              let
-                val c1 = compileCondition x
-                val c2 = compileCondition y
-              in
-                case oper of
-                  Ast.OR => (
-                            case (c1,c2) of 
-                              (Ast.BConst Ast.TRUE,_) => (Ast.BConst Ast.TRUE) 
-                              |(_,Ast.BConst Ast.TRUE) => (Ast.BConst Ast.TRUE)
-                              |(_,_) => (Ast.CondOp (c1,oper,c2))
-                            )
-                  |Ast.AND => (
-                                case (c1,c2) of 
-                                (Ast.BConst Ast.FALSE,_) => (Ast.BConst Ast.FALSE) 
-                                |(_,Ast.BConst Ast.FALSE) => (Ast.BConst Ast.FALSE) 
-                                |(_,_) => (Ast.CondOp (c1,oper,c2))
-                              )
-              end
-
-             | compileCondition (Ast.Rel(x,oper,y)) = 
-             let
-               val c1 = #2 (compileExpr (Atom.atom "undef",x))
-               val c2 = #2 (compileExpr (Atom.atom "undef",y))
-             in
-               (Ast.Rel(c1 ,oper,c2))
-             end*)
                   
-                
-          
+                  
 
           (*
             2 - print this statement and those who comes after it
