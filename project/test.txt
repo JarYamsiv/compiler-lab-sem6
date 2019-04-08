@@ -6,7 +6,7 @@ end
 fun yeet(a,b,c)
 beg
 	a = 0
-	if (a>0) beg
+	if (meow(a,b,3)) beg
 		b = 0
 		c = true
 	end
@@ -19,7 +19,7 @@ beg
 	k = false
 	q = 1
 
-	ret meow(1,2,3) 
+	ret meow(1,2,3) && k
 end
 
 
@@ -34,7 +34,7 @@ beg
 	yeet(0,0,true)
 	yeet(1,2,false)
 
-	if false && true beg
+	if false || true beg
 		f= 0
 	end
 	else

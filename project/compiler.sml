@@ -155,7 +155,30 @@ struct
                       then () 
                       else reg_error "Type error\n"
            in
-              (Atom.atom "bool",Ast.Econd(c1,oper,c2))
+              case oper of
+                Ast.AND => 
+                (let
+                  val c1c = compileExpr(Atom.atom "undef",c1)
+                  val c2c = compileExpr(Atom.atom "undef",c2)
+                in
+                  case (c1,c2) of
+                    (Ast.BVal Ast.FALSE,_) => (Atom.atom "bool",Ast.BVal Ast.FALSE)
+                    |(_,Ast.BVal Ast.FALSE) => (Atom.atom "bool",Ast.BVal Ast.FALSE)
+                    |(_,_) => (Atom.atom "bool",Ast.Econd(c1,oper,c2))
+                  
+                end)
+               |Ast.OR => (
+                let
+                  val c1c = compileExpr(Atom.atom "undef",c1)
+                  val c2c = compileExpr(Atom.atom "undef",c2)
+                in
+                  case (c1,c2) of
+                    (Ast.BVal Ast.TRUE,_) => (Atom.atom "bool",Ast.BVal Ast.TRUE)
+                    |(_,Ast.BVal Ast.TRUE) => (Atom.atom "bool",Ast.BVal Ast.TRUE)
+                    |(_,_) => (Atom.atom "bool",Ast.Econd(c1,oper,c2))
+                  
+                end
+                )
            end
 
 

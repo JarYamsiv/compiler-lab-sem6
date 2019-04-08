@@ -4,7 +4,7 @@ bool meow(int a , int b , int c){
 }
 bool yeet(int a , int b , bool c){
    a =  0 ;
-   if(a> 0 ){
+   if(meow(a , b ,  3 )){
       b =  0 ;
       c = true ;
    }
@@ -14,7 +14,7 @@ bool yeet(int a , int b , bool c){
    }
    bool k = false ;
    int q =  1 ;
-   return meow( 1  ,  2  ,  3 );
+   return meow( 1  ,  2  ,  3 )&&k;
 }
 int main(){
    int a =  0 ;
@@ -23,12 +23,7 @@ int main(){
    bool q = false ;
    yeet( 0  ,  0  , true );
    yeet( 1  ,  2  , false );
-   if(false &&true ){
-      int f =  0 ;
-   }
-   else{
-      int g =  0 ;
-   }
+   int f =  0 ;
    a =  0 ;
    while(a< 100 ){
       a = a+ 1 ;
