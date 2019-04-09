@@ -2,9 +2,9 @@
 bool meow(int a , int b , int c){
    return a>b&&b>c;
 }
-bool yeet(int a , int b , bool c){
+void yeet(int a , int b , bool c){
    a =  0 ;
-   if(meow(a , b ,  3 )){
+   if(meow( 2  ,  3  ,  4 )){
       b =  0 ;
       c = true ;
    }
@@ -14,7 +14,6 @@ bool yeet(int a , int b , bool c){
    }
    bool k = false ;
    int q =  1 ;
-   return meow( 1  ,  2  ,  3 )&&k;
 }
 int main(){
    int a =  0 ;
@@ -22,7 +21,7 @@ int main(){
    b = b+ 1 ;
    bool q = false ;
    yeet( 0  ,  0  , true );
-   bool k = yeet( 1  ,  2  , false );
+   void k = yeet( 1  ,  2  , false );
    int f =  0 ;
    a =  0 ;
    while(a< 100 ){
