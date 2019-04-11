@@ -29,8 +29,11 @@ fun translateArguments_f [x]     = translateArgument_f x
 
 fun translateExpr (Ast.Const (x) )         = (" "^(Int.toString x)^" ")
 
+
   | translateExpr (Ast.BVal Ast.TRUE)      = ("true ")
   | translateExpr (Ast.BVal Ast.FALSE)      = ("false ")
+
+  | translateExpr (Ast.Bracket e)           = ("(" ^ (translateExpr e) ^ ")")
 
   | translateExpr (Ast.EVar  (x) )     = x 
 

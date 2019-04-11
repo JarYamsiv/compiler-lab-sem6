@@ -2,27 +2,27 @@
 bool meow(int a , int b , int c){
    return a>b&&b>c;
 }
-int yeet(int a , int b , bool c){
+bool yeet(int a , int b , bool c){
    a =  0 ;
-   if(meow( 2  ,  3  ,  4 )){
+   if((meow( 2  ,  3  ,  4 ))){
       b =  0 ;
       c = true ;
    }
    while(a< 100 ){
       int t =  2 ;
       a = a+t;
+      return meow( 1  ,  2  ,  3 );
    }
    bool k = false ;
    int q =  1 ;
-   return q;
 }
 int main(){
    int a =  0 ;
-   int b =  3 +a;
+   int b = ( 3 +a)* 5 ;
    b = b+ 1 ;
    bool q = false ;
    yeet( 0  ,  0  , true );
-   int k = yeet( 1  ,  2  , false );
+   bool k = yeet( 1  ,  2  , false );
    int f =  0 ;
    a =  0 ;
    while(a< 100 ){

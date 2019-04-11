@@ -4,6 +4,7 @@ structure Ast = struct
 datatype Expr  =  Const of int
 				| BVal of Bool
 		   		| EVar of string 
+		   		| Bracket of Expr
 		   		| ARVar of string*Expr
 		   		| EFncl of string*Expr list
 	       		| Op    of Expr * BinOp * Expr 

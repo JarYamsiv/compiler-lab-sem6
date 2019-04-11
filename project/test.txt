@@ -15,10 +15,11 @@ beg
 	beg
 		t = 2
 		a = a+t
+		ret meow(1,2,3)
 	end
 	k = false
 	q = 1
-	ret q
+
 end
 
 
@@ -27,7 +28,7 @@ end
 fun main()
 beg
 	a = 0
-	b= 3+a
+	b= (3+a)*5
 	b = b+1
 	q = false
 	yeet(0,0,true)

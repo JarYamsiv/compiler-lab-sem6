@@ -61,6 +61,14 @@ struct
 
   fun  compileExpr (tp,(Ast.Const x))  = (Atom.atom "int",(Ast.Const x))
       |compileExpr (tp,(Ast.BVal x)) = (Atom.atom "bool",(Ast.BVal x))
+      |compileExpr (tp,(Ast.Bracket e)) = 
+      let
+        val cp = compileExpr(tp,e)
+        val tp = #1 cp
+        val cpe = #2 cp
+      in
+        (tp,Ast.Bracket cpe)
+      end
       |compileExpr (tp,(Ast.EVar (identifier))) = 
                 let 
                   val this_tp = LocalSymTable.getkey(Atom.atom identifier)
