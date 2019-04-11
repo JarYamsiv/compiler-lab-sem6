@@ -1,0 +1,8 @@
+/* shows simantic analysis to find errors with 
+undefined variables*/
+
+fun main()
+beg
+	a = b
+	v = foo()
+end

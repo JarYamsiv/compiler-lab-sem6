@@ -1,3 +1,7 @@
+/*
+shows basic type inference and type checing
+*/
+
 fun meow(a,b,c)
 beg 
 	ret a>b && b>c
@@ -32,8 +36,8 @@ beg
 	b = b+1
 	q = false
 	yeet(0,0,true)
-	k= yeet(1,2,false) 
-	
+	k= yeet(1,2,false) /* now this is an error */
+
 	if false || true beg
 		f= 0
 	end

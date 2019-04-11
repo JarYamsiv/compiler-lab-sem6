@@ -1,0 +1,29 @@
+/*
+	errors for showing functions with unused arguments
+	functions with invalid argument types
+	multiple return types
+*/
+
+fun bar(a,b)
+beg
+end
+
+fun foo(a,b)
+beg
+	a = true
+	b = 1
+	if b>0
+	beg
+		ret a
+	end
+	else
+	beg
+		ret b
+	end
+end
+
+fun main()
+beg
+	a = bar(2,3)
+	b = foo(3,false)
+end

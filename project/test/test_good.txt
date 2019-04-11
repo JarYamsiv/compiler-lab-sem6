@@ -1,0 +1,30 @@
+/*
+	test to show
+	-> constant folding in arithemetic expressions
+	-> constant folding in boolean expression
+	-> dead code removal depending
+		-> from dead if / if-else statements
+		-> statements after return statement
+*/
+
+fun main()
+beg
+	if false
+	beg
+		a = 3
+	end
+
+	if true || (2>3)
+	beg
+		a = 4*12
+		b = a+2
+		ret 3
+		c = 4
+	end
+	else
+	beg
+		r = 4
+		v = r+r
+		ret 5
+	end
+end

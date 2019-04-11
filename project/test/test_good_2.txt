@@ -1,0 +1,22 @@
+/*
+	test to show the direct c feature
+	which allows to run c code directly from 
+	this language
+	-> it will not be compiled though
+*/
+
+fun decrease(a)
+beg	
+	ret (a-1)
+end
+
+fun main()
+beg
+	a = 100
+	while a>0 
+	beg
+		a =  decrease(a)
+		$ printf("%d ",a) ; $
+
+	end
+end
