@@ -207,6 +207,9 @@ struct
                             ) else
                            if acomp(x,tpe) then () else reg_error ("Multiple types for " ^ varname ^ "\n")
 
+                  val _ = if acomp(tpe,Atom.atom "void") orelse acomp(tpe,Atom.atom "undef") then
+                              reg_error "function doesn't return an assignable type\n" else ()
+
                   val _ = LocalSymTable.addkey(Atom.atom varname,tpe)
 
                 in

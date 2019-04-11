@@ -18,8 +18,7 @@ beg
 	end
 	k = false
 	q = 1
-
-
+	ret q
 end
 
 
@@ -46,6 +45,7 @@ beg
 	while a < 100
 	beg
 		a = a+1
+
 		if a > 50
 		beg
 			$break;$
