@@ -1,0 +1,5 @@
+Library
+	structure main
+	is
+		tiger.sml
+		$/basis.cm
